@@ -1,3 +1,6 @@
 Team 
 P01: ArRESTed Development
 2019-1?-??
+
+junheeL -- 2019-11-14 08:40
+created script to write to updatelog and push changes
