@@ -13,7 +13,10 @@ amandaZ -- 2019-11-16 10:00
   
 jackieL -- 2019-11-17 05:51
 junheeL -- 2019-11-17 05:51
+
 michaelZ -- 2019-11-17 05:51
+  -Finished the Project Description on the Design Document
+
 amandaZ -- 2019-11-17 05:51
   -Made the database design -- two databases: User and Game
   -Finished componenet description
