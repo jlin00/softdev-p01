@@ -3,7 +3,19 @@ P01: ArRESTed Development
 2019-1?-??
 
 jackieL -- 2019-11-14 08:28
-Team Kirkland Meeseeks established with members Jackie, Michael, Junhee and Amanda. Created collaborative repo and added doc directory with devlog.
+  -Team Kirkland Meeseeks established with members Jackie, Michael, Junhee and Amanda. Created collaborative repo and added doc directory   with devlog.
 
 junheeL -- 2019-11-14 08:40
-created script to write to updatelog and push changes
+  -created script to write to updatelog and push changes
+
+amandaZ -- 2019-11-16 10:00
+  -The whole team decided on what APIs to use and the division of labor for creating the design documents.
+  
+jackieL -- 2019-11-17 05:51
+junheeL -- 2019-11-17 05:51
+michaelZ -- 2019-11-17 05:51
+amandaZ -- 2019-11-17 05:51
+  -Made the database design -- two databases: User and Game
+  -Finished componenet description
+    -Completed frontend descriptions for the components such as homepage, profile page, store, inventory page, games...etc
+    -Wrote descriptions for Backend components such as the sql databases, searching mechanism, and APIs 
