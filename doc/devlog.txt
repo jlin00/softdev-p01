@@ -10,8 +10,10 @@ junheeL -- 2019-11-14 08:40
 
 amandaZ -- 2019-11-16 10:00
   -The whole team decided on what APIs to use and the division of labor for creating the design documents.
-  
+
 jackieL -- 2019-11-17 05:51
+  -made component map on the design document and edited project description
+
 junheeL -- 2019-11-17 05:51
 
 michaelZ -- 2019-11-17 05:51
@@ -21,4 +23,4 @@ amandaZ -- 2019-11-17 05:51
   -Made the database design -- two databases: User and Game
   -Finished componenet description
     -Completed frontend descriptions for the components such as homepage, profile page, store, inventory page, games...etc
-    -Wrote descriptions for Backend components such as the sql databases, searching mechanism, and APIs 
+    -Wrote descriptions for Backend components such as the sql databases, searching mechanism, and APIs
