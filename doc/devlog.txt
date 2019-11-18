@@ -28,3 +28,6 @@ amandaZ -- 2019-11-17 17:51
 
 jackieL -- 2019-11-17 19:22
   -uploaded design doc
+
+jackieL -- 2019-11-17 22:58
+fixed typos in design doc
