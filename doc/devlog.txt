@@ -15,6 +15,7 @@ jackieL -- 2019-11-17 17:51
   -made component map on the design document and edited project description
 
 junheeL -- 2019-11-17 17:51
+  -created sitemap in the Design Document
 
 michaelZ -- 2019-11-17 17:51
   -Finished the Project Description on the Design Document
