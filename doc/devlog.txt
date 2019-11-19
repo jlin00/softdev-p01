@@ -40,3 +40,6 @@ created html template
 
 jackieL -- 2019-11-19 08:10
 entered base code for flask app
+
+jackieL -- 2019-11-19 08:23
+created db_builder file with data tables
