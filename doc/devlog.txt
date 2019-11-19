@@ -49,3 +49,6 @@ wrote new addUser function in db_manager
 
 juunheeL -- 2019-11-19 08:49
 started work on html file for login
+
+jackieL -- 2019-11-19 17:17
+fixed signup function to include flashed messages
