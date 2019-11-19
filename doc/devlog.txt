@@ -37,3 +37,6 @@ uploaded revised design doc, with sitemap updated to include search, division of
 
 junheeL -- 2019-11-19 08:16
 created html template
+
+jackieL -- 2019-11-19 08:10
+entered base code for flask app
