@@ -8,20 +8,24 @@
     <center>
       <font face = "courier new">
         <h1> <font color ="#F597EF"> Sign Up </font> </h1>
-        <font color =  "#C11B17">
-        </font>
+        {% set msgs = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in msgs %}
+          <p>
+            <font color="{{category}}"> {{ msg }} </font>
+          </p>
+        {% endfor %}
         <form action = "/signupcheck" method="POST">
           <b> Username  </b> <br>
-          <input type = "text" name = "username">
+          <input type = "text" name = "username" value={{username}}>
           <br><br>
           <b> Password </b> <br>
-          <input type = "password" name = "password">
+          <input type = "password" name = "password" value={{password}}>
           <br><br>
           <b> Confirm Password </b> <br>
-          <input type = "password" name = "confirmation">
+          <input type = "password" name = "confirmation" value={{confirm}}>
           <br><br>
           <b> Pick a Country to represent </b> <br>
-          <select name="flag">
+          <select name="flag" value={{flag}}>
             <option value="USA">USA</option>
             <option value="Mexico">Mexico</option>
             <option value="Canada">Canada</option>
