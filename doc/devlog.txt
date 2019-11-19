@@ -55,3 +55,6 @@ fixed signup function to include flashed messages
 
 jackieL  -- 2019-11-19 17:26
 extended base files
+
+jackieL -- 2019-11-19 17:58
+added bootstrap to signup page

@@ -5,18 +5,20 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	</head>
 	<body>
-		<center>
-			<font face = "courier new">
-				{% set msgs = get_flashed_messages(with_categories=true) %}
-				{% for category, msg in msgs %}
-					<p>
-						<font color="{{category}}"> {{ msg }} </font>
-					</p>
-				{% endfor %}
-			</font>
-			{% block body %}
-				<h1>HELP I NEED CONTENT</h1>
-			{% endblock %}
-		</center>
+		<div class="cotainer">
+			<center>
+				<font face = "courier new">
+					{% set msgs = get_flashed_messages(with_categories=true) %}
+					{% for category, msg in msgs %}
+						<p>
+							<font color="{{category}}"> {{ msg }} </font>
+						</p>
+					{% endfor %}
+				</font>
+				{% block body %}
+					<h1>HELP I NEED CONTENT</h1>
+				{% endblock %}
+			</center>
+		</div>
 	</body>
 </html>
