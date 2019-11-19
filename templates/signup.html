@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title> Join the Trivia Game! </title>
+  </head>
+    <center>
+      <font face = "courier new">
+        <h1> <font color ="#F597EF"> Sign Up </font> </h1>
+        <font color =  "#C11B17">
+        </font>
+        <form action = "/signupcheck" method="POST">
+          <b> Username  </b> <br>
+          <input type = "text" name = "username">
+          <br><br>
+          <b> Password </b> <br>
+          <input type = "password" name = "password">
+          <br><br>
+          <b> Confirm Password </b> <br>
+          <input type = "password" name = "confirmation">
+          <br><br>
+          <b> Pick a Country to represent </b> <br>
+          <select name="flag">
+            <option value="USA">USA</option>
+            <option value="Mexico">Mexico</option>
+            <option value="Canada">Canada</option>
+            <option value="China">China</option>
+            </select>
+          <br><br>
+          <input type = "submit" name = "sub1" value = "Trivia Time!">
+        </form>
+        <br><br>
+        <form>
+          <input type = "button" onclick= "location.href='/';" value = "Back to log in">
+        </form>
+      </font>
+    </center>
+</html>
