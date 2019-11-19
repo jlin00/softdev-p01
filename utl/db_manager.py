@@ -24,13 +24,6 @@ def formatFetch(results):
     for item in results:
         if str(item) not in collection:
             collection.append(str(item)[2:-3])
-
-    print(results)
-    l = list(results)
-    print("list")
-    print(l)
-    print("collection")
-    print(collection)
     return collection
 
 #====================================================

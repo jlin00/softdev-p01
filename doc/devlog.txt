@@ -52,3 +52,6 @@ started work on html file for login
 
 jackieL -- 2019-11-19 17:17
 fixed signup function to include flashed messages
+
+jackieL  -- 2019-11-19 17:26
+extended base files
