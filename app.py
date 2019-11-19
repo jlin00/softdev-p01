@@ -25,19 +25,16 @@ def signupcheck():
     password=request.form['password']
     confirm=request.form['confirmation']
     flag=request.form['flag']
-    command="SELECT username FROM user_tbl WHERE username = \'"+username+"\';"
-    users=db_manager.formatFetch(db_builder.exec(command))
-    print(users)
     if(username=="" or password=="" or confirm==""):
         flash('Please fill out all fields!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag)
-    elif(len(users)!=0):
-        flash('Username taken!', 'red')
-        return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag)
-    elif (confirm!=password):
+    if (confirm!=password):
         flash('Passwords do not match!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag)
-    db_manager.addUser(username,password,flag)
+    added = db_manager.addUser(username,password,flag)
+    if (not added):
+        flash('Username taken!', 'red')
+        return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag)
     return "Signed In"
 
 
