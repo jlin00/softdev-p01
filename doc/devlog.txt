@@ -31,3 +31,6 @@ uploaded design doc
 
 jackieL -- 2019-11-17 22:58
 fixed typos in design doc
+
+jackieL -- 2019-11-18 21:13
+uploaded revised design doc, with sitemap updated to include search, division of labor updated, and cached databases added
