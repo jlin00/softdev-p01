@@ -46,3 +46,6 @@ created db_builder file with data tables
 
 jackieL -- 2019-11-19 08:38
 wrote new addUser function in db_manager
+
+juunheeL -- 2019-11-19 08:49
+started work on html file for login
