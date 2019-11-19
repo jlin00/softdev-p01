@@ -7,9 +7,11 @@ import urllib, json
 from json import loads
 app = Flask(__name__)
 
+#Michael's Code Below
 @app.route("/login")
 def login():
-
+    return "Hello World"
+#Amanda's Code Below
 @app.route("/signup")
 def signup():
 
