@@ -58,3 +58,6 @@ extended base files
 
 jackieL -- 2019-11-19 17:58
 added bootstrap to signup page
+
+jackieL -- 2019-11-19 18:02
+uploaded revised design doc with FEF and updated database
