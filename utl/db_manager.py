@@ -8,12 +8,25 @@ from utl.db_builder import exec
 
 #====================================================
 
+#validates if the user exists in the database
+def userValid(username,password):
+    q = "SELECT username FROM user_tbl;"
+    data = exec(q)
+    for uName in data:
+        if uName[0] == username:
+            p = "SELECT password FROM user_tbl WHERE username = '" + username + "';"
+            data2 = exec(p)
+            for passW in data2:
+                if (passW[0] == password):
+                    return True
+    return False
+
 #add user-provided credentials to database
 def addUser(username, password, flag):
     q = "SELECT * FROM user_tbl WHERE username = '%s';" % username
     data = exec(q).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, '%s', '', 0);" % (username, password, flag)
+        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
         exec(q)
         return True
     return False #if username already exists
