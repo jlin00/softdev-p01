@@ -98,3 +98,6 @@ added bootstrap to login pages
 
 jackieL -- 2019-11-20 08:28
 added requirements.txt, fixed login bug
+
+jackieL -- 2019-11-20 08:33
+fixed login quote bug
