@@ -81,3 +81,8 @@ Worked on sign in
         -fixed noned type error
     -have to fix order of users with same score (lower alphabet sort)
 
+michaelZ -- 2019-11-20 2:00
+Worked on login
+    -add routes for login, logout, authentication, homepage
+    -change route redirection for leaderboard and nationboard to only come from the homepage
+    -add necessary html files
