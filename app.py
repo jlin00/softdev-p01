@@ -44,7 +44,7 @@ def auth():
         #session['username'] = enteredU
         #session['password'] = enteredP
         #
-    #    
+    #
     #else:
     #    return redirect('/home')
         #return redirect(url_for('error', msge = "login failed"))
@@ -104,6 +104,25 @@ def leaderboard():
     return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
 @app.route("/nationboard")
 def nationboard():
+    #here is how to get the all the countries
+    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
+    response = json.loads(u.read())
+    allcountries=[]
+    for country in response:
+        allcountries.append(country['name'])
+    ##########################################
+    countryRank={}
+    #Here uses the the list of allcountries
+    for places in allcountries:
+        command="SELECT SUM(score) FROM user_tbl WHERE flag= \""+places+"\";"
+        output=str(db_builder.exec(command).fetchall())[2:-3]
+        if output !="None":
+            countryRank[places]=output
+    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+    #######################################
+@app.route("/mycountryboard")
+def mycountryboard():
+    session['username']
     u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
     response = json.loads(u.read())
     allcountries=[]
@@ -116,6 +135,8 @@ def nationboard():
         if output !="None":
             countryRank[places]=output
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+
+
 if __name__ == "__main__":
     db_builder.build_db()
     app.debug = True
