@@ -61,3 +61,23 @@ added bootstrap to signup page
 
 jackieL -- 2019-11-19 18:02
 uploaded revised design doc with FEF and updated database
+
+amandaZ -- 2019-11-17 23:30
+Worked on sign in
+    -finished sign in form (html and route)
+    -finished the three error messages
+        -user name taken
+        -password confirmation
+        -blank fields
+    -made inputs stay on page despite error
+    -made new function for formatting fetchall results into a list
+    -made leaderboard route and html
+        -used sqlite to display scores and user
+        -made function to make sqlite answers into dictionary
+        -printed in order of scores
+    -made nationboard route and html
+        -used sqlite to display scores and flag
+        -printed in order of scores
+        -fixed noned type error
+    -have to fix order of users with same score (lower alphabet sort)
+
