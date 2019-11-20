@@ -27,3 +27,20 @@ def formatFetch(results):
     return collection
 
 #====================================================
+def makeDict(results):
+    dictionary={}
+    for pair in results:
+        if(pair[0]!=None):
+            if(pair[1]==None):
+                value=0
+            else:
+                value=pair[1]
+            if value not in dictionary.keys():
+                list=[pair[0]]
+                dictionary[value]=list
+            else:
+                dictionary[value].append(pair[0])
+    for key in dictionary:
+        dictionary[key]=sorted(dictionary[key])
+    print(dictionary)
+    return dictionary

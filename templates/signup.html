@@ -7,23 +7,23 @@
     <form action="/signupcheck" method="POST">
       <div class="form-group">
         <label for="username" class="font-weight-bold">Username </label>
-        <input name="username" type="text" class="form-control" id="username">
+        <input name="username" type="text" class="form-control" id="username" value={{username}}>
       </div>
       <div class="form-group">
         <label for="password" class="font-weight-bold">Password</label>
-        <input name="password" type="password" class="form-control" id="password">
+        <input name="password" type="password" class="form-control" id="password" value={{password}}>
       </div>
       <div class="form-group">
         <label for="confirm" class="font-weight-bold">Confirm Password</label>
-        <input name="confirmation" type="password" class="form-control" id="confirm">
+        <input name="confirmation" type="password" class="form-control" id="confirm" value={{confirm}}>
       </div>
       <div class="form-group">
         <label for="flag" class="font-weight-bold">Pick a country to represent: </label>
-        <select name="flag" class="form-control" id="flag">
-          <option>USA</option>
-          <option>Mexico</option>
-          <option>Canada</option>
-          <option>China</option>
+        <select name="flag" class="form-control" id="flag" value="{{flag}}">
+          <option selected>{{flag}}</option>
+          {% for item in options %}
+          <option value="{{item}}">{{item}}</option>
+          {% endfor %}
         </select>
       </div>
       <br>

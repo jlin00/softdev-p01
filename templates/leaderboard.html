@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+
+{% block body %}
+  <h1> <font color ="#25383C"> {{title}} </font> </h1>
+
+  <body> {% for score in rank %}
+            {% for user in scoreDict[score] %}
+              {{score}}|{{user}}<br>
+            {% endfor %}
+          {% endfor %}
+  </body>
+{% endblock %}
