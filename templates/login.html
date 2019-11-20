@@ -1,18 +1,20 @@
-{% extends _base.html %}
+{% extends "_base.html" %}
 
 {% block body %}
-	<div class="card card-body bg-dark" style="text-align:center; color: white;">
-	</div>
-	<div class="container">
-		{% block form %}
-		<form>
-			<div class="input-group mb-3">
-  				<input type="text" class="form-control" placeholder="Username" aria-labelledby="Username" aria-describedby="basic-addon1" name="user">
-			</div>
-			<br>
-			<div class="input-group mb-3">
-  				<input type="password" class="form-control" aria-labelledby="Password" aria-describedby="basic-addon1" name="password">
-			</div>
-		</form>
-	</div>
+	<br><h1>Login to an account</h1><br>
+	<br>
+	<form action='/auth' method = "POST">
+		Username:
+		<br>
+		<input type="text" name="username">
+		<br>
+		Password:
+		<br>
+		<input type="password" name="password">
+		<br>
+		<input type="submit" value="Login">
+	</form>
+	<form action = '/'>
+		<button type = "submit"> Back </button>
+	</form>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+
+{% block body %}
+	<br><h1>Congratulations, you are logged in!</h1><br>
+	<br>
+    <form action = "/leaderboard">
+        <button type = "submit"> View Users Leaderboard </button>
+    </form>
+    <form action = "/nationboard">
+        <button type = "submit"> View Countries Leaderboard </button>
+    </form>
+    <form action = "/logout">
+        <button type = "submit"> Logout </button>
+    </form>
+{% endblock %}

@@ -12,9 +12,57 @@ app.secret_key = os.urandom(32)
 
 DB_FILE = "trivia.db"
 #Michael's Code Below
+@app.route("/")
+def root():
+    return render_template('welcome.html')
+
+@app.route('/logout')
+def logout():
+    session.pop('username')
+    session.pop('password')
+    flash('You were successfully logged out!')
+    return redirect('/')
+
 @app.route("/login")
 def login():
-    return "Hello World"
+    return render_template('login.html')
+
+@app.route("/auth", methods=["POST"])
+def auth():
+    enteredU = request.form['username']
+    enteredP = request.form['password']
+    if(enteredU=="" or enteredP==""):
+        flash('Please fill out all fields!', 'red')
+        return render_template("login.html")
+    if (userValid(enteredU,enteredP)):
+        flash('You were successfully logged in!')
+        return redirect('/home')
+    else:
+        flash('Wrong Credentials!', 'red')
+        return render_template("login.html")
+    #if (False):
+        #session['username'] = enteredU
+        #session['password'] = enteredP
+        #
+    #    
+    #else:
+    #    return redirect('/home')
+        #return redirect(url_for('error', msge = "login failed"))
+
+def userValid(username,password):
+    foo = c.execute ("SELECT username FROM users;")
+    for uName in foo:
+        if uName[0] == username:
+            boo = c.execute("SELECT password FROM users WHERE username = '" + username + "';")
+            for passW in boo:
+                if (passW[0] == password):
+                    return True
+    return False
+
+@app.route("/home")
+def home():
+    return render_template("home.html")
+
 #Amanda's Code Below
 @app.route("/signup")
 def signup():
@@ -45,7 +93,9 @@ def signupcheck():
     if (not added):
         flash('Username taken!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    return redirect(url_for("leaderboard"))
+    #return redirect(url_for("leaderboard"))
+    flash('You have successfully created an account! Please log in!')
+    return redirect("/login")
 @app.route("/leaderboard")
 def leaderboard():
     command="SELECT username,score FROM user_tbl;"
