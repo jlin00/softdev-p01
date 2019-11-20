@@ -86,3 +86,6 @@ Worked on login
     -add routes for login, logout, authentication, homepage
     -change route redirection for leaderboard and nationboard to only come from the homepage
     -add necessary html files
+
+junheeL -- 2019-11-20 08:16
+updated app to better match sitemap in devlog

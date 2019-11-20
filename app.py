@@ -14,7 +14,9 @@ DB_FILE = "trivia.db"
 #Michael's Code Below
 @app.route("/")
 def root():
-    return render_template('welcome.html')
+    if 'username' in session:
+        return redirect('/menu')
+    return redirect('/login')
 
 @app.route('/logout')
 def logout():
@@ -59,7 +61,7 @@ def userValid(username,password):
                     return True
     return False
 
-@app.route("/home")
+@app.route("/menu")
 def home():
     return render_template("home.html")
 
