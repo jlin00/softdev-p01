@@ -35,6 +35,9 @@ def signupcheck():
     db_manager.addUser(username,password,flag)
     return "Signed In"
 
+command="SELECT username,score FROM user_tbl;"
+leaderboard=db_manager.formatFetch(exec(command));
+
 
 if __name__ == "__main__":
     db_builder.build_db()
