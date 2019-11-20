@@ -42,24 +42,6 @@ def auth():
     else:
         flash('Wrong Credentials!', 'red')
         return render_template("login.html")
-    #if (False):
-        #session['username'] = enteredU
-        #session['password'] = enteredP
-        #
-    #
-    #else:
-    #    return redirect('/home')
-        #return redirect(url_for('error', msge = "login failed"))
-
-def userValid(username,password):
-    foo = c.execute("SELECT username FROM users;")
-    for uName in foo:
-        if uName[0] == username:
-            boo = c.execute("SELECT password FROM users WHERE username = '" + username + "';")
-            for passW in boo:
-                if (passW[0] == password):
-                    return True
-    return False
 
 @app.route("/menu")
 def home():
