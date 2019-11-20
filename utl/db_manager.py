@@ -26,7 +26,10 @@ def addUser(username, password, flag):
     q = "SELECT * FROM user_tbl WHERE username = '%s';" % username
     data = exec(q).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
+        username = username.replace("'", "\\\'")
+        password = password.replace("'", "\\\'")
+        flag = flag.replace("'", "\'")
+        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, '%s', '', 0);" % (username, password, flag)
         exec(q)
         return True
     return False #if username already exists

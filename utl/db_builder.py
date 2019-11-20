@@ -3,7 +3,7 @@
 #P01 -- ArRESTed Development
 #2019-1?-??
 
-import sqlite3
+import sqlite3, urllib, json
 
 DB_FILE = "trivia.db"
 
@@ -29,3 +29,22 @@ def build_db():
 
     command = "CREATE TABLE IF NOT EXISTS cached_game_tbl (game_id TEXT, type TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT)"
     exec(command)
+
+    command = "CREATE TABLE IF NOT EXISTS flags_tbl (country TEXT PRIMARY KEY, flag TEXT)"
+    exec(command)
+
+#populates flag_tbl if it isn't already populated
+def build_flag():
+    command = "SELECT * FROM flags_tbl;"
+    data = exec(command).fetchone()
+    if (data is None):
+        #print("EXECUTING BUILD_FLAG")
+        u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
+        response = json.loads(u.read())
+        for country in response:
+            name = country['name'].replace("'", "\\\''")
+            #print(country['name'].replace("'", "\'"))
+            command = "INSERT OR IGNORE INTO flags_tbl VALUES('%s', '%s');" % (name, country['flag'])
+            exec(command)
+    #else:
+        #print("NOT EXECUTING BUILD_FLAG")

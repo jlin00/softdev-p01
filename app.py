@@ -3,10 +3,10 @@
 #K25: Getting More Rest
 #2019-11-13
 from flask import Flask , render_template,request, redirect, url_for, session, flash
-import urllib, json, sqlite3
+import sqlite3, os
 from json import loads
 from utl import db_builder, db_manager
-import os
+
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
 
@@ -100,7 +100,9 @@ def nationboard():
         if output !="None":
             countryRank[places]=output
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+
 if __name__ == "__main__":
     db_builder.build_db()
+    db_builder.build_flag()
     app.debug = True
     app.run()
