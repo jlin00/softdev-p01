@@ -2,19 +2,23 @@
 
 {% block body %}
 	<br><h1>Login to an account</h1><br>
-	<br>
-	<form action='/auth' method = "POST">
-		Username:
-		<br>
-		<input type="text" name="username">
-		<br>
-		Password:
-		<br>
-		<input type="password" name="password">
-		<br>
-		<input type="submit" value="Login">
-	</form>
-	<form action = '/'>
-		<button type = "submit"> Back </button>
-	</form>
+
+	<div class="w-25 p-3">
+    <form action="/auth" method="POST">
+      <div class="form-group">
+        <label for="username" class="font-weight-bold">Username </label>
+        <input name="username" type="text" class="form-control" id="username" value={{username}}>
+      </div>
+      <div class="form-group">
+        <label for="password" class="font-weight-bold">Password</label>
+        <input name="password" type="password" class="form-control" id="password" value={{password}}>
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <br>
+    <form>
+      <input class="btn btn-link" type="button" onclick= "location.href='/signup';" value = "Sign Up">
+    </form>
+  </div>
 {% endblock %}
