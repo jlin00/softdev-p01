@@ -14,7 +14,7 @@ def userValid(username,password):
     data = exec(q)
     for uName in data:
         if uName[0] == username:
-            p = "SELECT password FROM users WHERE username = '" + username + "';"
+            p = "SELECT password FROM user_tbl WHERE username = '" + username + "';"
             data2 = exec(p)
             for passW in data2:
                 if (passW[0] == password):

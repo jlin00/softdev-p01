@@ -36,16 +36,16 @@ def auth():
     if(enteredU=="" or enteredP==""):
         flash('Please fill out all fields!', 'red')
         return render_template("login.html")
-    if (userValid(enteredU,enteredP)):
+    if (db_manager.userValid(enteredU,enteredP)):
         flash('You were successfully logged in!')
         return redirect('/home')
     else:
         flash('Wrong Credentials!', 'red')
         return render_template("login.html")
 
-@app.route("/menu")
+@app.route("/home")
 def home():
-    return render_template("home.html")
+    return "LOGGED IN"
 
 #Amanda's Code Below
 @app.route("/signup")
