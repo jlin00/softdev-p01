@@ -6,6 +6,8 @@
 import sqlite3
 from utl.db_builder import exec
 
+#====================================================
+
 #add user-provided credentials to database
 def addUser(username, password, flag):
     q = "SELECT * FROM user_tbl WHERE username = '%s';" % username
@@ -15,9 +17,13 @@ def addUser(username, password, flag):
         exec(q)
         return True
     return False #if username already exists
+
+#turns tuple into a list
 def formatFetch(results):
     collection=[]
     for item in results:
         if str(item) not in collection:
             collection.append(str(item)[2:-3])
     return collection
+
+#====================================================
