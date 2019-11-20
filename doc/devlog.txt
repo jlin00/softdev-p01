@@ -89,3 +89,6 @@ Worked on login
 
 junheeL -- 2019-11-20 08:16
 updated app to better match sitemap in devlog
+
+junheeL -- 2019-11-20 08:23
+added functionality to pull code automatically before updating devlog
