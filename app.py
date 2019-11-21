@@ -78,6 +78,8 @@ def signupcheck():
     password=request.form['password']
     confirm=request.form['confirmation']
     flag=request.form['flag']
+    if flag=="":
+        flag="United States of America"
     allcountries=db_manager.allCountries()
     if(username=="" or password=="" or confirm==""):
         flash('Please fill out all fields!', 'red')
@@ -112,7 +114,6 @@ def leaderboard():
 def nationboard():
     countryRank = db_manager.nationLeaderboard()
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
-    #######################################
 
 @app.route("/mycountryboard")
 @login_required
@@ -141,6 +142,11 @@ def icon():
 def password():
     #Jackie: Insert Code Here
     return redirect("/home")
+
+@app.route("/store")
+def store():
+
+    return render_template("store.html")
 
 if __name__ == "__main__":
     db_builder.build_db()
