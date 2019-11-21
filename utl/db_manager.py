@@ -26,10 +26,8 @@ def addUser(username, password, flag):
     q = "SELECT * FROM user_tbl WHERE username = '%s';" % username
     data = exec(q).fetchone()
     if (data is None):
-        username = username.replace("'", "\\\'")
-        password = password.replace("'", "\\\'")
-        flag = flag.replace("'", "\'")
-        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, '%s', '', 0);" % (username, password, flag)
+        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
+        #print(q)
         exec(q)
         return True
     return False #if username already exists
@@ -60,3 +58,8 @@ def makeDict(results):
         dictionary[key]=sorted(dictionary[key])
     print(dictionary)
     return dictionary
+
+def allCountries():
+    q = "SELECT country FROM flags_tbl;"
+    data = exec(q).fetchall()
+    return formatFetch(data)

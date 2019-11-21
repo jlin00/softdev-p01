@@ -38,13 +38,11 @@ def build_flag():
     command = "SELECT * FROM flags_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        #print("EXECUTING BUILD_FLAG")
+        print("EXECUTING BUILD_FLAG")
         u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
         response = json.loads(u.read())
         for country in response:
-            name = country['name'].replace("'", "\\\''")
-            #print(country['name'].replace("'", "\'"))
-            command = "INSERT OR IGNORE INTO flags_tbl VALUES('%s', '%s');" % (name, country['flag'])
+            command = "INSERT OR IGNORE INTO flags_tbl VALUES(\"%s\", '%s');" % (country['name'], country['flag'])
             exec(command)
     #else:
         #print("NOT EXECUTING BUILD_FLAG")

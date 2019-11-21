@@ -3,7 +3,7 @@
 #K25: Getting More Rest
 #2019-11-13
 from flask import Flask , render_template,request, redirect, url_for, session, flash
-import sqlite3, os
+import sqlite3, os, urllib, json
 from json import loads
 from utl import db_builder, db_manager
 
@@ -50,23 +50,16 @@ def home():
 #Amanda's Code Below
 @app.route("/signup")
 def signup():
-    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
-    response = json.loads(u.read())
-    allcountries=[]
-    for country in response:
-        allcountries.append(country['name'])
-    return render_template("signup.html",options=allcountries)
+    data = db_manager.allCountries()
+    return render_template("signup.html",options=data)
+
 @app.route("/signupcheck", methods=["POST"])
 def signupcheck():
     username=request.form['username']
     password=request.form['password']
     confirm=request.form['confirmation']
     flag=request.form['flag']
-    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
-    response = json.loads(u.read())
-    allcountries=[]
-    for country in response:
-        allcountries.append(country['name'])
+    allcountries=db_manager.allCountries()
     if(username=="" or password=="" or confirm==""):
         flash('Please fill out all fields!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
@@ -80,12 +73,14 @@ def signupcheck():
     #return redirect(url_for("leaderboard"))
     flash('You have successfully created an account! Please log in!')
     return redirect("/login")
+
 @app.route("/leaderboard")
 def leaderboard():
     command="SELECT username,score FROM user_tbl;"
     userScores=db_builder.exec(command).fetchall()
     leaderboard=db_manager.makeDict(userScores)
     return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
+    
 @app.route("/nationboard")
 def nationboard():
     u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
