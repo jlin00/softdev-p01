@@ -1,3 +1,10 @@
 # Trivia Crack by Kirkland Meeseeks
-<b>Team Roster:</b> Jackie Lin (project manager), Junhee Lee, Amanda Zheng, Michael Zhang <br>
-Abstract: TBD
+  
+## Team Roster
+- Jackie Lin (project manager)  
+- Junhee Lee (game developer)
+- Michael Zhang (game developer)
+- Amanda Zheng (user experience) 
+
+## Abstract 
+
