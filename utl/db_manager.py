@@ -4,33 +4,10 @@
 #2019-1?-??
 
 import sqlite3
-from utl.db_builder import exec
+from utl.db_builder import exec, execmany
 
 #====================================================
-
-#validates if the user exists in the database
-def userValid(username,password):
-    q = "SELECT username FROM user_tbl;"
-    data = exec(q)
-    for uName in data:
-        if uName[0] == username:
-            p = "SELECT password FROM user_tbl WHERE username = '" + username + "';"
-            data2 = exec(p)
-            for passW in data2:
-                if (passW[0] == password):
-                    return True
-    return False
-
-#add user-provided credentials to database
-def addUser(username, password, flag):
-    q = "SELECT * FROM user_tbl WHERE username = '%s';" % username
-    data = exec(q).fetchone()
-    if (data is None):
-        q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
-        #print(q)
-        exec(q)
-        return True
-    return False #if username already exists
+#formatting functions
 
 #turns tuple into a list
 def formatFetch(results):
@@ -40,7 +17,6 @@ def formatFetch(results):
             collection.append(str(item)[2:-3])
     return collection
 
-#====================================================
 def makeDict(results):
     dictionary={}
     for pair in results:
@@ -58,7 +34,41 @@ def makeDict(results):
         dictionary[key]=sorted(dictionary[key])
     return dictionary
 
+#====================================================
+#sign up and login functions
+
+#validates if the user exists in the database
+def userValid(username,password):
+    q = "SELECT username FROM user_tbl;"
+    data = exec(q)
+    for uName in data:
+        if uName[0] == username:
+            q = "SELECT password from user_tbl WHERE username=?"
+            inputs = (username,)
+            data = execmany(q, inputs)
+            for passW in data:
+                if (passW[0] == password):
+                    return True
+    return False
+
+#add user-provided credentials to database
+def addUser(username, password, flag):
+    q = "SELECT * FROM user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()
+    if (data is None):
+        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, '', 0)"
+        inputs = (username, password, flag)
+        execmany(q, inputs)
+        #q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
+        #exec(q)
+        return True
+    return False #if username already exists
+
 def allCountries():
     q = "SELECT country FROM flags_tbl;"
     data = exec(q).fetchall()
     return formatFetch(data)
+
+#====================================================
+#creating leaderboard functions

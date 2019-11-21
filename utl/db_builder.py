@@ -15,6 +15,13 @@ def exec(cmd):
     db.commit()
     return output
 
+def execmany(cmd, inputs):
+    db = sqlite3.connect(DB_FILE)
+    c = db.cursor()
+    output = c.execute(cmd, inputs)
+    db.commit()
+    return output
+
 #==========================================================
 #creates tables if they do not exist with necessary columns
 def build_db():
@@ -42,7 +49,8 @@ def build_flag():
         u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
         response = json.loads(u.read())
         for country in response:
-            command = "INSERT OR IGNORE INTO flags_tbl VALUES(\"%s\", '%s');" % (country['name'], country['flag'])
-            exec(command)
+            q = "INSERT OR IGNORE INTO flags_tbl VALUES(?, ?)"
+            inputs = (country['name'], country['flag'])
+            execmany(q, inputs)
     #else:
         #print("NOT EXECUTING BUILD_FLAG")

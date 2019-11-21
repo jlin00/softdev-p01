@@ -15,13 +15,12 @@ DB_FILE = "trivia.db"
 @app.route("/")
 def root():
     if 'username' in session:
-        return redirect('/menu')
+        return redirect('/home')
     return redirect('/login')
 
 @app.route('/logout')
 def logout():
     session.pop('username')
-    session.pop('password')
     flash('You were successfully logged out!')
     return redirect('/')
 
@@ -39,15 +38,10 @@ def auth():
     if (db_manager.userValid(enteredU,enteredP)):
         flash('You were successfully logged in!')
         session['username'] = enteredU
-        session['password'] = enteredP
         return redirect('/home')
     else:
         flash('Wrong Credentials!', 'red')
         return render_template("login.html")
-
-@app.route("/home")
-def home():
-    return "LOGGED IN"
 
 #Amanda's Code Below
 @app.route("/signup")
@@ -65,9 +59,6 @@ def signupcheck():
     if(username=="" or password=="" or confirm==""):
         flash('Please fill out all fields!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    if("\"" in username):
-        flash('Username can\'t have Double Quotes!', 'red')
-        return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
         flash('Passwords do not match!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
@@ -79,21 +70,22 @@ def signupcheck():
     flash('You have successfully created an account! Please log in!')
     return redirect("/login")
 
+@app.route("/home")
+def home():
+    return "LOGGED IN"
+
+#STARTING FROM HERE USER MUST BE LOGGED IN
 @app.route("/leaderboard")
 def leaderboard():
     command="SELECT username,score FROM user_tbl;"
     userScores=db_builder.exec(command).fetchall()
     leaderboard=db_manager.makeDict(userScores)
     return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
-    
+
 @app.route("/nationboard")
 def nationboard():
     #here is how to get the all the countries
-    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
-    response = json.loads(u.read())
-    allcountries=[]
-    for country in response:
-        allcountries.append(country['name'])
+    allcountries = db_manager.allCountries()
     ##########################################
     countryRank={}
     #Here uses the the list of allcountries
@@ -104,6 +96,7 @@ def nationboard():
             countryRank[places]=output
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
     #######################################
+
 @app.route("/mycountryboard")
 def mycountryboard():
     if session.get('username') is None:

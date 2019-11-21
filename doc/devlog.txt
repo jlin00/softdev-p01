@@ -114,3 +114,6 @@ amandaZ -- 2019-11-20 19:30
         -successfully found all scores and users that have same flag as user
    -implemented session keys for logging in
    -fixed quote related bugs
+
+jackieL -- 2019-11-20 21:46
+fixed error with inserting quotes in tables
