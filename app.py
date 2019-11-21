@@ -3,8 +3,7 @@
 #K25: Getting More Rest
 #2019-11-13
 from flask import Flask , render_template,request, redirect, url_for, session, flash
-import sqlite3, os, urllib, json
-from json import loads
+import sqlite3, os
 from utl import db_builder, db_manager
 
 app = Flask(__name__)
@@ -20,7 +19,7 @@ def root():
 
 @app.route('/logout')
 def logout():
-    session.pop('username')
+    session.clear()
     flash('You were successfully logged out!')
     return redirect('/')
 
@@ -92,14 +91,11 @@ def nationboard():
 
 @app.route("/mycountryboard")
 def mycountryboard():
-    if session.get('username') is None:
+    user = session['username']
+    if (user is None):
         flash('Oops, Lost Connection. Please Login Again!', 'red')
         return redirect(url_for("login"))
-    command="SELECT flag FROM user_tbl WHERE username = \""+session.get("username")+"\";"
-    country=db_builder.exec(command).fetchall()
-    country=country[0][0]
-    command="SELECT username,score FROM user_tbl WHERE flag = \""+country+"\";"
-    countryRank=db_manager.makeDict(db_builder.exec(command).fetchall())
+    countryRank=db_manager.myCountryboard(user)
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
 
 

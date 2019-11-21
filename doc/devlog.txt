@@ -120,3 +120,6 @@ fixed error with inserting quotes in tables
 
 jackieL -- 2019-11-20 22:39
 moved some database functions from app.py to db_manager
+
+jackieL -- 2019-11-20 22:57
+moved all db functions from app.py to db_manager

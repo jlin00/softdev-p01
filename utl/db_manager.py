@@ -84,3 +84,12 @@ def nationLeaderboard():
     data = makeDict(data)
     #print(data)
     return data
+
+def myCountryboard(username):
+    q = "SELECT flag FROM user_tbl WHERE username=?"
+    inputs = (username,)
+    country = execmany(q, inputs).fetchone()[0]
+    q = "SELECT username,score FROM user_tbl WHERE flag=?"
+    inputs = (country,)
+    countryRank = makeDict(execmany(q, inputs).fetchall())
+    return countryRank
