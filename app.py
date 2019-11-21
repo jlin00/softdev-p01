@@ -120,11 +120,26 @@ def mycountryboard():
     countryRank=db_manager.myCountryboard(user)
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
 
-@app.route('/logout')
 def logout():
     session.clear()
-    flash('You were successfully logged out!')
-    return redirect('/')
+    flash('You were successfully logged out.')
+    return redirect('/home')
+
+#profile pages below
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
+@app.route("/icon", methods=["POST"])
+def icon():
+    command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
+    db_builder.exec(command)
+    return redirect("/home")
+
+@app.route("/resetpasswd", methods=["POST"])
+def password():
+    #Jackie: Insert Code Here
+    return redirect("/home")
 
 if __name__ == "__main__":
     db_builder.build_db()

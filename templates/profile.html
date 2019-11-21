@@ -1,0 +1,33 @@
+{% extends "_base.html" %}
+
+{% block body %}
+<div class="card" style="align-text:center;" id="passreset">
+	<h3>Change Your Password</h3>
+	<form action="/resetpasswd" method="post">
+		<div class="form-group">
+			<label for="password" class="font-weight-bold">New Password</label>
+			<input name="password" type="password" class="form-control" id="password">
+		</div>
+		<div class="form-group">
+			<label for="verif" class="font-weight-bold">Password Verification</label>
+			<input name="verif" type="password" class="form-control" id="password">
+		</div>
+		<div class="form-group">
+			<label for="oldpass" class="font-weight-bold">Old Password</label>
+			<input name="oldpass" type="password" class="form-control" id="oldpass">
+		</div>
+		<br>
+		<button type="submit" class="btn btn-primary">Change Password!</button>
+	</form>
+</div>
+<div class="card" id="games">
+	<!-- Insert list of games here  -->
+</div>
+<div class="card" id="stats">
+	<!-- Insert player stats here -->
+</div>
+<div class="card" id="icon">
+	<!-- Insert icon management here -->
+</div>
+
+{% endblock %}
