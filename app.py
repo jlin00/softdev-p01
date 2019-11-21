@@ -129,16 +129,23 @@ def logout():
 
 #profile pages below
 @app.route("/profile")
+@login_required
 def profile():
-    return render_template("profile.html")
+    return render_template("profile.html",
+            subpage="Profile")
 
 @app.route("/icon", methods=["POST"])
+@login_required
 def icon():
+    if 'img' not in request.form:
+        flash("Please Select a Profile Icon!", "red")
+        return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
     db_builder.exec(command)
     return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
+@login_required
 def password():
     #Jackie: Insert Code Here
     return redirect("/home")
