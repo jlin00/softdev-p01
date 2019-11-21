@@ -104,3 +104,6 @@ fixed login quote bug
 
 junheeL -- 2019-11-20 08:44
 updated design doc with more accurate sitemap
+
+jackieL -- 2019-11-20 12:42
+wrote new database function for cached flag table
