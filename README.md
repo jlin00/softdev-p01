@@ -32,7 +32,7 @@ Copy and paste the API key you generated into the terminal. Then, hit [Ctrl+X], 
 
 Then, create a virtual environment like so:
 ```
-$ python3 -m venv test
+$ python3 -m venv ~/test
 $ . ~/test/bin/activate
 ```
 
