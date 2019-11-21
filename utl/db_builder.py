@@ -15,6 +15,7 @@ def exec(cmd):
     db.commit()
     return output
 
+#executing using ? placeholder
 def execmany(cmd, inputs):
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
@@ -45,7 +46,7 @@ def build_flag():
     command = "SELECT * FROM flags_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        print("EXECUTING BUILD_FLAG")
+        #print("EXECUTING BUILD_FLAG")
         u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
         response = json.loads(u.read())
         for country in response:

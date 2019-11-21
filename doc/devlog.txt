@@ -117,3 +117,6 @@ amandaZ -- 2019-11-20 19:30
 
 jackieL -- 2019-11-20 21:46
 fixed error with inserting quotes in tables
+
+jackieL -- 2019-11-20 22:39
+moved some database functions from app.py to db_manager

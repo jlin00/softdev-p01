@@ -74,26 +74,19 @@ def signupcheck():
 def home():
     return "LOGGED IN"
 
+#====================================================
 #STARTING FROM HERE USER MUST BE LOGGED IN
+
 @app.route("/leaderboard")
 def leaderboard():
-    command="SELECT username,score FROM user_tbl;"
-    userScores=db_builder.exec(command).fetchall()
-    leaderboard=db_manager.makeDict(userScores)
+    leaderboard=db_manager.userLeaderboard()
+    #print(leaderboard)
     return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
 
 @app.route("/nationboard")
 def nationboard():
-    #here is how to get the all the countries
-    allcountries = db_manager.allCountries()
-    ##########################################
-    countryRank={}
-    #Here uses the the list of allcountries
-    for places in allcountries:
-        command="SELECT SUM(score) FROM user_tbl WHERE flag= \""+places+"\";"
-        output=db_builder.exec(command).fetchall()[0][0]
-        if output !="None":
-            countryRank[places]=output
+    countryRank = db_manager.nationLeaderboard()
+    #print(countryRank)
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
     #######################################
 

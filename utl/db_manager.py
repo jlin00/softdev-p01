@@ -57,7 +57,7 @@ def addUser(username, password, flag):
     inputs = (username,)
     data = execmany(q, inputs).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, '', 0)"
+        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, '', 300)"
         inputs = (username, password, flag)
         execmany(q, inputs)
         #q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
@@ -72,3 +72,15 @@ def allCountries():
 
 #====================================================
 #creating leaderboard functions
+
+def userLeaderboard():
+    q = "SELECT username, score FROM user_tbl"
+    data = exec(q).fetchall()
+    return makeDict(data)
+
+def nationLeaderboard():
+    q = "SELECT country, SUM(score) FROM user_tbl, flags_tbl WHERE flags_tbl.country = user_tbl.flag GROUP BY flags_tbl.country"
+    data = exec(q).fetchall()
+    data = makeDict(data)
+    #print(data)
+    return data

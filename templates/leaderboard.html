@@ -5,7 +5,7 @@
 
   <body> {% for score in rank %}
             {% for user in scoreDict[score] %}
-              {{score}}|{{user}}<br>
+              {{user}}|{{score}}<br>
             {% endfor %}
           {% endfor %}
   </body>
