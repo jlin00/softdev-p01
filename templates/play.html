@@ -1,0 +1,18 @@
+{% extends "_base.html" %}
+
+{% block body %}
+	<h1>Play</h1><br>
+	<br>
+		<form action = "/singleplayer">
+				<button type = "submit"> Single-player </button>
+		</form>
+    <form action = "/pvp">
+        <button type = "submit"> Multiplayer 1v1 </button>
+    </form>
+    <form action = "/team">
+        <button type = "submit"> Multilayer 5v5 </button>
+    </form>
+    <form action = "/home">
+        <button type = "submit"> Back </button>
+    </form>
+{% endblock %}

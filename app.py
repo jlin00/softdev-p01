@@ -37,6 +37,22 @@ def no_login_required(f):
 #====================================================
 
 #Michael's Code Below
+@app.route("/singleplayer")
+def single():
+    return render_template("singleplayer.html")
+
+@app.route("/pvp")
+def pvp():
+    return render_template("pvp.html")
+
+@app.route("/team")
+def team():
+    return render_template("team.html")
+
+@app.route("/play")
+def play():
+    return render_template("play.html")
+
 @app.route("/")
 def root():
     if 'username' in session:
