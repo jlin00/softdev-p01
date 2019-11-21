@@ -107,3 +107,10 @@ updated design doc with more accurate sitemap
 
 jackieL -- 2019-11-20 12:42
 wrote new database function for cached flag table
+
+amandaZ -- 2019-11-20 19:30
+    -Worked on leaderboards
+        -finished getting output from session key and getting country flag
+        -successfully found all scores and users that have same flag as user
+   -implemented session keys for logging in
+   -fixed quote related bugs

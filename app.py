@@ -38,6 +38,8 @@ def auth():
         return render_template("login.html")
     if (db_manager.userValid(enteredU,enteredP)):
         flash('You were successfully logged in!')
+        session['username'] = enteredU
+        session['password'] = enteredP
         return redirect('/home')
     else:
         flash('Wrong Credentials!', 'red')
@@ -63,6 +65,9 @@ def signupcheck():
     if(username=="" or password=="" or confirm==""):
         flash('Please fill out all fields!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
+    if("\"" in username):
+        flash('Username can\'t have Double Quotes!', 'red')
+        return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
         flash('Passwords do not match!', 'red')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
@@ -83,18 +88,34 @@ def leaderboard():
     
 @app.route("/nationboard")
 def nationboard():
+    #here is how to get the all the countries
     u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all")
     response = json.loads(u.read())
     allcountries=[]
     for country in response:
         allcountries.append(country['name'])
+    ##########################################
     countryRank={}
+    #Here uses the the list of allcountries
     for places in allcountries:
         command="SELECT SUM(score) FROM user_tbl WHERE flag= \""+places+"\";"
-        output=str(db_builder.exec(command).fetchall())[2:-3]
+        output=db_builder.exec(command).fetchall()[0][0]
         if output !="None":
             countryRank[places]=output
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+    #######################################
+@app.route("/mycountryboard")
+def mycountryboard():
+    if session.get('username') is None:
+        flash('Oops, Lost Connection. Please Login Again!', 'red')
+        return redirect(url_for("login"))
+    command="SELECT flag FROM user_tbl WHERE username = \""+session.get("username")+"\";"
+    country=db_builder.exec(command).fetchall()
+    country=country[0][0]
+    command="SELECT username,score FROM user_tbl WHERE flag = \""+country+"\";"
+    countryRank=db_manager.makeDict(db_builder.exec(command).fetchall())
+    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+
 
 if __name__ == "__main__":
     db_builder.build_db()

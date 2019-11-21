@@ -56,7 +56,6 @@ def makeDict(results):
                 dictionary[value].append(pair[0])
     for key in dictionary:
         dictionary[key]=sorted(dictionary[key])
-    print(dictionary)
     return dictionary
 
 def allCountries():
