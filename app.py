@@ -120,10 +120,11 @@ def mycountryboard():
     countryRank=db_manager.myCountryboard(user)
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
 
+@app.route("/logout")
 def logout():
     session.clear()
     flash('You were successfully logged out.')
-    return redirect('/home')
+    return redirect('/')
 
 #profile pages below
 @app.route("/profile")
