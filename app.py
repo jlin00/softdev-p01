@@ -35,6 +35,12 @@ def no_login_required(f):
         return redirect('/home')
     return dec
 #====================================================
+#code for creating icons
+icons=[]
+#for i in range(1, 200):
+    
+
+#====================================================
 
 #Michael's Code Below
 @app.route("/")
@@ -131,8 +137,13 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
+    command = "SELECT coll FROM user_tbl WHERE user={}".format(session['username'])
+    raw = db_builder.exec(command).fetchall()
+    iconstring = raw[0][0]
+    coll = iconstring.split(",")
     return render_template("profile.html",
-            subpage="Profile")
+            coll=coll,
+            not_owned=[item for item in icons if item not in coll])
 
 @app.route("/icon", methods=["POST"])
 @login_required
