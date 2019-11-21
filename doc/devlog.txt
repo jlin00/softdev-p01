@@ -134,3 +134,6 @@ From the reading, we learned a very important skill that will be very useful for
 
 junheeL -- 2019-11-21 08:50
 worked on profile html file
+
+junheeL -- 2019-11-21 09:26
+began code for importing player icons from APIs
