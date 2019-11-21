@@ -38,7 +38,7 @@ $ . ~/test/bin/activate
 
 Install the required modules with the following command:
 ```
-(test)$ pip install -r requirements.txt
+(test)$ pip install -r doc/requirements.txt
 ```
 
 Now, you can run the project!
