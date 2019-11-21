@@ -117,12 +117,8 @@ def mycountryboard():
     command="SELECT flag FROM user_tbl WHERE username = \""+session.get("username")+"\";"
     country=db_builder.exec(command).fetchall()
     country=country[0][0]
-    print(country)
     command="SELECT username,score FROM user_tbl WHERE flag = \""+country+"\";"
-    print(command)
-    print((db_builder.exec(command)).fetchall())
     countryRank=db_manager.makeDict(db_builder.exec(command).fetchall())
-    print(countryRank)
     return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
 
 
