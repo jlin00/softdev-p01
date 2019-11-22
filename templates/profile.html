@@ -1,33 +1,62 @@
 {% extends "_base.html" %}
 
+{% block title %}User Profile{% endblock %}
+
 {% block body %}
-<div class="card" style="align-text:center;" id="passreset">
-	<h3>Change Your Password</h3>
-	<form action="/resetpasswd" method="post">
-		<div class="form-group">
-			<label for="password" class="font-weight-bold">New Password</label>
-			<input name="password" type="password" class="form-control" id="password">
-		</div>
-		<div class="form-group">
-			<label for="verif" class="font-weight-bold">Password Verification</label>
-			<input name="verif" type="password" class="form-control" id="password">
-		</div>
-		<div class="form-group">
-			<label for="oldpass" class="font-weight-bold">Old Password</label>
-			<input name="oldpass" type="password" class="form-control" id="oldpass">
-		</div>
-		<br>
-		<button type="submit" class="btn btn-primary">Change Password!</button>
-	</form>
+<div class="card" id="stats">
+	<!-- Insert player stats here -->
 </div>
 <div class="card" id="games">
 	<!-- Insert list of games here  -->
 </div>
-<div class="card" id="stats">
-	<!-- Insert player stats here -->
+<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#passreset" aria-expanded="false" aria-controls="passreset">
+	Reset Password
+</button>
+<div class="collapse" id="passreset">
+	<div class="card" style="align-text:center;">
+		<h3>Change Your Password</h3>
+		<form action="/resetpasswd" method="post">
+			<div class="form-group">
+				<label for="password" class="font-weight-bold">New Password</label>
+				<input name="password" type="password" class="form-control" id="password">
+			</div>
+			<div class="form-group">
+				<label for="verif" class="font-weight-bold">Password Verification</label>
+				<input name="verif" type="password" class="form-control" id="password">
+			</div>
+			<div class="form-group">
+				<label for="oldpass" class="font-weight-bold">Old Password</label>
+				<input name="oldpass" type="password" class="form-control" id="oldpass">
+			</div>
+			<br>
+			<button type="submit" class="btn btn-primary">Change Password!</button>
+		</form>
+	</div>
 </div>
 <div class="card" id="icon">
-	<!-- Insert icon management here -->
+	<form action="/icon" method="post">
+		{% for item in coll %}
+		<div class="form-group">
+			<input name="img" type="radio" class="form-control"><img src="{{ item }}" alt="{{ item }}" style="width=300px; height=300px;">
+		</div>
+		{% endfor %}
+		<br>
+		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
+	</form>
+	<br>
+	<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#allicons" arai-expanded="false" aria-controls="allicons">
+		Show All Icons
+	</button>
+	<div class="collapse" id="allicons">
+		<h5>Current Balance: {{ money }}</h5>
+		<a href="/store">Buy A Random Icon!</a> Cost: 100 coins
+		<div class="container">
+			{% for icon in not_owned %}
+			<img src="{{ icon }}" alt="{{ icon }}" style="width=100%; padding=5px; padding-bottom:5px;">
+			{% endfor %}
+		</div>
+	</div>
+
 </div>
 
 {% endblock %}

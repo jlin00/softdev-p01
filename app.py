@@ -6,6 +6,9 @@ from flask import Flask , render_template,request, redirect, url_for, session, f
 from functools import wraps
 import sqlite3, os
 from utl import db_builder, db_manager
+from urllib.request import urlopen
+from json import loads
+import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -34,6 +37,14 @@ def no_login_required(f):
         flash('You cannot view this page while logged in!', 'red')
         return redirect('/home')
     return dec
+#====================================================
+#code for creating icons
+icons=[]
+#for i in range(1, 200):
+for i in range(1, 200):
+    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
+    icons.append(data['image'])
+
 #====================================================
 
 #Michael's Code Below
@@ -129,23 +140,63 @@ def logout():
 
 #profile pages below
 @app.route("/profile")
+@login_required
 def profile():
-    return render_template("profile.html")
+    command = 'SELECT coll,money FROM user_tbl WHERE username="{}"'.format(session['username'])
+    raw = db_manager.exec(command).fetchall()
+    iconstring = raw[0][0]
+    money = raw[0][1]
+    coll = iconstring.split(",")
+    coll.remove('')
+    return render_template("profile.html",
+            coll=coll,
+            not_owned=[item for item in icons if item not in coll],
+            money=money)
 
 @app.route("/icon", methods=["POST"])
+@login_required
 def icon():
+    if 'img' not in request.form:
+        flash("Please Select a Profile Icon!", "red")
+        return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
-    db_builder.exec(command)
+    db_manager.exec(command)
+    flash("Successfully set Player Icon", "blue")
     return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
+@login_required
 def password():
     #Jackie: Insert Code Here
+    password = request.form['password']
+    verif = request.form['verif']
+    oldpass = request.form['oldpass']
+    if (password == "" or verif == "" or oldpass == ""):
+        flash("Please fill out all fields!", 'red')
+        return redirect("/profile")
+    if (password != verif):
+        flash("Passwords do not match!", 'red')
+        return redirect("/profile")
+    username = session['username']
+    if (not db_manager.userValid(username, oldpass)):
+        flash("Wrong password!", 'red')
+        return redirect("/profile")
+    db_manager.changePass(username, password)
+    flash("Password successfully changed!")
     return redirect("/home")
 
 @app.route("/store")
 def store():
     return render_template("store.html")
+@app.route("/purchase")
+def purchase():
+    if request.args.get('value') == "R":
+
+        return render_template("collection.html", )
+    elif request.args.get('value') == "S":
+        return render_template("collection.html")
+    else:
+        return render_template("collection.html")
 
 if __name__ == "__main__":
     db_builder.build_db()
