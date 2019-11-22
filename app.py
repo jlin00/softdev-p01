@@ -143,12 +143,14 @@ def logout():
 @login_required
 def profile():
     username=session['username']
-    command = 'SELECT coll,money FROM user_tbl WHERE username="{}"'.format(username)
+    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username="{}"'.format(username)
     raw = db_manager.exec(command).fetchall()
     iconstring = raw[0][0]
     money = raw[0][1]
     coll = iconstring.split(",")
     coll.remove('')
+    games = raw[0][2].split(",")
+    games.remove("")
     stats = db_manager.getStats(username).items()
     return render_template("profile.html",
             stats=stats,
