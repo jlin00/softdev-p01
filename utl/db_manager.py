@@ -57,11 +57,11 @@ def addUser(username, password, flag):
     inputs = (username,)
     data = execmany(q, inputs).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, '', 300)"
-        inputs = (username, password, flag)
+        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, ?, 0)"
+        command = "SELECT stat FROM user_tbl WHERE username='jackielin'"
+        stats = exec(command).fetchone()[0]
+        inputs = (username, password, flag, stats)
         execmany(q, inputs)
-        #q = "INSERT INTO user_tbl VALUES('%s', '%s', '', '', '', 200, \"%s\", '', 0);" % (username, password, flag)
-        #exec(q)
         return True
     return False #if username already exists
 
@@ -76,6 +76,19 @@ def changePass(username, password):
     q = "UPDATE user_tbl SET password=? WHERE username=?"
     inputs = (password, username)
     execmany(q, inputs)
+
+def getStats(username):
+    q = "SELECT stat from user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()[0]
+    stats = {}
+    if (data is not None):
+        data = data.split(",")
+        for category in data:
+            category = category.split("|")
+            stats[category[0]] = (category[1], category[2])
+    print(stats)
+    return stats
 
 
 #====================================================
