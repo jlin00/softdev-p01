@@ -41,7 +41,7 @@ def no_login_required(f):
 #code for creating icons
 icons=[]
 
-for i in range(1, 200):
+for i in range(1, 20):
     data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
     icons.append(data['image'])
 
@@ -283,7 +283,7 @@ def play():
 def check():
     command = 'SELECT answer FROM cached_question_tbl WHERE question="{}"'.format(request.form['question'])
     ans = db_manager.exec(command).fetchall()
-    if ans[0][0] == request.form['answer']:
+    #if ans[0][0] == request.form['answer']:
         #correct answer
         #update points
     #change to next player
