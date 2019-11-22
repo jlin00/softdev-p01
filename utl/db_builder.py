@@ -29,10 +29,9 @@ def build_db():
     command = "CREATE TABLE IF NOT EXISTS user_tbl (username TEXT, password TEXT, pic TEXT, coll TEXT, game_id TEXT, money INT, flag TEXT, stat TEXT, score INT)"
     exec(command)
 
-    command = "SELECT * FROM user_tbl WHERE username='jackielin'" #admin account
+    command = "SELECT * FROM user_tbl WHERE username='jackielin'" #dummy account
     data = exec(command).fetchone()
     if (data is None):
-        print("EXECUTING ADMIN")
         u = urllib.request.urlopen("https://opentdb.com/api_category.php")
         response = json.loads(u.read())['trivia_categories']
         allcategories = ""

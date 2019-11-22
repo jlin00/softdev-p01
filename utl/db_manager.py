@@ -77,6 +77,19 @@ def changePass(username, password):
     inputs = (password, username)
     execmany(q, inputs)
 
+def getStats(username):
+    q = "SELECT stat from user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()[0]
+    stats = {}
+    if (data is not None):
+        data = data.split(",")
+        for category in data:
+            category = category.split("|")
+            stats[category[0]] = (category[1], category[2])
+    print(stats)
+    return stats
+
 
 #====================================================
 #creating leaderboard functions

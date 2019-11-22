@@ -143,3 +143,6 @@ allows users to set their player icon
 
 jackieL -- 2019-11-21 22:16
 updated addUser function to insert default categories into user entry in database
+
+jackieL -- 2019-11-21 23:06
+added code to profile html page and database functions to display user stats

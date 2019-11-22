@@ -40,10 +40,10 @@ def no_login_required(f):
 #====================================================
 #code for creating icons
 icons=[]
-#for i in range(1, 200):
-#for i in range(1, 200):
-#    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
-#    icons.append(data['image'])
+
+for i in range(1, 200):
+    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
+    icons.append(data['image'])
 
 #====================================================
 
@@ -142,13 +142,16 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    command = 'SELECT coll,money FROM user_tbl WHERE username="{}"'.format(session['username'])
+    username=session['username']
+    command = 'SELECT coll,money FROM user_tbl WHERE username="{}"'.format(username)
     raw = db_manager.exec(command).fetchall()
     iconstring = raw[0][0]
     money = raw[0][1]
     coll = iconstring.split(",")
     coll.remove('')
+    stats = db_manager.getStats(username).items()
     return render_template("profile.html",
+            stats=stats,
             coll=coll,
             not_owned=[item for item in icons if item not in coll],
             money=money)
