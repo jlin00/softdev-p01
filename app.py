@@ -24,7 +24,7 @@ def login_required(f):
             for arg in args:
                 print(arg)
             return f(*args, **kwargs)
-        flash('You must be logged in to view this page!', 'red')
+        flash('You must be logged in to view this page!', 'alert-danger')
         return redirect('/')
     return dec
 
@@ -34,7 +34,7 @@ def no_login_required(f):
     def dec(*args, **kwargs):
         if 'username' not in session:
             return f(*args, **kwargs)
-        flash('You cannot view this page while logged in!', 'red')
+        flash('You cannot view this page while logged in!', 'alert-danger')
         return redirect('/home')
     return dec
 #====================================================
@@ -65,14 +65,14 @@ def auth():
     enteredU = request.form['username']
     enteredP = request.form['password']
     if(enteredU=="" or enteredP==""):
-        flash('Please fill out all fields!', 'red')
+        flash('Please fill out all fields!', 'alert-danger')
         return render_template("login.html")
     if (db_manager.userValid(enteredU,enteredP)):
-        flash('You were successfully logged in!')
+        flash('You were successfully logged in!', 'alert-success')
         session['username'] = enteredU
         return redirect('/home')
     else:
-        flash('Wrong Credentials!', 'red')
+        flash('Wrong Credentials!', 'alert-danger')
         return render_template("login.html")
 
 #Amanda's Code Below
@@ -93,17 +93,17 @@ def signupcheck():
         flag="United States of America"
     allcountries=db_manager.allCountries()
     if(username=="" or password=="" or confirm==""):
-        flash('Please fill out all fields!', 'red')
+        flash('Please fill out all fields!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
-        flash('Passwords do not match!', 'red')
+        flash('Passwords do not match!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     added = db_manager.addUser(username,password,flag)
     if (not added):
-        flash('Username taken!', 'red')
+        flash('Username taken!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     #return redirect(url_for("leaderboard"))
-    flash('You have successfully created an account! Please log in!')
+    flash('You have successfully created an account! Please log in!', 'alert-success')
     return redirect("/login")
 
 #====================================================
@@ -135,7 +135,7 @@ def mycountryboard():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash('You were successfully logged out.')
+    flash('You were successfully logged out.', 'alert-success')
     return redirect('/')
 
 #profile pages below
@@ -167,7 +167,7 @@ def icon():
         return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
     db_manager.exec(command)
-    flash("Successfully set Player Icon", "blue")
+    flash("Successfully set Player Icon", 'alert-success')
     return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
@@ -178,17 +178,17 @@ def password():
     verif = request.form['verif']
     oldpass = request.form['oldpass']
     if (password == "" or verif == "" or oldpass == ""):
-        flash("Please fill out all fields!", 'red')
+        flash("Please fill out all fields!", 'alert-danger')
         return redirect("/profile")
     if (password != verif):
-        flash("Passwords do not match!", 'red')
+        flash("Passwords do not match!", 'alert-danger')
         return redirect("/profile")
     username = session['username']
     if (not db_manager.userValid(username, oldpass)):
-        flash("Wrong password!", 'red')
+        flash("Wrong password!", 'alert-danger')
         return redirect("/profile")
     db_manager.changePass(username, password)
-    flash("Password successfully changed!")
+    flash("Password successfully changed!", 'alert-success')
     return redirect("/home")
 
 @app.route("/store")

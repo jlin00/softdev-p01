@@ -10,14 +10,18 @@
 	<body>
 		<div class="container">
 			<center>
-				<font face = "courier new">
-					{% set msgs = get_flashed_messages(with_categories=true) %}
-					{% for category, msg in msgs %}
-						<p>
-							<font color="{{category}}"> {{ msg }} </font>
-						</p>
-					{% endfor %}
-				</font>
+				{% block header %}
+				{% endblock %}
+				<br>
+				{% set msgs = get_flashed_messages(with_categories=true) %}
+				{% for category, msg in msgs %}
+				<div class="alert {{ category }}" role="alert">
+  				{{ msg }}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					   <span aria-hidden="true">&times;</span>
+					 </button>
+				</div>
+				{% endfor %}
 				{% block body %}
 					<h1>HELP I NEED CONTENT</h1>
 				{% endblock %}
