@@ -145,7 +145,6 @@ def password():
 
 @app.route("/store")
 def store():
-
     return render_template("store.html")
 
 if __name__ == "__main__":
