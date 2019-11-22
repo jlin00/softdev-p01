@@ -137,3 +137,6 @@ worked on profile html file
 
 junheeL -- 2019-11-21 09:26
 began code for importing player icons from APIs
+
+junheeL -- 2019-11-21 21:25
+allows users to set their player icon
