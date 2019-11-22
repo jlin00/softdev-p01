@@ -6,6 +6,9 @@ from flask import Flask , render_template,request, redirect, url_for, session, f
 from functools import wraps
 import sqlite3, os
 from utl import db_builder, db_manager
+from urllib.request import urlopen
+from json import loads
+import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -37,8 +40,14 @@ def no_login_required(f):
 #====================================================
 #code for creating icons
 icons=[]
+<<<<<<< HEAD
 #for i in range(1, 200):
 
+=======
+for i in range(1, 200):
+    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
+    icons.append(data['image'])
+>>>>>>> ca1ffe5562e697e6949b20ba4419a40d78c3b6d5
 
 #====================================================
 
@@ -137,15 +146,16 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    command = "SELECT coll FROM user_tbl WHERE username=?"
-    username = session.get('username')
-    inputs = (username,)
-    raw = db_builder.execmany(command, inputs).fetchall()
+    command = 'SELECT coll,money FROM user_tbl WHERE username="{}"'.format(session['username'])
+    raw = db_manager.exec(command).fetchall()
     iconstring = raw[0][0]
+    money = raw[0][1]
     coll = iconstring.split(",")
+    coll.remove('')
     return render_template("profile.html",
             coll=coll,
-            not_owned=[item for item in icons if item not in coll])
+            not_owned=[item for item in icons if item not in coll],
+            money=money)
 
 @app.route("/icon", methods=["POST"])
 @login_required
@@ -154,7 +164,8 @@ def icon():
         flash("Please Select a Profile Icon!", "red")
         return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
-    db_builder.exec(command)
+    db_manager.exec(command)
+    flash("Successfully set Player Icon", "blue")
     return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
@@ -180,8 +191,20 @@ def password():
 
 @app.route("/store")
 def store():
-
-    return render_template("store.html")
+    command = 'SELECT coll, money FROM user_tbl WHERE username="{}";'.format(session['username'])
+    raw = db_manager.exec(command).fetchall()
+    if raw[0][1] < 100:
+        flash("Insufficient Funds!", "red")
+        return redirect("/profile")
+    iconstring = raw[0][0]
+    coll = iconstring.split(",")
+    unowned = [item for item in icons if item not in coll]
+    draw = random.choice(unowned)
+    iconstring = iconstring + "," + draw
+    command = 'UPDATE user_tbl SET coll="{}", money="{}";'.format(iconstring, str(raw[0][1] - 100))
+    db_manager.exec(command)
+    flash("Successfully Purchased Icon!", "blue")
+    return redirect("/profile")
 
 if __name__ == "__main__":
     db_builder.build_db()
