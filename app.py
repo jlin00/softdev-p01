@@ -38,7 +38,7 @@ def no_login_required(f):
 #code for creating icons
 icons=[]
 #for i in range(1, 200):
-    
+
 
 #====================================================
 
@@ -137,8 +137,10 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    command = "SELECT coll FROM user_tbl WHERE user={}".format(session['username'])
-    raw = db_builder.exec(command).fetchall()
+    command = "SELECT coll FROM user_tbl WHERE username=?"
+    username = session.get('username')
+    inputs = (username,)
+    raw = db_builder.execmany(command, inputs).fetchall()
     iconstring = raw[0][0]
     coll = iconstring.split(",")
     return render_template("profile.html",
@@ -159,6 +161,21 @@ def icon():
 @login_required
 def password():
     #Jackie: Insert Code Here
+    password = request.form['password']
+    verif = request.form['verif']
+    oldpass = request.form['oldpass']
+    if (password == "" or verif == "" or oldpass == ""):
+        flash("Please fill out all fields!", 'red')
+        return redirect("/profile")
+    if (password != verif):
+        flash("Passwords do not match!", 'red')
+        return redirect("/profile")
+    username = session['username']
+    if (not db_manager.userValid(username, oldpass)):
+        flash("Wrong password!", 'red')
+        return redirect("/profile")
+    db_manager.changePass(username, password)
+    flash("Password successfully changed!")
     return redirect("/home")
 
 @app.route("/store")

@@ -71,6 +71,14 @@ def allCountries():
     return formatFetch(data)
 
 #====================================================
+#user profile
+def changePass(username, password):
+    q = "UPDATE user_tbl SET password=? WHERE username=?"
+    inputs = (password, username)
+    execmany(q, inputs)
+
+
+#====================================================
 #creating leaderboard functions
 
 def userLeaderboard():
