@@ -39,6 +39,7 @@ Trivia
 	{% if player == up %}
 	<h4>{{ question }}</h4>
 	<form action="/triviacheck" method="post">
+		<input type="hidden" name="question" value="{{ question }}">
 		{% for answer in choices %}
 		<input type="radio" name="answer" value="{{ answer }}" id="{{ answer }}">
 		<label for="{{ answer }}">{{ answer }}</label>

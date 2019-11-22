@@ -1,0 +1,46 @@
+{% extends "_base.html"}
+
+{% block body %}
+<div class="container">
+	<div class="row">
+		<div class="col">
+			<div class="card">
+				Single Player Games:
+				<br>
+				{% for game in single %}
+				<form action="/play" method="post">
+					<input type="hidden" value="{{ game }}" name="id">
+					<button class="btn btn-primary" type="submit">{{ game }}</button>
+				</form>
+				<br>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col">
+			<div class="card">
+				PvP Games:
+				<br>
+				{% for game in pvp %}
+				<form action="/play" method="post">
+					<input type="hidden" value="{{ game }}" name="id">
+					<button class="btn btn-primary" type="submit">{{ game }}</button>
+				</form>
+				<br>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col">
+			<div class="card">
+				Team Rallies:
+				<br>
+				{% for game in team %}
+				<form action="/play" method="post">
+					<input type="hidden" value="{{ game }}" name="id">
+					<button class="btn btn-primary" type="submit">{{ game }}</button>
+				</form>
+				<br>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>

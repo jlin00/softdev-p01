@@ -209,10 +209,30 @@ def purchase():
 def play():
     if request.method == 'GET':
         #display your games with search bar
-        return render_template("games.html")
+        command = 'SELECT game_id FROM user_tbl WHERE username="{}"'.format(session['username'])
+        games = db_manager.exec(command).fetchall()
+        games=games[0][0].split(",")
+        games.remove('')
+        team = []
+        pvp = []
+        single = []
+        for game in games:
+            if "T" in game:
+                team.append(game)
+            elif "P" in game:
+                pvp.append(game)
+            else:
+                single.append(game)
+        return render_template("games.html",
+                team=team,
+                pvp=pvp,
+                single=single)
     game = request.form['id']
+    if game == 'new':
+        #create game
+        redirect("/play")
     command = 'SELECT team1,team2,playing FROM cached_game_tbl WHERE game_id="{}";'.format(game)
-    raw = db_manager.exec(command)
+    raw = db_manager.exec(command).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
     team1.remove('')
@@ -228,30 +248,45 @@ def play():
         command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
         raw = db_manager.exec(command)
         t2[1].append((user, raw[0][0]))
+    #fetch question from API
+    #cache
+    q = '' #question here
+    c = {} #choices
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
                 player=session['username'],
                 up=up,
                 t1=t1,
-                t2=t2)
+                t2=t2,
+                question=q,
+                choices=c)
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
                 player=session["username"],
                 up=up,
                 t1=t1,
-                t2=t2)
+                t2=t2,
+                question=q,
+                choices=c)
     #single player
     return render_template("_gameplay.html",
             player=session["username"],
             up=up,
-            t1=t1)
+            t1=t1,
+            question=q,
+            choices=c)
 
-@app.route("/triviacheck")
+@app.route("/triviacheck", methods=['POST'])
 @login_required
 def check():
-    #check answer and update points accordingly
+    command = 'SELECT answer FROM cached_question_tbl WHERE question="{}"'.format(request.form['question'])
+    ans = db_manager.exec(command).fetchall()
+    if ans[0][0] == request.form['answer']:
+        #correct answer
+        #update points
+    #change to next player
     return redirect("/play")
 
 if __name__ == "__main__":
