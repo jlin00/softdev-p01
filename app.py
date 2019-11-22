@@ -154,7 +154,8 @@ def profile():
             stats=stats,
             coll=coll,
             not_owned=[item for item in icons if item not in coll],
-            money=money)
+            money=money,
+            games=games)
 
 @app.route("/icon", methods=["POST"])
 @login_required
@@ -191,7 +192,7 @@ def password():
 @app.route("/store")
 def store():
     command = 'SELECT coll, money FROM user_tbl WHERE username="{}";'.format(session['username'])
-    raw = db_manager.exec(command).fetchall()
+    raw = db_manager.exec(command)
     if raw[0][1] < 100:
         flash("Insufficient Funds!", "red")
         return redirect("/profile")
@@ -204,6 +205,56 @@ def store():
     db_manager.exec(command)
     flash("Successfully Purchased Icon!", "blue")
     return redirect("/profile")
+
+@app.route("/play", methods=['GET', 'POST'])
+@login_required
+def play():
+    if request.method == 'GET':
+        #display your games with search bar
+        return render_template("games.html")
+    game = request.form['id']
+    command = 'SELECT team1,team2,playing FROM cached_game_tbl WHERE game_id="{}";'.format(game)
+    raw = db_manager.exec(command)
+    team1 = raw[0][0].split(',')
+    team2 = raw[0][1].split(',')
+    team1.remove('')
+    team2.remove('')
+    up = raw[0][2]
+    t1 = (team1.pop(0), [])
+    for user in team1:
+        command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
+        raw = db_manager.exec(command)
+        t1[1].append((user, raw[0][0]))
+    t2 = (team2.pop(0), [])
+    for user in team2:
+        command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
+        raw = db_manager.exec(command)
+        t2[1].append((user, raw[0][0]))
+    if "T" in game:
+        #team rally
+        return render_template("_gameplay.html",
+                player=session['username'],
+                up=up,
+                t1=t1,
+                t2=t2)
+    if "P" in game:
+        #pvp
+        return render_template("_gameplay.html",
+                player=session["username"],
+                up=up,
+                t1=t1,
+                t2=t2)
+    #single player
+    return render_template("_gameplay.html",
+            player=session["username"],
+            up=up,
+            t1=t1)
+
+@app.route("/triviacheck")
+@login_required
+def check():
+    #check answer and update points accordingly
+    return redirect("/play")
 
 if __name__ == "__main__":
     db_builder.build_db()

@@ -4,7 +4,13 @@
 
 {% block body %}
 <div class="card" id="games">
-	<!-- Insert list of games here  -->
+	{% for game in games %}
+	<form action="/play" method="post">
+		<input type="hidden" name="id" value="{{ game }}">
+		<button class="btn btn-primary" type="submit">{{ game }}</button>
+	</form>
+	<br>
+	{% endfor %}
 </div>
 <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#passreset" aria-expanded="false" aria-controls="passreset">
 	Reset Password
