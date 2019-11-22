@@ -1,4 +1,4 @@
-#Amanda Zheng , Jackie Lin, Junhee Lee, Michael Zhang (KIRKLAND MEESEEKS)
+# Junhee Lee, Jackie Lin, Michael Zhang, Amanda Zheng (KIRKLAND MEESEEKS)
 #SoftDev1 pd1
 #K25: Getting More Rest
 #2019-11-13
