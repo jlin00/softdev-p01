@@ -41,9 +41,9 @@ def no_login_required(f):
 #code for creating icons
 icons=[]
 #for i in range(1, 200):
-for i in range(1, 200):
-    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
-    icons.append(data['image'])
+#for i in range(1, 200):
+#    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
+#    icons.append(data['image'])
 
 #====================================================
 

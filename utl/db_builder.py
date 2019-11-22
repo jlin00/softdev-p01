@@ -29,6 +29,20 @@ def build_db():
     command = "CREATE TABLE IF NOT EXISTS user_tbl (username TEXT, password TEXT, pic TEXT, coll TEXT, game_id TEXT, money INT, flag TEXT, stat TEXT, score INT)"
     exec(command)
 
+    command = "SELECT * FROM user_tbl WHERE username='jackielin'" #admin account
+    data = exec(command).fetchone()
+    if (data is None):
+        print("EXECUTING ADMIN")
+        u = urllib.request.urlopen("https://opentdb.com/api_category.php")
+        response = json.loads(u.read())['trivia_categories']
+        allcategories = ""
+        for category in response:
+            allcategories += category['name'] + "|0|0,"
+        #print(allcategories)
+        allcategories = allcategories[0:-1]
+        command = "INSERT OR IGNORE INTO user_tbl VALUES('jackielin', '123', '', '', '', 2000, '', '%s', 0)" % allcategories
+        exec(command)
+
     command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT)"
     exec(command)
 
