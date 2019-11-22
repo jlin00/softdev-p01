@@ -20,7 +20,7 @@
 </button>
 <div class="collapse" id="passreset">
 	<br><br>
-	<div class="card" style="align-text:center;">
+	<div class="card" style="align-text:center; display:flex; align-items:center;">
 		<h3>Change Your Password</h3>
 		<form action="/resetpasswd" method="post" class="w-50 p-3">
 			<div class="form-group">
@@ -82,7 +82,6 @@
 		Show All Icons
 	</button>
 	<div class="collapse" id="allicons">
-		<h5>Current Balance: {{ money }}</h5>
 		<a href="/store">Buy An Icon!</a>
 		<div class="container">
 			{% for icon in not_owned %}
