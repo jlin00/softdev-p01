@@ -146,3 +146,10 @@ updated addUser function to insert default categories into user entry in databas
 
 jackieL -- 2019-11-21 23:06
 added code to profile html page and database functions to display user stats
+
+amandaZ -- 2019-11-21 23:46
+    -made two api cards 
+        -one for pictures api and one for nasa api
+    -made a gorgeous store
+        -mainly html front
+    -started the purchase and collection display
