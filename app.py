@@ -6,6 +6,7 @@ from flask import Flask , render_template,request, redirect, url_for, session, f
 from functools import wraps
 import sqlite3, os
 from utl import db_builder, db_manager
+import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -39,7 +40,12 @@ def no_login_required(f):
 #Michael's Code Below
 @app.route("/singleplayer")
 def single():
-    return render_template("singleplayer.html")
+    categories = ['General Knowledge', 'Books', 'Film','Music', 'Theater', 'Television', 'Video Games','Board Games', 'Science & Nature', 'Computers & Technology', 'Mathematics', 'Mythology', 'Sports', 'Geography', 'History', 'Politics', 'Art', 'Celebrities', 'Animals', 'Vehicles', 'Comics', 'Inventions', 'Anime & Manga', 'Cartoons']
+    categorynums = range(9, 33)
+    selection = []
+    for i in range(0, 5):
+        selection.append(categories.pop(random.randint(0, len(categories) - 1)))
+    return render_template("singleplayer.html", categoriess = selection)
 
 @app.route("/pvp")
 def pvp():

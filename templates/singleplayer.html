@@ -2,6 +2,11 @@
 
 {% block body %}
 	<h1>Single-player</h1><br>
+	{% for i in categoriess %}
+		<form action = "/play">
+				<button type = "submit"> {{i}} </button>
+		</form>
+	{% endfor %}
 	<form action = "/play">
 			<button type = "submit"> Back </button>
 	</form>
