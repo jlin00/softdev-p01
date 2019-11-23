@@ -112,25 +112,32 @@ def signupcheck():
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    return render_template("home.html", home="active")
 
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
+    user = session['username']
     leaderboard=db_manager.userLeaderboard()
-    return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
+    nationboard=db_manager.nationLeaderboard()
+    countryboard=db_manager.myCountryboard(user)
+    return render_template("leaderboard.html",
+                            leaderboard=enumerate(leaderboard.items()),  
+                            nationboard=enumerate(nationboard.items()),
+                            countryboard=enumerate(countryboard.items()))
 
 @app.route("/nationboard")
 @login_required
 def nationboard():
     countryRank = db_manager.nationLeaderboard()
-    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+    return render_template("leaderboard.html", rank=sorted(countryRank.keys())[::-1], scoreDict=countryRank)
 
 @app.route("/mycountryboard")
 @login_required
 def mycountryboard():
+    user = session['username']
     countryRank=db_manager.myCountryboard(user)
-    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
+    return render_template("leaderboard.html", rank=sorted(countryRank.keys())[::-1], scoreDict=countryRank)
 
 @app.route("/logout")
 def logout():
@@ -157,7 +164,8 @@ def profile():
             coll=coll,
             not_owned=[item for item in icons if item not in coll],
             money=money,
-            games=games)
+            games=games,
+            profile="active")
 
 @app.route("/icon", methods=["POST"])
 @login_required
@@ -194,6 +202,7 @@ def password():
 @app.route("/store")
 def store():
     return render_template("store.html")
+
 @app.route("/purchase")
 def purchase():
     if request.args.get('value') == "R":
@@ -226,7 +235,8 @@ def play():
         return render_template("games.html",
                 team=team,
                 pvp=pvp,
-                single=single)
+                single=single,
+                play="active")
     game = request.form['id']
     if game == 'new':
         #create game

@@ -1,14 +1,102 @@
 {% extends "_base.html" %}
 
-{% block body %}
-  <h1> <font color ="#25383C"> {{title}} </font> </h1>
+{% block title %}
+	Leaderboard
+{% endblock %}
 
-  <body> {% for score in rank %}
-            {% for user in scoreDict[score] %}
-              {{user}}|{{score}}<br>
-            {% endfor %}
-          {% endfor %}
-  </body>
+{% block body %}
+  <h1><font color ="#25383C">Leaderboards</font></h1>
+	{% for score in rank %}
+	  {% for user in scoreDict[score] %}
+	    {{user}}|{{score}}<br>
+	  {% endfor %}
+	{% endfor %}
+
+	<p>
+	  <a class="btn btn-secondary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Toggle first element</a>
+	  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Toggle second element</button>
+	  <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Toggle both elements</button>
+	</p>
+	<div class="row">
+	  <div class="col">
+	    <div class="collapse multi-collapse" id="multiCollapseExample1">
+	      <div class="card card-body">
+	        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+	      </div>
+	    </div>
+	  </div>
+	  <div class="col">
+	    <div class="collapse multi-collapse" id="multiCollapseExample2">
+	      <div class="card card-body">
+	        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Country</th>
+						<th scope="col">Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for i, (k, v) in nationboard %}
+					<tr>
+						<th>{{ i + 1 }}</th>
+						<td>{{ k }}</td>
+						<td>{{ v }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<div class="col">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Country</th>
+						<th scope="col">Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for i, (k, v) in countryboard %}
+					<tr>
+						<th>{{ i + 1 }}</th>
+						<td>{{ k }}</td>
+						<td>{{ v }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<div class="col">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Country</th>
+						<th scope="col">Score</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for i, (k, v) in leaderboard %}
+					<tr>
+						<th>{{ i + 1 }}</th>
+						<td>{{ k }}</td>
+						<td>{{ v }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
   <form action = '/home'>
 		<button type = "submit"> Back </button>
 	</form>

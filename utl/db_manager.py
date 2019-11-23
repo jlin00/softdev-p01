@@ -5,6 +5,7 @@
 
 import sqlite3
 from utl.db_builder import exec, execmany
+from collections import OrderedDict
 
 #====================================================
 #formatting functions
@@ -93,17 +94,22 @@ def getStats(username):
 
 #====================================================
 #creating leaderboard functions
+def orderDict(list):
+    list = sorted(list, key=lambda x:x[1])
+    dict = OrderedDict()
+    for item in list:
+        dict[item[0]] = item[1]
+    return dict
 
 def userLeaderboard():
     q = "SELECT username, score FROM user_tbl"
     data = exec(q).fetchall()
-    return makeDict(data)
+    return orderDict(data)
 
 def nationLeaderboard():
     q = "SELECT country, SUM(score) FROM user_tbl, flags_tbl WHERE flags_tbl.country = user_tbl.flag GROUP BY flags_tbl.country"
     data = exec(q).fetchall()
-    data = makeDict(data)
-    #print(data)
+    data = orderDict(data)
     return data
 
 def myCountryboard(username):
@@ -112,7 +118,7 @@ def myCountryboard(username):
     country = execmany(q, inputs).fetchone()[0]
     q = "SELECT username,score FROM user_tbl WHERE flag=?"
     inputs = (country,)
-    countryRank = makeDict(execmany(q, inputs).fetchall())
+    countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
 #====================================================
 #creating store functions
@@ -120,4 +126,3 @@ def moneyExchange(username):
     q = "SELECT money FROM user_tbl WHERE username=?"
     inputs = (username,)
     money=execmany(q,inputs)
-    
