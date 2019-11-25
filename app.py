@@ -110,26 +110,15 @@ def home():
 @login_required
 def leaderboard():
     user = session['username']
+    country = db_manager.getCountry(user)
     leaderboard=db_manager.userLeaderboard()
     nationboard=db_manager.nationLeaderboard()
     countryboard=db_manager.myCountryboard(user)
     return render_template("leaderboard.html",
-                            leaderboard=enumerate(leaderboard.items()),  
+                            leaderboard=enumerate(leaderboard.items()),
                             nationboard=enumerate(nationboard.items()),
-                            countryboard=enumerate(countryboard.items()))
-
-@app.route("/nationboard")
-@login_required
-def nationboard():
-    countryRank = db_manager.nationLeaderboard()
-    return render_template("leaderboard.html", rank=sorted(countryRank.keys())[::-1], scoreDict=countryRank)
-
-@app.route("/mycountryboard")
-@login_required
-def mycountryboard():
-    user = session['username']
-    countryRank=db_manager.myCountryboard(user)
-    return render_template("leaderboard.html", rank=sorted(countryRank.keys())[::-1], scoreDict=countryRank)
+                            countryboard=enumerate(countryboard.items()),
+                            country=country)
 
 @app.route("/logout")
 def logout():

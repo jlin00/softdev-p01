@@ -88,8 +88,13 @@ def getStats(username):
         for category in data:
             category = category.split("|")
             stats[category[0]] = (category[1], category[2])
-    print(stats)
     return stats
+
+def getCountry(username):
+    q = "SELECT flag from user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()[0]
+    return data
 
 
 #====================================================
