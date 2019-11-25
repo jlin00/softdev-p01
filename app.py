@@ -271,7 +271,7 @@ def play():
                 t2=t2,
                 question=q,
                 choices=c,
-                game-game)
+                game=game)
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
