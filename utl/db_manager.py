@@ -58,10 +58,14 @@ def addUser(username, password, flag):
     inputs = (username,)
     data = execmany(q, inputs).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, ?, 0)"
+        q = "INSERT INTO user_tbl VALUES(?, ?, ?, ?, '', 200, ?, ?, 0)"
+        command = "SELECT flag from flags_tbl where country=?"
+        inputs = (flag, )
+        pic = execmany(command, inputs).fetchone()[0]
+        coll = "['%s']" % pic
         command = "SELECT stat FROM user_tbl WHERE username='jackielin'"
         stats = exec(command).fetchone()[0]
-        inputs = (username, password, flag, stats)
+        inputs = (username, password, pic, coll, flag, stats)
         execmany(q, inputs)
         return True
     return False #if username already exists
@@ -96,6 +100,11 @@ def getCountry(username):
     data = execmany(q, inputs).fetchone()[0]
     return data
 
+def getPic(username):
+    q = "SELECT pic from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    return data
 
 #====================================================
 #creating leaderboard functions

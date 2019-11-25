@@ -104,7 +104,9 @@ def signupcheck():
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html", home="active")
+    username = session['username']
+    pic = db_manager.getPic(username)
+    return render_template("home.html", home="active", pic=pic)
 
 @app.route("/leaderboard")
 @login_required
@@ -151,7 +153,7 @@ def profile():
 @login_required
 def icon():
     if 'img' not in request.form:
-        flash("Please Select a Profile Icon!", "red")
+        flash("Please Select a Profile Icon!", "alert-danger")
         return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
     db_manager.exec(command)
