@@ -5,16 +5,25 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Home</h1><br>
-	<img src="{{ pic }}" style="width:200px;">
+	<h1>Dashboard</h1><br>
+
 	<br>
-    <form action = "/leaderboard">
-        <button type = "submit"> View Users Leaderboard </button>
-    </form>
-    <form action = "/nationboard">
-        <button type = "submit"> View Countries Leaderboard </button>
-    </form>
-    <form action = "/logout">
-        <button type = "submit"> Logout </button>
-    </form>
+	<div class="container">
+  <div class="row">
+    <div class="col-sm">
+      <img src="{{ pic }}" style="width:200px; border:7px solid #aaa; border-radius:5px;">
+    </div>
+    <div class="col-sm">
+      <h1 style="font-weight:bold">{{ user }}</h1>
+			<h4 class="text-primary">Score: {{ score }} </h4>
+			<h4 class="text-success">Money: {{ money }}</h4>
+    </div>
+  </div><br><br>
+	<div class="row">
+		<div class="col-sm">
+			<button class="btn btn-secondary">View Leaderboard</button>
+			<button class="btn btn-secondary">View Stats</button>
+		</div>
+	</div>
+</div>
 {% endblock %}

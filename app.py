@@ -106,7 +106,14 @@ def signupcheck():
 def home():
     username = session['username']
     pic = db_manager.getPic(username)
-    return render_template("home.html", home="active", pic=pic)
+    score = db_manager.getScore(username)
+    money = db_manager.getMoney(username)
+    stat = db_manager.getStats(username)
+    print(stat)
+    for category in stat:
+        for i in range(len(category)):
+            print(category[i])
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stat=stat)
 
 @app.route("/leaderboard")
 @login_required
@@ -138,7 +145,7 @@ def profile():
     iconstring = raw[0][0]
     money = raw[0][1]
     coll = iconstring.split(",")
-    coll.remove('')
+    #coll.remove('')
     games = raw[0][2].split(",")
     games.remove("")
     stats = db_manager.getStats(username).items()
