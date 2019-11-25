@@ -6,92 +6,104 @@
 
 {% block body %}
   <h1><font color ="#25383C">Leaderboards</font></h1>
-	{% for score in rank %}
-	  {% for user in scoreDict[score] %}
-	    {{user}}|{{score}}<br>
-	  {% endfor %}
-	{% endfor %}
-	<div class="row">
-	  <div class="col">
-	    <div class="collapse multi-collapse" id="multiCollapseExample1">
-	      <div class="card card-body">
-	        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-	      </div>
-	    </div>
-	  </div>
-	  <div class="col">
-	    <div class="collapse multi-collapse" id="multiCollapseExample2">
-	      <div class="card card-body">
-	        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-	      </div>
-	    </div>
-	  </div>
-	</div>
+	<div class="accordion" id="accordionExample">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" type="button" style="font-weight:700" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Top Users
+        </button>
+      </h5>
+    </div>
 
-	<div class="row">
-		<div class="col">
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Country</th>
-						<th scope="col">Score</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for i, (k, v) in nationboard %}
-					<tr>
-						<th>{{ i + 1 }}</th>
-						<td>{{ k }}</td>
-						<td>{{ v }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		<div class="col">
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Country</th>
-						<th scope="col">Score</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for i, (k, v) in countryboard %}
-					<tr>
-						<th>{{ i + 1 }}</th>
-						<td>{{ k }}</td>
-						<td>{{ v }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-		<div class="col">
-			<table class="table">
-				<thead>
-					<tr>
-						<th scope="col">#</th>
-						<th scope="col">Country</th>
-						<th scope="col">Score</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for i, (k, v) in leaderboard %}
-					<tr>
-						<th>{{ i + 1 }}</th>
-						<td>{{ k }}</td>
-						<td>{{ v }}</td>
-					</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		</div>
-	</div>
-
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+      <div class="card-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">User</th>
+							<th scope="col">Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for i, (k, v) in leaderboard %}
+						<tr>
+							<th>{{ i + 1 }}</th>
+							<td>{{ k }}</td>
+							<td>{{ v }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" style="font-weight:700" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Top Countries
+        </button>
+      </h5>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+      <div class="card-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Country</th>
+							<th scope="col">Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for i, (k, v) in nationboard %}
+						<tr>
+							<th>{{ i + 1 }}</th>
+							<td>{{ k }}</td>
+							<td>{{ v }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree">
+      <h5 class="mb-0">
+        <button class="btn btn-link collapsed" style="font-weight:700" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Top Users in {{ country }}
+        </button>
+      </h5>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+      <div class="card-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">User</th>
+							<th scope="col">Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for i, (k, v) in countryboard %}
+						<tr>
+							<th>{{ i + 1 }}</th>
+							<td>{{ k }}</td>
+							<td>{{ v }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+      </div>
+    </div>
+  </div>
+</div>
+<br>
   <form action = '/home'>
-		<button type = "submit"> Back </button>
+		<button class="btn btn-secondary" type = "submit"> Back </button>
 	</form>
 {% endblock %}
