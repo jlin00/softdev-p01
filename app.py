@@ -38,14 +38,6 @@ def no_login_required(f):
         return redirect('/home')
     return dec
 #====================================================
-#code for creating icons
-icons=[]
-
-for i in range(1, 20):
-    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
-    icons.append(data['image'])
-
-#====================================================
 
 #Michael's Code Below
 @app.route("/")
@@ -162,7 +154,6 @@ def profile():
     return render_template("profile.html",
             stats=stats,
             coll=coll,
-            not_owned=[item for item in icons if item not in coll],
             money=money,
             games=games,
             profile="active")
