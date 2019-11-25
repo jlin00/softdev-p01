@@ -239,9 +239,18 @@ def play():
         raw = db_manager.exec(command)
         t2[1].append((user, raw[0][0]))
     #fetch question from API
+    raw = urlopen("https://opentdb.com/api.php?amount=1&type=multiple").read()
+    question = loads(raw)['results'][0]
+    choices = question['incorrect_answers']
+    choices.append(question['correct_answer'])
     #cache
-    q = '' #question here
-    c = {} #choices
+    command='INSERT INTO cached_question_tbl VALUES ("{}", "{}", "{}", "{}", "{}")'.format(question['category'],
+            question['question'],
+            question['difficulty'],
+            choices,
+            question['correct_answer'])
+    q = question['question'] #question here
+    c = set(choices) #choices
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
