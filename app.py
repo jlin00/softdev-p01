@@ -104,7 +104,16 @@ def signupcheck():
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html", home="active")
+    username = session['username']
+    pic = db_manager.getPic(username)
+    score = db_manager.getScore(username)
+    money = db_manager.getMoney(username)
+    stat = db_manager.getStats(username)
+    print(stat)
+    for category in stat:
+        for i in range(len(category)):
+            print(category[i])
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stat=stat)
 
 @app.route("/leaderboard")
 @login_required
@@ -136,7 +145,7 @@ def profile():
     iconstring = raw[0][0]
     money = raw[0][1]
     coll = iconstring.split(",")
-    coll.remove('')
+    #coll.remove('')
     games = raw[0][2].split(",")
     games.remove("")
     stats = db_manager.getStats(username).items()
@@ -151,7 +160,7 @@ def profile():
 @login_required
 def icon():
     if 'img' not in request.form:
-        flash("Please Select a Profile Icon!", "red")
+        flash("Please Select a Profile Icon!", "alert-danger")
         return redirect("/profile")
     command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
     db_manager.exec(command)

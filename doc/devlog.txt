@@ -153,3 +153,6 @@ amandaZ -- 2019-11-21 23:46
     -made a gorgeous store
         -mainly html front
     -started the purchase and collection display
+
+jackieL -- 2019-11-25 14:52
+updated homepage and db fucntions for profile
