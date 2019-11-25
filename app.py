@@ -39,6 +39,7 @@ def no_login_required(f):
 
 #Michael's Code Below
 @app.route("/singleplayer")
+@login_required
 def single():
     categories = ['General Knowledge', 'Books', 'Film','Music', 'Theater', 'Television', 'Video Games','Board Games', 'Science & Nature', 'Computers & Technology', 'Mathematics', 'Mythology', 'Sports', 'Geography', 'History', 'Politics', 'Art', 'Celebrities', 'Animals', 'Vehicles', 'Comics', 'Inventions', 'Anime & Manga', 'Cartoons']
     categorynums = range(9, 33)
@@ -48,14 +49,17 @@ def single():
     return render_template("singleplayer.html", categoriess = selection)
 
 @app.route("/pvp")
+@login_required
 def pvp():
     return render_template("pvp.html")
 
 @app.route("/team")
+@login_required
 def team():
     return render_template("team.html")
 
 @app.route("/play")
+@login_required
 def play():
     return render_template("play.html")
 

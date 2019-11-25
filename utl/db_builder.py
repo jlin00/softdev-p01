@@ -5,6 +5,7 @@
 
 import sqlite3, urllib, json
 
+gameID = 0;
 DB_FILE = "trivia.db"
 
 #commits the changes after a command
@@ -40,6 +41,26 @@ def build_db():
 
     command = "CREATE TABLE IF NOT EXISTS flags_tbl (country TEXT PRIMARY KEY, flag TEXT)"
     exec(command)
+
+def build_question():
+    u = urllib.request.urlopen("https://opentdb.com/api.php?amount=1&type=multiple")
+    response = json.loads(u.read())
+    qtype = response['results'][0]['category']
+    q = response['results'][0]['question']
+    qdiff = response['results'][0]['difficulty']
+    randomint = random.randint(0, 3)
+    if (randomint == 0):
+        qchoices = response['results'][0]['correct_answer'] + "," + response['results'][0]['incorrect_answers'][0] + "," + response['results'][0]['incorrect_answers'][1] + "," + response['results'][0]['incorrect_answers'][2]
+    if (randomint == 1):
+        qchoices = response['results'][0]['incorrect_answers'][0] + "," + response['results'][0]['correct_answer'] + "," + response['results'][0]['incorrect_answers'][1] + "," + response['results'][0]['incorrect_answers'][2]
+    if (randomint == 2):
+        qchoices = response['results'][0]['incorrect_answers'][0] + "," + response['results'][0]['incorrect_answers'][1] + "," + response['results'][0]['correct_answer'] + "," + response['results'][0]['incorrect_answers'][2]
+    if (randomint == 3):
+        qchoices = response['results'][0]['incorrect_answers'][0] + "," + response['results'][0]['incorrect_answers'][1] + "," + response['results'][0]['incorrect_answers'][2] + "," + response['results'][0]['correct_answer']
+    qans = response['results'][0]['correct_answer']
+        q = "INSERT INTO question_tbl VALUES(?, ?)"
+        inputs = (country['name'], country['flag'])
+        execmany(q, inputs)
 
 #populates flag_tbl if it isn't already populated
 def build_flag():
