@@ -291,12 +291,11 @@ def check():
     #if ans[0][0] == request.form['answer']:
         #correct answer
         #update points
-    #change to next player
     command = 'SELECT participants FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
-    partic = db_manager.exec(command).fetchall()[0][0].split(',')
-    partic.remove('')
-    player = partic.index(session['username'])
-    command = 'UPDATE cached_game_tbl SET playing="{}" WHERE game_id="{}"'.format(partic[player - 1], request.form['id'])
+    participants = db_manager.exec(command).fetchall()[0][0].split(',')
+    participants.remove('')
+    player = participants.index(session['username'])
+    command = 'UPDATE cached_game_tbl SET playing="{}" WHERE game_id="{}"'.format(participants[player - 1], request.form['id'])
     db_manager.exec(command)
     return redirect("/play")
 
