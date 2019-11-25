@@ -77,17 +77,9 @@
 		<br>
 		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
 	</form>
-	<br>
-	<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#allicons" arai-expanded="false" aria-controls="allicons">
-		Show All Icons
-	</button>
-	<div class="collapse" id="allicons">
-		<a href="/store">Buy An Icon!</a>
-		<div class="container">
-			{% for icon in not_owned %}
-			<img src="{{ icon }}" alt="{{ icon }}" style="width=100%; padding=5px; padding-bottom:5px;">
-			{% endfor %}
-		</div>
+	<div class="card">
+	<h5 style="margin-top: 10px;">Want more icons?</h5>
+	<a href="/store">Buy An Icon!</a>
 	</div>
 
 </div>
