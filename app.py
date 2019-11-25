@@ -270,7 +270,8 @@ def play():
                 t1=t1,
                 t2=t2,
                 question=q,
-                choices=c)
+                choices=c,
+                game-game)
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
@@ -279,14 +280,17 @@ def play():
                 t1=t1,
                 t2=t2,
                 question=q,
-                choices=c)
+                choices=c,
+                game=game)
     #single player
     return render_template("_gameplay.html",
             player=session["username"],
             up=up,
             t1=t1,
+            t2=['', []],
             question=q,
-            choices=c)
+            choices=c,
+            game=game)
 
 @app.route("/triviacheck", methods=['POST'])
 @login_required
@@ -297,6 +301,12 @@ def check():
         #correct answer
         #update points
     #change to next player
+    command = 'SELECT participants FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
+    partic = db_manager.exec(command).fetchall()[0][0].split(',')
+    partic.remove('')
+    player = partic.index(session['username'])
+    command = 'UPDATE cached_game_tbl SET playing="{}" WHERE game_id="{}"'.format(partic[player - 1], request.form['id'])
+    db_manager.exec(command)
     return redirect("/play")
 
 if __name__ == "__main__":
