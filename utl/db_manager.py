@@ -157,6 +157,16 @@ def myCountryboard(username):
     countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
 
+def findUser(query):
+    query = query.lower().strip()
+    list = []
+    q = "SELECT username FROM user_tbl"
+    data = exec(q).fetchall()
+    for name in data:
+        if (query in name[0]):
+            list.append(name[0])
+    return list
+
 #====================================================
 #creating store functions
 def purchase(username, value):
@@ -166,6 +176,10 @@ def purchase(username, value):
     if (money >= value):
         if (value == 50):
             packR(username)
+        if (value == 75):
+            packP(username)
+        if (value == 100):
+            packM(username)
         #additional code
         q = "UPDATE user_tbl SET money=? WHERE username=?"
         money -= value
@@ -175,22 +189,74 @@ def purchase(username, value):
     return False
 
 def packR(username):
-    q = "SELECT pic FROM pic_tbl ORDER BY random() LIMIT 3;"
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'R%' ORDER BY random() LIMIT 3"
     data = exec(q).fetchall()
     for pic in data:
         pic = pic[0]
         coll = getColl(username)
         coll.append(pic)
         coll = ",".join(coll)
-        print(coll)
         q = "UPDATE user_tbl SET coll=? WHERE username=?"
         inputs = (coll, username)
         execmany(q, inputs)
 
-def packS():
-    #code to return random space pack
-    return None
+def packP(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'P%' ORDER BY random() LIMIT 3"
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
 
-def packM():
-    #code to return random pokemon pack
-    return None
+def packM(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'M%' ORDER BY random() LIMIT 3 "
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
+
+#====================================================
+#creating game functions
+
+#get all single player games
+def getSingle(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "S" in data[i]:
+            list.append(game)
+    return list
+
+def getPVP(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "P" in data[i]:
+            list.append(game)
+    return list
+
+def getTeam(username):
+        q = "SELECT game_id FROM user_tbl WHERE username=?"
+        inputs = (username, )
+        data = execmany(q, inputs).fetchone()[0]
+        data = data.split(",")
+        list = []
+        for i in range(len(data)):
+            if "T" in data[i]:
+                list.append(game)
+        return list

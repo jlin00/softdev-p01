@@ -181,3 +181,15 @@ HOME STRETCH PLAN
 
 jackieL -- 2019-11-26 02:28
 formatted profile picture store and tested out buying
+
+jackieL -- 2019-11-26 10:16
+added code to cache images from pictures database
+
+jackieL -- 2019-11-26 12:53
+finished building picture cache table in database
+
+jackieL -- 2019-11-26 13:06
+fixed buying functionality in db_mananger
+
+jackieL -- 2019-11-26 14:52
+added search functionality to search for users

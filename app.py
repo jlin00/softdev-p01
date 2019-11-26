@@ -40,6 +40,16 @@ def no_login_required(f):
 #====================================================
 
 #Michael's Code Below
+@app.route("/search", methods=["GET"])
+@login_required
+def search():
+    if (request.args):
+        if ('query' in request.args):
+            query = request.args['query'] #search keyword
+            results = db_manager.findUser(query)
+            return render_template('search.html', results=results)
+    return render_template('search.html')
+
 @app.route("/")
 def root():
     if 'username' in session:
@@ -105,11 +115,18 @@ def signupcheck():
 @login_required
 def home():
     username = session['username']
+    owner = session['username']
+    if (request.args):
+        if ('user' in request.args):
+            username = request.args['user']
+    isOwner = False
+    if (owner == username):
+        isOwner = True
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
 
 @app.route("/leaderboard")
 @login_required
@@ -199,22 +216,12 @@ def purchase():
 @app.route("/play", methods=['GET', 'POST'])
 @login_required
 def play():
+    username = session['username']
     if request.method == 'GET':
         #display your games with search bar
-        command = 'SELECT game_id FROM user_tbl WHERE username="{}"'.format(session['username'])
-        games = db_manager.exec(command).fetchall()
-        games=games[0][0].split(",")
-        games.remove('')
-        team = []
-        pvp = []
-        single = []
-        for game in games:
-            if "T" in game:
-                team.append(game)
-            elif "P" in game:
-                pvp.append(game)
-            else:
-                single.append(game)
+        team = db_manager.getTeam(username)
+        pvp = db_manager.getPVP(username)
+        single = db_manager.getSingle(username)
         return render_template("games.html",
                 team=team,
                 pvp=pvp,
@@ -287,12 +294,12 @@ def create():
     #create game code here
     #random
     game_id = 0 #change this
-    if 'p' in request.form['id']:
+    #if 'p' in request.form['id']:
         #check if there exists a game with room first
         return 'under construction'
         #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
-    elif 't' in request.form['id']:
+    #elif 't' in request.form['id']:
         #check if there exists a game with room first
         return 'under construction'
         #else:
