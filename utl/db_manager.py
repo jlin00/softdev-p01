@@ -157,6 +157,16 @@ def myCountryboard(username):
     countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
 
+def findUser(query):
+    query = query.lower().strip()
+    list = []
+    q = "SELECT username FROM user_tbl"
+    data = exec(q).fetchall()
+    for name in data:
+        if (query in name[0]):
+            list.append(name[0])
+    return list
+
 #====================================================
 #creating store functions
 def purchase(username, value):
@@ -213,3 +223,40 @@ def packM(username):
         q = "UPDATE user_tbl SET coll=? WHERE username=?"
         inputs = (coll, username)
         execmany(q, inputs)
+
+#====================================================
+#creating game functions
+
+#get all single player games
+def getSingle(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "S" in data[i]:
+            list.append(game)
+    return list
+
+def getPVP(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "P" in data[i]:
+            list.append(game)
+    return list
+
+def getTeam(username):
+        q = "SELECT game_id FROM user_tbl WHERE username=?"
+        inputs = (username, )
+        data = execmany(q, inputs).fetchone()[0]
+        data = data.split(",")
+        list = []
+        for i in range(len(data)):
+            if "T" in data[i]:
+                list.append(game)
+        return list

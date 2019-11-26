@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+
+{% block title %}
+	Search
+{% endblock %}
+
+{% block body %}
+<h1>Search</h1>
+  {% for result in results %}
+    <a href="/home?user={{ result }}">{{ result }}</a><br>
+  {% endfor %}
+{% endblock %}
