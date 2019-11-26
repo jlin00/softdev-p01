@@ -1,4 +1,4 @@
-#Amanda Zheng , Jackie Lin, Junhee Lee, Michael Zhang (KIRKLAND MEESEEKS)
+# Junhee Lee, Jackie Lin, Michael Zhang, Amanda Zheng (KIRKLAND MEESEEKS)
 #SoftDev1 pd1
 #K25: Getting More Rest
 #2019-11-13
@@ -26,7 +26,7 @@ def login_required(f):
             for arg in args:
                 print(arg)
             return f(*args, **kwargs)
-        flash('You must be logged in to view this page!', 'red')
+        flash('You must be logged in to view this page!', 'alert-danger')
         return redirect('/')
     return dec
 
@@ -36,14 +36,9 @@ def no_login_required(f):
     def dec(*args, **kwargs):
         if 'username' not in session:
             return f(*args, **kwargs)
-        flash('You cannot view this page while logged in!', 'red')
+        flash('You cannot view this page while logged in!', 'alert-danger')
         return redirect('/home')
     return dec
-#====================================================
-#code for creating icons
-icons=[]
-
-
 #====================================================
 
 #Michael's Code Below
@@ -64,14 +59,14 @@ def auth():
     enteredU = request.form['username']
     enteredP = request.form['password']
     if(enteredU=="" or enteredP==""):
-        flash('Please fill out all fields!', 'red')
+        flash('Please fill out all fields!', 'alert-danger')
         return render_template("login.html")
     if (db_manager.userValid(enteredU,enteredP)):
-        flash('You were successfully logged in!')
+        flash('You were successfully logged in!', 'alert-success')
         session['username'] = enteredU
         return redirect('/home')
     else:
-        flash('Wrong Credentials!', 'red')
+        flash('Wrong Credentials!', 'alert-danger')
         return render_template("login.html")
 
 #Amanda's Code Below
@@ -92,17 +87,17 @@ def signupcheck():
         flag="United States of America"
     allcountries=db_manager.allCountries()
     if(username=="" or password=="" or confirm==""):
-        flash('Please fill out all fields!', 'red')
+        flash('Please fill out all fields!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
-        flash('Passwords do not match!', 'red')
+        flash('Passwords do not match!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     added = db_manager.addUser(username,password,flag)
     if (not added):
-        flash('Username taken!', 'red')
+        flash('Username taken!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     #return redirect(url_for("leaderboard"))
-    flash('You have successfully created an account! Please log in!')
+    flash('You have successfully created an account! Please log in!', 'alert-success')
     return redirect("/login")
 
 #====================================================
@@ -111,62 +106,58 @@ def signupcheck():
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html")
+    username = session['username']
+    pic = db_manager.getPic(username)
+    score = db_manager.getScore(username)
+    money = db_manager.getMoney(username)
+    stats = db_manager.getStats(username).items()
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
 
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
+    user = session['username']
+    country = db_manager.getCountry(user)
     leaderboard=db_manager.userLeaderboard()
-    return render_template("leaderboard.html", title="Leaderboard", rank=sorted(leaderboard.keys())[::-1] ,scoreDict=leaderboard)
-
-@app.route("/nationboard")
-@login_required
-def nationboard():
-    countryRank = db_manager.nationLeaderboard()
-    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
-
-@app.route("/mycountryboard")
-@login_required
-def mycountryboard():
-    countryRank=db_manager.myCountryboard(user)
-    return render_template("leaderboard.html", title="Country Leaderboard", rank=sorted(countryRank.keys())[::-1] ,scoreDict=countryRank)
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash('You were successfully logged out.')
-    return redirect('/')
+    nationboard=db_manager.nationLeaderboard()
+    countryboard=db_manager.myCountryboard(user)
+    return render_template("leaderboard.html",
+                            leaderboard=enumerate(leaderboard.items()),
+                            nationboard=enumerate(nationboard.items()),
+                            countryboard=enumerate(countryboard.items()),
+                            country=country,
+                            board="active")
 
 #profile pages below
 @app.route("/profile")
 @login_required
 def profile():
     username=session['username']
-    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username="{}"'.format(username)
-    raw = db_manager.exec(command).fetchall()
-    iconstring = raw[0][0]
-    money = raw[0][1]
+    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username=?'
+    inputs = (username, )
+    raw = db_manager.execmany(command, inputs).fetchone()
+    iconstring = raw[0]
     coll = iconstring.split(",")
-    coll.remove('')
-    games = raw[0][2].split(",")
-    games.remove("")
-    stats = db_manager.getStats(username).items()
+    money = raw[1]
+    games = raw[2].split(",")
     return render_template("profile.html",
-            stats=stats,
+            enumcoll=range(len(coll)),
             coll=coll,
-            not_owned=[item for item in icons if item not in coll],
             money=money,
-            games=games)
+            games=games,
+            profile="active")
 
 @app.route("/icon", methods=["POST"])
 @login_required
 def icon():
     if 'img' not in request.form:
-        flash("Please Select a Profile Icon!", "red")
+        flash("Please Select a Profile Icon!", "alert-danger")
         return redirect("/profile")
-    command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
-    db_manager.exec(command)
-    flash("Successfully set Player Icon", "blue")
+    index = int(request.form['img'])
+    user = session['username']
+    img = db_manager.getColl(user)[index]
+    db_manager.updatePic(user, img)
+    flash("Successfully set Player Icon", 'alert-success')
     return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
@@ -177,23 +168,26 @@ def password():
     verif = request.form['verif']
     oldpass = request.form['oldpass']
     if (password == "" or verif == "" or oldpass == ""):
-        flash("Please fill out all fields!", 'red')
+        flash("Please fill out all fields!", 'alert-danger')
         return redirect("/profile")
     if (password != verif):
-        flash("Passwords do not match!", 'red')
+        flash("Passwords do not match!", 'alert-danger')
         return redirect("/profile")
     username = session['username']
     if (not db_manager.userValid(username, oldpass)):
-        flash("Wrong password!", 'red')
+        flash("Wrong password!", 'alert-danger')
         return redirect("/profile")
     db_manager.changePass(username, password)
-    flash("Password successfully changed!")
+    flash("Password successfully changed!", 'alert-success')
     return redirect("/home")
 
 @app.route("/store")
+@login_required
 def store():
-    return render_template("store.html")
+    return render_template("store.html", store="active")
+
 @app.route("/purchase")
+@login_required
 def purchase():
     list=db_manager.getCollection(session['username'])
     if request.args.get('value') == "R":
@@ -206,7 +200,14 @@ def purchase():
     else:
         link="https://picsum.photos/id/"+str(random.choice(mysteryid))+"/200.jpg"
         return render_template("collection.html",coll=list,new=link,desc="Mystery")
-
+#username = session['username']
+#selection = int(request.args['value'])
+#purchased = db_manager.purchase(username, selection)
+#if (purchased):
+#    flash('Purchase successfully made!','alert-success')
+#else:
+#    flash('You don\'t have enough money to make this purchase!', 'alert-danger')
+#return redirect(url_for("store"))
 
 @app.route("/play", methods=['GET', 'POST'])
 @login_required
@@ -230,7 +231,8 @@ def play():
         return render_template("games.html",
                 team=team,
                 pvp=pvp,
-                single=single)
+                single=single,
+                play="active")
     game = request.form['id']
     if game == 'new':
         #create game
@@ -253,9 +255,18 @@ def play():
         raw = db_manager.exec(command)
         t2[1].append((user, raw[0][0]))
     #fetch question from API
+    raw = urlopen("https://opentdb.com/api.php?amount=1&type=multiple").read()
+    question = loads(raw)['results'][0]
+    choices = question['incorrect_answers']
+    choices.append(question['correct_answer'])
     #cache
-    q = '' #question here
-    c = {} #choices
+    command='INSERT INTO cached_question_tbl VALUES ("{}", "{}", "{}", "{}", "{}")'.format(question['category'],
+            question['question'],
+            question['difficulty'],
+            choices,
+            question['correct_answer'])
+    q = question['question'] #question here
+    c = set(choices) #choices
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
@@ -264,7 +275,8 @@ def play():
                 t1=t1,
                 t2=t2,
                 question=q,
-                choices=c)
+                choices=c,
+                game=game)
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
@@ -273,14 +285,17 @@ def play():
                 t1=t1,
                 t2=t2,
                 question=q,
-                choices=c)
+                choices=c,
+                game=game)
     #single player
     return render_template("_gameplay.html",
             player=session["username"],
             up=up,
             t1=t1,
+            t2=['', []],
             question=q,
-            choices=c)
+            choices=c,
+            game=game)
 
 @app.route("/triviacheck", methods=['POST'])
 @login_required
@@ -290,11 +305,23 @@ def check():
     #if ans[0][0] == request.form['answer']:
         #correct answer
         #update points
-    #change to next player
+    command = 'SELECT participants FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
+    participants = db_manager.exec(command).fetchall()[0][0].split(',')
+    participants.remove('')
+    player = participants.index(session['username'])
+    command = 'UPDATE cached_game_tbl SET playing="{}" WHERE game_id="{}"'.format(participants[player - 1], request.form['id'])
+    db_manager.exec(command)
     return redirect("/play")
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash('You were successfully logged out.', 'alert-success')
+    return redirect('/')
 
 if __name__ == "__main__":
     db_builder.build_db()
     db_builder.build_flag()
+    db_builder.build_pic()
     app.debug = True
     app.run()

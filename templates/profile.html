@@ -3,24 +3,13 @@
 {% block title %}User Profile{% endblock %}
 
 {% block body %}
-<div class="card" id="games">
-	{% for game in games %}
-	<form action="/play" method="post">
-		<input type="hidden" name="id" value="{{ game }}">
-		<button class="btn btn-primary" type="submit">{{ game }}</button>
-	</form>
-	<br>
-	{% endfor %}
-</div>
-<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#passreset" aria-expanded="false" aria-controls="passreset">
+<button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#passreset" aria-expanded="false" aria-controls="passreset">
 	Reset Password
 </button>
-<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#stattable" aria-expanded="false" aria-controls="stattable">
-	Show Stats
-</button>
+
 <div class="collapse" id="passreset">
 	<br><br>
-	<div class="card" style="align-text:center;">
+	<div class="card" style="align-text:center; display:flex; align-items:center;">
 		<h3>Change Your Password</h3>
 		<form action="/resetpasswd" method="post" class="w-50 p-3">
 			<div class="form-group">
@@ -40,57 +29,76 @@
 		</form><br>
 	</div>
 </div>
-<div class="collapse" id="stattable">
-	<br><br>
-	<h3>Your Statistics</h3>
-	<table class="table table-striped table-hover w-75 p-3" >
-	<thead class="thead-dark">
-		<tr>
-			<th>Category</th>
-			<th>QN Answered</th>
-			<th>QN Attempted</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for category, value in stats %}
-			<tr>
-				<td>{{ category }}</td>
-				{% for stat in value %}
-					<td>
-						{{ stat }}
-					</td>
-				{% endfor %}
-			</tr>
-		{% endfor %}
-	</tbody>
-	</table>
-</div>
 <br>
 <br>
-<div class="card" id="icon">
-	<form action="/icon" method="post">
-		{% for item in coll %}
-		<div class="form-group">
-			<input name="img" type="radio" class="form-control"><img src="{{ item }}" alt="{{ item }}" style="width=300px; height=300px;">
-		</div>
-		{% endfor %}
-		<br>
-		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
-	</form>
+<div class="card collapse show" id="icon">
 	<br>
-	<button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#allicons" arai-expanded="false" aria-controls="allicons">
-		Show All Icons
-	</button>
-	<div class="collapse" id="allicons">
-		<h5>Current Balance: {{ money }}</h5>
-		<a href="/store">Buy A Random Icon!</a> Cost: 100 coins
-		<div class="container">
-			{% for icon in not_owned %}
-			<img src="{{ icon }}" alt="{{ icon }}" style="width=100%; padding=5px; padding-bottom:5px;">
+	<h2>Select a profile picture: </h2><br>
+	<form action="/icon" method="post" class="form-horizontal">
+			{% for i in enumcoll %}
+			<label for="option{{i}}">
+				<input class="form-check-input" type="radio" name="img" value="{{ i }}" id="option{{i}}">
+				<img src="{{ coll[i] }}" class="img-thumbnail my-4" style="width:250px;">
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			</label>
 			{% endfor %}
-		</div>
-	</div>
-
+      <br><br>
+		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
+	</form><br><br>
+	<form action="/store" class="font-italic">
+		Want more icons?
+		<button type="submit" class="btn btn-link">Go to Store</button>
+	</form>
 </div>
 
+{% endblock %}
+
+
+
+
+
+
+{% extends "_base.html" %}
+
+{% block body %}
+  <h1>Collection</h1>
+  <br>
+  <h3>Select a picture for your profile picture</h3>
+  <head>
+<style>
+  .carousel {
+    width:250px;
+    height:250px;
+    float: top;
+    }
+  .carousel-item {
+    width:250px;
+    height:250px;
+    }
+</style>
+</head>
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+
+  <div class="carousel-inner"  width="250px;">
+      <div class="carousel-item active" >
+        <a href="#"><img class="d-block w-100" src="{{new}}" alt="First slide"  width="250px;"></a>
+        <div class="carousel-caption d-none d-md-block">
+        <h5>NEW!</h5>
+  </div>
+      </div>
+{% for item in coll%}
+      <div class="carousel-item">
+          <a href="#"><img class="d-block w-100" src="{{item}}" alt="Slide" width="250px;"></a>
+      </div>
+{% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
 {% endblock %}

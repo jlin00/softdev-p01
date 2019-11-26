@@ -5,6 +5,7 @@
 
 import sqlite3
 from utl.db_builder import exec, execmany
+from collections import OrderedDict
 
 #====================================================
 #formatting functions
@@ -57,10 +58,13 @@ def addUser(username, password, flag):
     inputs = (username,)
     data = execmany(q, inputs).fetchone()
     if (data is None):
-        q = "INSERT INTO user_tbl VALUES(?, ?, '', '', '', 200, ?, ?, 0)"
+        q = "INSERT INTO user_tbl VALUES(?, ?, ?, ?, '', 200, ?, ?, 0)"
+        command = "SELECT flag from flags_tbl where country=?"
+        inputs = (flag, )
+        pic = execmany(command, inputs).fetchone()[0]
         command = "SELECT stat FROM user_tbl WHERE username='jackielin'"
         stats = exec(command).fetchone()[0]
-        inputs = (username, password, flag, stats)
+        inputs = (username, password, pic, pic, flag, stats)
         execmany(q, inputs)
         return True
     return False #if username already exists
@@ -89,20 +93,59 @@ def getStats(username):
             stats[category[0]] = (category[1], category[2])
     return stats
 
+def getCountry(username):
+    q = "SELECT flag from user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()[0]
+    return data
+
+def getPic(username):
+    q = "SELECT pic from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    return data
+
+def updatePic(username, pic):
+    q = "UPDATE user_tbl SET pic=? WHERE username=?"
+    inputs = (pic, username)
+    data = execmany(q, inputs)
+
+def getScore(username):
+    q = "SELECT score from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    return data
+
+def getMoney(username):
+    q = "SELECT money from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    return data
+
+def getColl(username):
+    q = "SELECT coll from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    return data
 
 #====================================================
 #creating leaderboard functions
+def orderDict(list):
+    list = sorted(list, key=lambda x:x[1])
+    dict = OrderedDict()
+    for item in list:
+        dict[item[0]] = item[1]
+    return dict
 
 def userLeaderboard():
     q = "SELECT username, score FROM user_tbl"
     data = exec(q).fetchall()
-    return makeDict(data)
+    return orderDict(data)
 
 def nationLeaderboard():
     q = "SELECT country, SUM(score) FROM user_tbl, flags_tbl WHERE flags_tbl.country = user_tbl.flag GROUP BY flags_tbl.country"
     data = exec(q).fetchall()
-    data = makeDict(data)
-    #print(data)
+    data = orderDict(data)
     return data
 
 def myCountryboard(username):
@@ -111,20 +154,43 @@ def myCountryboard(username):
     country = execmany(q, inputs).fetchone()[0]
     q = "SELECT username,score FROM user_tbl WHERE flag=?"
     inputs = (country,)
-    countryRank = makeDict(execmany(q, inputs).fetchall())
+    countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
+
 #====================================================
 #creating store functions
-def moneyExchange(username):
+def purchase(username, value):
     q = "SELECT money FROM user_tbl WHERE username=?"
     inputs = (username,)
-    money=execmany(q,inputs).fetchone()[0]
+    money = execmany(q, inputs).fetchone()[0]
+    if (money >= value):
+        if (value == 50):
+            packR(username)
+        #additional code
+        q = "UPDATE user_tbl SET money=? WHERE username=?"
+        money -= value
+        inputs = (money, username)
+        execmany(q, inputs)
+        return True
+    return False
 
-def getCollection(username):
-    q="SELECT coll FROM user_tbl WHERE username=?"
-    inputs=(username,)
-    coll=formatFetch(execmany(q,inputs).fetchall())
-    return coll
-def insertPic(username,mode):
-    q = "SELECT ? FROM user_tbl WHERE username=?"
-    inputs=(mode,user
+def packR(username):
+    q = "SELECT pic FROM pic_tbl ORDER BY random() LIMIT 3;"
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        print(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
+
+def packS():
+    #code to return random space pack
+    return None
+
+def packM():
+    #code to return random pokemon pack
+    return None
