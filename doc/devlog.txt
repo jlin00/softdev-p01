@@ -156,3 +156,6 @@ amandaZ -- 2019-11-21 23:46
 
 jackieL -- 2019-11-25 14:52
 updated homepage and db fucntions for profile
+
+jackieL -- 2019-11-26 01:12
+added to homepage and profile, fixed setting profile icon and worked on store

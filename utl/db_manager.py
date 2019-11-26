@@ -105,6 +105,11 @@ def getPic(username):
     data = execmany(q, inputs).fetchone()[0]
     return data
 
+def updatePic(username, pic):
+    q = "UPDATE user_tbl SET pic=? WHERE username=?"
+    inputs = (pic, username)
+    data = execmany(q, inputs)
+
 def getScore(username):
     q = "SELECT score from user_tbl WHERE username=?"
     inputs = (username, )
@@ -151,9 +156,29 @@ def myCountryboard(username):
     inputs = (country,)
     countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
+
 #====================================================
 #creating store functions
-def moneyExchange(username):
+def purchase(username, value):
     q = "SELECT money FROM user_tbl WHERE username=?"
     inputs = (username,)
-    money=execmany(q,inputs)
+    money = execmany(q, inputs).fetchone()[0]
+    if (money >= value):
+        q = "UPDATE user_tbl SET money=? WHERE username=?"
+        money -= value
+        inputs = (money, username)
+        execmany(q, inputs)
+        return True
+    return False
+
+def packR():
+    #code to return random rick and morty pack
+    return None
+
+def packS():
+    #code to return random space pack
+    return None
+
+def packM():
+    #code to return random pokemon pack
+    return None

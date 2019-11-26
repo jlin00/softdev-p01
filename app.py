@@ -108,12 +108,8 @@ def home():
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
-    stat = db_manager.getStats(username)
-    print(stat)
-    for category in stat:
-        for i in range(len(category)):
-            print(category[i])
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stat=stat)
+    stats = db_manager.getStats(username).items()
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
 
 @app.route("/leaderboard")
 @login_required
@@ -140,17 +136,15 @@ def logout():
 @login_required
 def profile():
     username=session['username']
-    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username="{}"'.format(username)
-    raw = db_manager.exec(command).fetchall()
-    iconstring = raw[0][0]
-    money = raw[0][1]
+    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username=?'
+    inputs = (username, )
+    raw = db_manager.execmany(command, inputs).fetchone()
+    iconstring = raw[0]
     coll = iconstring.split(",")
-    #coll.remove('')
-    games = raw[0][2].split(",")
-    games.remove("")
-    stats = db_manager.getStats(username).items()
+    money = raw[1]
+    games = raw[2].split(",")
     return render_template("profile.html",
-            stats=stats,
+            enumcoll=range(len(coll)),
             coll=coll,
             money=money,
             games=games,
@@ -162,8 +156,10 @@ def icon():
     if 'img' not in request.form:
         flash("Please Select a Profile Icon!", "alert-danger")
         return redirect("/profile")
-    command='UPDATE user_tbl SET pic="{}" WHERE username="{}";'.format(request.form['img'], session['username'])
-    db_manager.exec(command)
+    index = int(request.form['img'])
+    user = session['username']
+    img = db_manager.getColl(user)[index]
+    db_manager.updatePic(user, img)
     flash("Successfully set Player Icon", 'alert-success')
     return redirect("/home")
 
@@ -194,13 +190,13 @@ def store():
 
 @app.route("/purchase")
 def purchase():
-    if request.args.get('value') == "R":
-
-        return render_template("collection.html")
-    elif request.args.get('value') == "S":
-        return render_template("collection.html")
-    else:
-        return render_template("collection.html")
+    username = session['username']
+    selection = int(request.args['value'])
+    purchased = db_manager.purchase(username, selection)
+    if (purchased):
+        flash('Purchase successfully made!','alert-success')
+    flash('You don\'t have enough money to make this purchase!', 'alert-danger')
+    return redirect(url_for("store"))
 
 @app.route("/play", methods=['GET', 'POST'])
 @login_required

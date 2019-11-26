@@ -5,12 +5,12 @@
 {% endblock %}
 
 {% block body %}
-  <h1><font color ="#25383C">Leaderboards</font></h1>
+  <h1><font color ="#25383C">Leaderboards</font></h1><br>
 	<div class="accordion" id="accordionExample">
   <div class="card">
     <div class="card-header" id="headingOne">
       <h5 class="mb-0">
-        <button class="btn btn-link" type="button" style="font-weight:700" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        <button class="btn btn-link text-dark font-weight-bold" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
           Top Users
         </button>
       </h5>
@@ -28,7 +28,7 @@
 					</thead>
 					<tbody>
 						{% for i, (k, v) in leaderboard %}
-						<tr>
+						<tr class="text-center">
 							<th>{{ i + 1 }}</th>
 							<td>{{ k }}</td>
 							<td>{{ v }}</td>
@@ -42,7 +42,7 @@
   <div class="card">
     <div class="card-header" id="headingTwo">
       <h5 class="mb-0">
-        <button class="btn btn-link collapsed" style="font-weight:700" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        <button class="btn btn-link collapsed text-dark font-weight-bold" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
           Top Countries
         </button>
       </h5>
@@ -59,7 +59,7 @@
 					</thead>
 					<tbody>
 						{% for i, (k, v) in nationboard %}
-						<tr>
+						<tr class="text-center">
 							<th>{{ i + 1 }}</th>
 							<td>{{ k }}</td>
 							<td>{{ v }}</td>
@@ -73,7 +73,7 @@
   <div class="card">
     <div class="card-header" id="headingThree">
       <h5 class="mb-0">
-        <button class="btn btn-link collapsed" style="font-weight:700" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        <button class="btn btn-link collapsed text-dark font-weight-bold" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
           Top Users in {{ country }}
         </button>
       </h5>
@@ -90,7 +90,7 @@
 					</thead>
 					<tbody>
 						{% for i, (k, v) in countryboard %}
-						<tr>
+						<tr class="text-center">
 							<th>{{ i + 1 }}</th>
 							<td>{{ k }}</td>
 							<td>{{ v }}</td>
@@ -103,7 +103,4 @@
   </div>
 </div>
 <br>
-  <form action = '/home'>
-		<button class="btn btn-secondary" type = "submit"> Back </button>
-	</form>
 {% endblock %}
