@@ -40,6 +40,10 @@ def no_login_required(f):
 #====================================================
 
 #Michael's Code Below
+@app.route("/search")
+def search():
+    return render_template('search.html')
+
 @app.route("/")
 def root():
     if 'username' in session:
