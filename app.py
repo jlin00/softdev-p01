@@ -123,13 +123,8 @@ def leaderboard():
                             leaderboard=enumerate(leaderboard.items()),
                             nationboard=enumerate(nationboard.items()),
                             countryboard=enumerate(countryboard.items()),
-                            country=country)
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    flash('You were successfully logged out.', 'alert-success')
-    return redirect('/')
+                            country=country,
+                            board="active")
 
 #profile pages below
 @app.route("/profile")
@@ -185,17 +180,20 @@ def password():
     return redirect("/home")
 
 @app.route("/store")
+@login_required
 def store():
-    return render_template("store.html")
+    return render_template("store.html", store="active")
 
 @app.route("/purchase")
+@login_required
 def purchase():
     username = session['username']
     selection = int(request.args['value'])
     purchased = db_manager.purchase(username, selection)
     if (purchased):
         flash('Purchase successfully made!','alert-success')
-    flash('You don\'t have enough money to make this purchase!', 'alert-danger')
+    else:
+        flash('You don\'t have enough money to make this purchase!', 'alert-danger')
     return redirect(url_for("store"))
 
 @app.route("/play", methods=['GET', 'POST'])
@@ -302,8 +300,15 @@ def check():
     db_manager.exec(command)
     return redirect("/play")
 
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash('You were successfully logged out.', 'alert-success')
+    return redirect('/')
+
 if __name__ == "__main__":
     db_builder.build_db()
     db_builder.build_flag()
+    db_builder.build_pic()
     app.debug = True
     app.run()

@@ -164,6 +164,9 @@ def purchase(username, value):
     inputs = (username,)
     money = execmany(q, inputs).fetchone()[0]
     if (money >= value):
+        if (value == 50):
+            packR(username)
+        #additional code
         q = "UPDATE user_tbl SET money=? WHERE username=?"
         money -= value
         inputs = (money, username)
@@ -171,9 +174,18 @@ def purchase(username, value):
         return True
     return False
 
-def packR():
-    #code to return random rick and morty pack
-    return None
+def packR(username):
+    q = "SELECT pic FROM pic_tbl ORDER BY random() LIMIT 3;"
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        print(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
 
 def packS():
     #code to return random space pack

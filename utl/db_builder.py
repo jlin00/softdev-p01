@@ -48,10 +48,10 @@ def build_db():
     command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT, diff TEXT, choices TEXT, answer TEXT)"
     exec(command)
 
-    command = "CREATE TABLE IF NOT EXISTS cached_game_tbl (game_id TEXT, type TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT)"
+    command = "CREATE TABLE IF NOT EXISTS flags_tbl (country TEXT PRIMARY KEY, flag TEXT)"
     exec(command)
 
-    command = "CREATE TABLE IF NOT EXISTS flags_tbl (country TEXT PRIMARY KEY, flag TEXT)"
+    command = "CREATE TABLE IF NOT EXISTS pic_tbl (category TEXT, pic TEXT PRIMARY KEY)"
     exec(command)
 
 #populates flag_tbl if it isn't already populated
@@ -68,3 +68,26 @@ def build_flag():
             execmany(q, inputs)
     #else:
         #print("NOT EXECUTING BUILD_FLAG")
+
+#build pic cache
+def build_pic():
+    command = "SELECT * FROM pic_tbl;"
+    data = exec(command).fetchone()
+    if (data is None):
+        #building Rick and Morty picture cache
+        for i in range(5):
+            url = "https://rickandmortyapi.com/api/character/?page=%d" % i
+            u = urllib.request.urlopen(url)
+            response = json.loads(u.read())['results']
+            for i in range(len(response)):
+                pic = response[i]['image']
+                q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
+                inputs = ("R", pic)
+                execmany(q, inputs)
+
+#build question cache
+def build_question():
+    command = "SELECT * FROM question_tbl;"
+    data = exec(command).fetchone()
+    if (data is None):
+        return data

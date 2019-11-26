@@ -178,3 +178,6 @@ HOME STRETCH PLAN
       -add frontend to allow users to start game (11/29)
       -add search feature to allow users to search for games to join (11/29)
       -write database functions to create quiz with answers (11/29)
+
+jackieL -- 2019-11-26 02:28
+formatted profile picture store and tested out buying

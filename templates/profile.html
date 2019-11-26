@@ -34,15 +34,15 @@
 <div class="card collapse show" id="icon">
 	<br>
 	<h2>Select a profile picture: </h2><br>
-	<form action="/icon" method="post">
-		<div class="col-sm-10">
+	<form action="/icon" method="post" class="form-horizontal">
 			{% for i in enumcoll %}
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="img" value="{{ i }}">
-					<img src="{{ coll[i] }}" style="width:250px">
-        </div>
+			<label for="option{{i}}">
+				<input class="form-check-input" type="radio" name="img" value="{{ i }}" id="option{{i}}">
+				<img src="{{ coll[i] }}" class="img-thumbnail my-4" style="width:250px;">
+				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+			</label>
 			{% endfor %}
-      </div><br>
+      <br><br>
 		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
 	</form><br><br>
 	<form action="/store" class="font-italic">
