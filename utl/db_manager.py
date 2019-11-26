@@ -187,10 +187,15 @@ def packR(username):
         inputs = (coll, username)
         execmany(q, inputs)
 
-def packS():
+def packP():
     #code to return random space pack
     return None
 
 def packM():
     #code to return random pokemon pack
     return None
+
+def pfp(username,link):
+    q = "UPDATE user_tbl SET pic = ? WHERE username=?"
+    inputs=(link, username)
+    execmany(q,inputs)

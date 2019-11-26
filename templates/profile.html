@@ -1,7 +1,19 @@
 {% extends "_base.html" %}
 
 {% block title %}User Profile{% endblock %}
-
+<head>
+<style>
+  .carousel {
+    width:250px;
+    height:250px;
+    float: top;
+    }
+  .carousel-item {
+    width:250px;
+    height:250px;
+    }
+</style>
+</head>
 {% block body %}
 <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#passreset" aria-expanded="false" aria-controls="passreset">
 	Reset Password
@@ -31,52 +43,6 @@
 </div>
 <br>
 <br>
-<div class="card collapse show" id="icon">
-	<br>
-	<h2>Select a profile picture: </h2><br>
-	<form action="/icon" method="post" class="form-horizontal">
-			{% for i in enumcoll %}
-			<label for="option{{i}}">
-				<input class="form-check-input" type="radio" name="img" value="{{ i }}" id="option{{i}}">
-				<img src="{{ coll[i] }}" class="img-thumbnail my-4" style="width:250px;">
-				&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-			</label>
-			{% endfor %}
-      <br><br>
-		<button type="submit" class="btn btn-primary">Set Player Icon!</button>
-	</form><br><br>
-	<form action="/store" class="font-italic">
-		Want more icons?
-		<button type="submit" class="btn btn-link">Go to Store</button>
-	</form>
-</div>
-
-{% endblock %}
-
-
-
-
-
-
-{% extends "_base.html" %}
-
-{% block body %}
-  <h1>Collection</h1>
-  <br>
-  <h3>Select a picture for your profile picture</h3>
-  <head>
-<style>
-  .carousel {
-    width:250px;
-    height:250px;
-    float: top;
-    }
-  .carousel-item {
-    width:250px;
-    height:250px;
-    }
-</style>
-</head>
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 
   <div class="carousel-inner"  width="250px;">
@@ -88,7 +54,7 @@
       </div>
 {% for item in coll%}
       <div class="carousel-item">
-          <a href="#"><img class="d-block w-100" src="{{item}}" alt="Slide" width="250px;"></a>
+          <a href="/newhome?value={{id}}"><img class="d-block w-100" src="{{item}}" alt="Slide" width="250px;"></a>
       </div>
 {% endfor %}
     </div>
@@ -101,4 +67,7 @@
       <span class="sr-only">Next</span>
     </a>
   </div>
+{% endblock %}
+
+
 {% endblock %}

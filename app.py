@@ -113,6 +113,22 @@ def home():
     stats = db_manager.getStats(username).items()
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
 
+@app.route("/newhome")
+@login_required
+def newhome():
+    username = session['username']
+    score = db_manager.getScore(username)
+    money = db_manager.getMoney(username)
+    stats = db_manager.getStats(username).items()
+    if request.args['id'][0]=="R":
+        pic="https://rickandmortyapi.com/api/character/avatar/"+request.args['id'][1:]+".jpeg"
+    elif request.args['id'][0]=="P":
+        pic="https://pokeres.bastionbot.org/images/pokemon/"+request.args['id'][1:]+".png"
+    else:
+        pic="https://picsum.photos/id/"+request.args['id'][1:]+"/250.jpg"
+    db_manager.pfp(username,pic)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
+
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
@@ -189,25 +205,14 @@ def store():
 @app.route("/purchase")
 @login_required
 def purchase():
-    list=db_manager.getCollection(session['username'])
-    if request.args.get('value') == "R":
-        link="https://rickandmortyapi.com/api/character/avatar/"+str(random.choice(range(1,494)))+".jpeg"
-        return render_template("collection.html",coll=list,new=link,desc="Rick and Morty")
-    elif request.args.get('value') == "P":
-        pokeID=str(random.choice(range(1,807)))
-        link="https://pokeres.bastionbot.org/images/pokemon/"+pokeID+".png"
-        return render_template("collection.html",coll=list,new=link,desc="Pokemon")
+    username = session['username']
+    selection = int(request.args['value'])
+    purchased = db_manager.purchase(username, selection)
+    if (purchased):
+        flash('Purchase successfully made!','alert-success')
     else:
-        link="https://picsum.photos/id/"+str(random.choice(mysteryid))+"/200.jpg"
-        return render_template("collection.html",coll=list,new=link,desc="Mystery")
-#username = session['username']
-#selection = int(request.args['value'])
-#purchased = db_manager.purchase(username, selection)
-#if (purchased):
-#    flash('Purchase successfully made!','alert-success')
-#else:
-#    flash('You don\'t have enough money to make this purchase!', 'alert-danger')
-#return redirect(url_for("store"))
+        flash('You don\'t have enough money to make this purchase!', 'alert-danger')
+    return redirect(url_for("store"))
 
 @app.route("/play", methods=['GET', 'POST'])
 @login_required
