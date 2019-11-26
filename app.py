@@ -289,14 +289,16 @@ def create():
     game_id = 0 #change this
     if 'p' in request.form['id']:
         #check if there exists a game with room first
+        return 'under construction'
         #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
     elif 't' in request.form['id']:
         #check if there exists a game with room first
+        return 'under construction'
         #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
     else:
-        command = 'INSERT INTO game_tbl VALUES ("{}", "{}", "{}", "{}", "{}");'.format(''+game_id, session['username'], 0 + ',' + session['username'], '', session['username'])
+        command = 'INSERT INTO game_tbl VALUES ("{}", "{}", "{}", "{}", "{}");'.format(str(game_id), session['username'], str(0) + ',' + session['username'], '', session['username'])
     db_manager.exec(command)
     return redirect("/play")
 
