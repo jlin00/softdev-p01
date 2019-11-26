@@ -9,6 +9,8 @@ from utl import db_builder, db_manager
 from urllib.request import urlopen
 from json import loads
 import random
+import urllib, json
+from json import loads
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -41,9 +43,6 @@ def no_login_required(f):
 #code for creating icons
 icons=[]
 
-for i in range(1, 20):
-    data = loads(urlopen("https://rickandmortyapi.com/api/character/{}".format(str(i))).read())
-    icons.append(data['image'])
 
 #====================================================
 
@@ -196,13 +195,18 @@ def store():
     return render_template("store.html")
 @app.route("/purchase")
 def purchase():
+    list=db_manager.getCollection(session['username'])
     if request.args.get('value') == "R":
-
-        return render_template("collection.html")
-    elif request.args.get('value') == "S":
-        return render_template("collection.html")
+        link="https://rickandmortyapi.com/api/character/avatar/"+str(random.choice(range(1,494)))+".jpeg"
+        return render_template("collection.html",coll=list,new=link,desc="Rick and Morty")
+    elif request.args.get('value') == "P":
+        pokeID=str(random.choice(range(1,807)))
+        link="https://pokeres.bastionbot.org/images/pokemon/"+pokeID+".png"
+        return render_template("collection.html",coll=list,new=link,desc="Pokemon")
     else:
-        return render_template("collection.html")
+        link="https://picsum.photos/id/"+str(random.choice(mysteryid))+"/200.jpg"
+        return render_template("collection.html",coll=list,new=link,desc="Mystery")
+
 
 @app.route("/play", methods=['GET', 'POST'])
 @login_required

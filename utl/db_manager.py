@@ -12,8 +12,8 @@ from utl.db_builder import exec, execmany
 #turns tuple into a list
 def formatFetch(results):
     collection=[]
-    for item in results:
-        if str(item) not in collection:
+    for item in results[0]:
+        if str(item) not in collection and len(str(item))>0:
             collection.append(str(item)[2:-3])
     return collection
 
@@ -87,7 +87,6 @@ def getStats(username):
         for category in data:
             category = category.split("|")
             stats[category[0]] = (category[1], category[2])
-    print(stats)
     return stats
 
 
@@ -119,5 +118,13 @@ def myCountryboard(username):
 def moneyExchange(username):
     q = "SELECT money FROM user_tbl WHERE username=?"
     inputs = (username,)
-    money=execmany(q,inputs)
-    
+    money=execmany(q,inputs).fetchone()[0]
+
+def getCollection(username):
+    q="SELECT coll FROM user_tbl WHERE username=?"
+    inputs=(username,)
+    coll=formatFetch(execmany(q,inputs).fetchall())
+    return coll
+def insertPic(username,mode):
+    q = "SELECT ? FROM user_tbl WHERE username=?"
+    inputs=(mode,user
