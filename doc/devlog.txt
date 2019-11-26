@@ -148,7 +148,7 @@ jackieL -- 2019-11-21 23:06
 added code to profile html page and database functions to display user stats
 
 amandaZ -- 2019-11-21 23:46
-    -made two api cards 
+    -made two api cards
         -one for pictures api and one for nasa api
     -made a gorgeous store
         -mainly html front
@@ -159,3 +159,22 @@ updated homepage and db fucntions for profile
 
 jackieL -- 2019-11-26 01:12
 added to homepage and profile, fixed setting profile icon and worked on store
+
+jackieL -- 2019-11-26 01:17
+HOME STRETCH PLAN
+  Priority List:
+    -finish store functionality (Amanda)
+      -create cached pictures table (11/26)
+      -write database functions to generate picture packs (11/26)
+      -write database functions to allow users to buy picture packs (11/26)
+    -create single-player trivia games (Junhee, Michael)
+      -add frontend to allow users to start game (11/27)
+      -create cached questions table (11/27)
+      -write database functions to create quiz with answers (11/27)
+    -update materials (Jackie)
+      -design doc and devlog (11/29)
+  Additional Features List:
+    -create multiplayer trivia games (TBD)
+      -add frontend to allow users to start game (11/29)
+      -add search feature to allow users to search for games to join (11/29)
+      -write database functions to create quiz with answers (11/29)
