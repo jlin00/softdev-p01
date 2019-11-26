@@ -247,7 +247,7 @@ def play():
     choices = question['incorrect_answers']
     choices.append(question['correct_answer'])
     #cache
-    command='INSERT INTO cached_question_tbl VALUES ("{}", "{}", "{}", "{}", "{}")'.format(question['category'],
+    command='INSERT INTO cached_question_tbl VALUES ("{}", "{}", "{}", "{}", "{}");'.format(question['category'],
             question['question'],
             question['difficulty'],
             choices,
@@ -287,11 +287,11 @@ def play():
 @app.route("/triviacheck", methods=['POST'])
 @login_required
 def check():
-    command = 'SELECT answer FROM cached_question_tbl WHERE question="{}"'.format(request.form['question'])
+    command = 'SELECT answer FROM cached_question_tbl WHERE question="{}";'.format(request.form['question'])
     ans = db_manager.exec(command).fetchall()
     if ans[0][0] == request.form['answer']:
         #correct answer
-        command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
+        command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
         teams = db_manager.exec(command).fetchall()[0]
         if session['username'] in teams[0]:
             data = teams[0].split(',')
@@ -301,13 +301,13 @@ def check():
             data = teams[1].split(',')
             data[0] = (int(data[0]) + 10) + ''
             teams[1] = data.join(',')
-        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}"'.format(teams[0], teams[1], request.form["id"])
+        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}";'.format(teams[0], teams[1], request.form["id"])
         db_manager.exec(command)
-    command = 'SELECT participants FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
+    command = 'SELECT participants FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
     participants = db_manager.exec(command).fetchall()[0][0].split(',')
     participants.remove('')
     player = participants.index(session['username'])
-    command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}"'.format(participants[player - 1], request.form['id'])
+    command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}";'.format(participants[player - 1], request.form['id'])
     db_manager.exec(command)
     return redirect("/play")
 
