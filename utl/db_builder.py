@@ -74,16 +74,34 @@ def build_pic():
     command = "SELECT * FROM pic_tbl;"
     data = exec(command).fetchone()
     if (data is None):
+        q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
         #building Rick and Morty picture cache
         for i in range(5):
             url = "https://rickandmortyapi.com/api/character/?page=%d" % i
             u = urllib.request.urlopen(url)
             response = json.loads(u.read())['results']
-            for i in range(len(response)):
-                pic = response[i]['image']
-                q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
+            for j in range(len(response)):
+                pic = response[j]['image']
+                id = "R" + response[j]['url']
                 inputs = ("R", pic)
                 execmany(q, inputs)
+
+        #building lorem picsum picture cache
+        url = "https://picsum.photos/v2/list?page=1&limit=80"
+        u = urllib.request.urlopen(url)
+        response = json.loads(u.read())
+        for entry in response:
+            pic = entry['url']
+            id = "M" + entry['id']
+            inputs = (id, pic)
+            execmany(q, inputs)
+
+        #building pokemon picture cache
+        for i in range(80):
+            pic = "https://pokeapi.co/api/v2/pokemon/%d" % i
+            id = "P" + str(i)
+            inputs = (id, pic)
+            execmany(q, inputs)
 
 #build question cache
 def build_question():
