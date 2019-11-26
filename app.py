@@ -221,9 +221,6 @@ def play():
                 single=single,
                 play="active")
     game = request.form['id']
-    if 'new' in game:
-        #create game
-        redirect("/play")
     command = 'SELECT team1,team2,playing FROM game_tbl WHERE game_id="{}";'.format(game)
     raw = db_manager.exec(command).fetchall()
     team1 = raw[0][0].split(',')
@@ -283,6 +280,12 @@ def play():
             question=q,
             choices=c,
             game=game)
+
+@app.route("/new", methods=['POST'])
+@login_required
+def create():
+    #create game code here
+    return redirect("/play")
 
 @app.route("/triviacheck", methods=['POST'])
 @login_required
