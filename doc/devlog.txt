@@ -184,3 +184,6 @@ formatted profile picture store and tested out buying
 
 jackieL -- 2019-11-26 10:16
 added code to cache images from pictures database
+
+jackieL -- 2019-11-26 12:53
+finished building picture cache table in database

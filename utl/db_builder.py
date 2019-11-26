@@ -75,30 +75,30 @@ def build_pic():
     data = exec(command).fetchone()
     if (data is None):
         q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
+
         #building Rick and Morty picture cache
-        for i in range(5):
-            url = "https://rickandmortyapi.com/api/character/?page=%d" % i
-            u = urllib.request.urlopen(url)
-            response = json.loads(u.read())['results']
-            for j in range(len(response)):
-                pic = response[j]['image']
-                id = "R" + response[j]['url']
-                inputs = ("R", pic)
-                execmany(q, inputs)
+        for i in range(80):
+            i = i + 1
+            pic = "https://rickandmortyapi.com/api/character/avatar/%d.jpeg" % i
+            id = "R" + str(i)
+            inputs = (id, pic)
+            execmany(q, inputs)
 
         #building lorem picsum picture cache
         url = "https://picsum.photos/v2/list?page=1&limit=80"
         u = urllib.request.urlopen(url)
         response = json.loads(u.read())
-        for entry in response:
-            pic = entry['url']
-            id = "M" + entry['id']
+        for entry in response: #take every id
+            id = entry['id']
+            pic = "https://picsum.photos/id/%s/250" % id
+            id = "M" + id
             inputs = (id, pic)
             execmany(q, inputs)
 
         #building pokemon picture cache
         for i in range(80):
-            pic = "https://pokeapi.co/api/v2/pokemon/%d" % i
+            i = i + 1
+            pic = "https://pokeres.bastionbot.org/images/pokemon/%d.png" % i
             id = "P" + str(i)
             inputs = (id, pic)
             execmany(q, inputs)
