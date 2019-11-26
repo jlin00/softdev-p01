@@ -166,6 +166,10 @@ def purchase(username, value):
     if (money >= value):
         if (value == 50):
             packR(username)
+        if (value == 75):
+            packP(username)
+        if (value == 100):
+            packM(username)
         #additional code
         q = "UPDATE user_tbl SET money=? WHERE username=?"
         money -= value
@@ -175,22 +179,37 @@ def purchase(username, value):
     return False
 
 def packR(username):
-    q = "SELECT pic FROM pic_tbl ORDER BY random() LIMIT 3;"
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'R%' ORDER BY random() LIMIT 3"
     data = exec(q).fetchall()
     for pic in data:
         pic = pic[0]
         coll = getColl(username)
         coll.append(pic)
         coll = ",".join(coll)
-        print(coll)
         q = "UPDATE user_tbl SET coll=? WHERE username=?"
         inputs = (coll, username)
         execmany(q, inputs)
 
-def packS():
-    #code to return random space pack
-    return None
+def packP(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'P%' ORDER BY random() LIMIT 3"
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
 
-def packM():
-    #code to return random pokemon pack
-    return None
+def packM(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'M%' ORDER BY random() LIMIT 3 "
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
