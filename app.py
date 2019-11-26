@@ -221,10 +221,10 @@ def play():
                 single=single,
                 play="active")
     game = request.form['id']
-    if game == 'new':
+    if 'new' in game:
         #create game
         redirect("/play")
-    command = 'SELECT team1,team2,playing FROM cached_game_tbl WHERE game_id="{}";'.format(game)
+    command = 'SELECT team1,team2,playing FROM game_tbl WHERE game_id="{}";'.format(game)
     raw = db_manager.exec(command).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
@@ -289,14 +289,25 @@ def play():
 def check():
     command = 'SELECT answer FROM cached_question_tbl WHERE question="{}"'.format(request.form['question'])
     ans = db_manager.exec(command).fetchall()
-    #if ans[0][0] == request.form['answer']:
+    if ans[0][0] == request.form['answer']:
         #correct answer
-        #update points
+        command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
+        teams = db_manager.exec(command).fetchall()[0]
+        if session['username'] in teams[0]:
+            data = teams[0].split(',')
+            data[0] = (int(data[0]) + 10) + ''
+            teams[0] = data.join(',')
+        if session['username'] in teams[1]:
+            data = teams[1].split(',')
+            data[0] = (int(data[0]) + 10) + ''
+            teams[1] = data.join(',')
+        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}"'.format(teams[0], teams[1], request.form["id"])
+        db_manager.exec(command)
     command = 'SELECT participants FROM game_tbl WHERE game_id="{}"'.format(request.form['id'])
     participants = db_manager.exec(command).fetchall()[0][0].split(',')
     participants.remove('')
     player = participants.index(session['username'])
-    command = 'UPDATE cached_game_tbl SET playing="{}" WHERE game_id="{}"'.format(participants[player - 1], request.form['id'])
+    command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}"'.format(participants[player - 1], request.form['id'])
     db_manager.exec(command)
     return redirect("/play")
 
