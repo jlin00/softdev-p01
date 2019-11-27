@@ -267,9 +267,11 @@ def play():
     q = question['question'] #question here
     c = set(choices) #choices
     category = question['category']
+    started = db_manager.gameStarted(game)
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
+                started=started,
                 player=session['username'],
                 up=up,
                 t1=t1,
@@ -281,6 +283,7 @@ def play():
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
+                started=started,
                 player=session["username"],
                 up=up,
                 t1=t1,
@@ -291,6 +294,7 @@ def play():
                 category=category)
     #single player
     return render_template("_gameplay.html",
+            started=started,
             player=session["username"],
             up=up,
             t1=t1,

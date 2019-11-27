@@ -289,8 +289,8 @@ def addSingle(username):
         game_id = "S" + str(random.randrange(10000))
 
     #add game to game table
-    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?)"
-    inputs = (str(game_id), username, str(0)+','+username, '', username)
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?)"
+    inputs = (str(game_id), username, str(0)+','+username, '', username, 1, 0)
     execmany(command, inputs)
 
     #add game to user table
@@ -301,3 +301,9 @@ def addSingle(username):
     games += "," + game_id
     inputs = (games, username)
     execmany(command, inputs)
+
+def gameStarted(game_id):
+    q = "SELECT started FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0]
+    return (data != 1)
