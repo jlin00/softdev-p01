@@ -135,7 +135,6 @@ def home():
     isOwner = False
     if (owner == username):
         isOwner = True
-
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)

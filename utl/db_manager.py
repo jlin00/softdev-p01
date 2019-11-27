@@ -261,7 +261,7 @@ def packM(username):
         execmany(q, inputs)
 
 def pfp(username,link):
-    q = "UPDATE user_tbl SET pic = ? WHERE username=?"
+    q = "UPDATE user_tbl SET pic=? WHERE username=?"
     inputs=(link, username)
     execmany(q,inputs)
 
@@ -270,7 +270,9 @@ def getpfp(pic_id):
     inputs = (pic_id, )
     data = execmany(q, inputs).fetchone()
     if (data is None):
-        return data
+        q = "SELECT flag FROM flags_tbl WHERE country=?"
+        inputs = (pic_id, )
+        data = execmany(q, inputs).fetchone()
     return data[0]
 #====================================================
 #creating game functions
