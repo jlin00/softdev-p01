@@ -14,8 +14,8 @@ import random
 #turns tuple into a list
 def formatFetch(results):
     collection=[]
-    for item in results[0]:
-        if str(item) not in collection and len(str(item))>0:
+    for item in results:
+         if str(item) not in collection:
             collection.append(str(item)[2:-3])
     return collection
 
@@ -128,6 +128,24 @@ def getColl(username):
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0].split(",")
     return data
+
+def getCollID(username):
+    coll = getColl(username)
+    list = []
+    for i in range(len(coll)):
+        pic = coll[i]
+        print("PICCICICCHSHSH=================")
+        print(pic)
+        q = "SELECT country from flags_tbl WHERE flag=?"
+        inputs = (pic, )
+        data = execmany(q, inputs).fetchone()
+        if (data is None):
+            q = "SELECT category from pic_tbl WHERE pic=?"
+            data = execmany(q, inputs).fetchone()[0]
+        else:
+            data = data[0]
+        list.append(data)
+    return list
 
 def getGames(username):
     q = "SELECT game_id from user_tbl WHERE username=?"
@@ -246,6 +264,14 @@ def pfp(username,link):
     q = "UPDATE user_tbl SET pic = ? WHERE username=?"
     inputs=(link, username)
     execmany(q,inputs)
+
+def getpfp(pic_id):
+    q = "SELECT pic FROM pic_tbl WHERE category=?"
+    inputs = (pic_id, )
+    data = execmany(q, inputs).fetchone()
+    if (data is None):
+        return data
+    return data[0]
 #====================================================
 #creating game functions
 

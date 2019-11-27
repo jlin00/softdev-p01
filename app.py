@@ -128,30 +128,19 @@ def home():
     if (request.args):
         if ('user' in request.args):
             username = request.args['user']
+        if ('value' in request.args):
+            pic = db_manager.getpfp(request.args['value'])
+            if (pic is not None):
+                db_manager.pfp(username, pic)
     isOwner = False
     if (owner == username):
         isOwner = True
+
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
-
-@app.route("/newhome")
-@login_required
-def newhome():
-    username = session['username']
-    score = db_manager.getScore(username)
-    money = db_manager.getMoney(username)
-    stats = db_manager.getStats(username).items()
-    if request.args['id'][0]=="R":
-        pic="https://rickandmortyapi.com/api/character/avatar/"+request.args['id'][1:]+".jpeg"
-    elif request.args['id'][0]=="P":
-        pic="https://pokeres.bastionbot.org/images/pokemon/"+request.args['id'][1:]+".png"
-    else:
-        pic="https://picsum.photos/id/"+request.args['id'][1:]+"/250.jpg"
-    db_manager.pfp(username,pic)
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
 
 @app.route("/leaderboard")
 @login_required
@@ -178,11 +167,13 @@ def profile():
     raw = db_manager.execmany(command, inputs).fetchone()
     iconstring = raw[0]
     coll = iconstring.split(",")
+    collID = db_manager.getCollID(username)
     money = raw[1]
     games = raw[2].split(",")
     return render_template("profile.html",
             enumcoll=range(len(coll)),
             coll=coll,
+            collID=collID,
             money=money,
             games=games,
             profile="active")

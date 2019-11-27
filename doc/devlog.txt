@@ -211,3 +211,6 @@ uploaded latest version of devlog
   -updated component map to reflect new caches in Backend
   -updated database schema with new caches
   -updated division of labor map 
+
+jackieL -- 2019-11-27 11:52
+updated code to allow selection of profile pictures
