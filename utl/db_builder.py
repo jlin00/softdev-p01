@@ -45,7 +45,7 @@ def build_db():
     command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT)"
     exec(command)
 
-    command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT, diff TEXT, choices TEXT, answer TEXT)"
+    command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT PRIMARY KEY, diff TEXT, choices TEXT, answer TEXT)"
     exec(command)
 
     command = "CREATE TABLE IF NOT EXISTS flags_tbl (country TEXT PRIMARY KEY, flag TEXT)"

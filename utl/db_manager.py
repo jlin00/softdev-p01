@@ -139,6 +139,7 @@ def getGames(username):
 #creating leaderboard functions
 def orderDict(list):
     list = sorted(list, key=lambda x:x[1])
+    list = list[::-1]
     dict = OrderedDict()
     for item in list:
         dict[item[0]] = item[1]
@@ -180,7 +181,7 @@ def findGame(query):
     q = "SELECT game_id FROM game_tbl"
     data = exec(q).fetchall()
     for game in data:
-        if (query in game[0]):
+        if (query in game[0] and "S" not in game[0]):
             list.append(game[0])
     return list
 

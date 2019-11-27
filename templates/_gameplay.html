@@ -41,11 +41,13 @@ Trivia
 	<form action="/triviacheck" method="post">
 		<input type="hidden" name="id" value="{{ game }}">
 		<input type="hidden" name="question" value="{{ question }}">
+		<input type="hidden" name="category" value="{{ category }}">
 		{% for answer in choices %}
 		<input type="radio" name="answer" value="{{ answer }}" id="{{ answer }}">
 		<label for="{{ answer }}">{{ answer }}</label>
 		<br>
 		{% endfor %}
+		<button type="submit" class="btn btn-primary">Submit</button>
 	</form>
 	{% else %}
 	<h4>{{up}} is currently making a move...</h4>

@@ -261,13 +261,12 @@ def play():
     choices = question['incorrect_answers']
     choices.append(question['correct_answer'])
     #cache
-    command='INSERT INTO cached_question_tbl VALUES ("{}", "{}", "{}", "{}", "{}");'.format(question['category'],
-            question['question'],
-            question['difficulty'],
-            choices,
-            question['correct_answer'])
+    command='INSERT OR IGNORE INTO question_tbl VALUES(?, ?, ?, ?, ?)'
+    inputs = (question['category'], question['question'], question['difficulty'], ",".join(choices), question['correct_answer'])
+    db_manager.execmany(command, inputs)
     q = question['question'] #question here
     c = set(choices) #choices
+    category = question['category']
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
@@ -277,7 +276,8 @@ def play():
                 t2=t2,
                 question=q,
                 choices=c,
-                game=game)
+                game=game,
+                category=category)
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
@@ -287,7 +287,8 @@ def play():
                 t2=t2,
                 question=q,
                 choices=c,
-                game=game)
+                game=game,
+                category=category)
     #single player
     return render_template("_gameplay.html",
             player=session["username"],
@@ -296,7 +297,8 @@ def play():
             t2=['', []],
             question=q,
             choices=c,
-            game=game)
+            game=game,
+            category=category)
 
 @app.route("/new", methods=['POST'])
 @login_required
@@ -320,29 +322,56 @@ def create():
 @app.route("/triviacheck", methods=['POST'])
 @login_required
 def check():
-    command = 'SELECT answer FROM cached_question_tbl WHERE question="{}";'.format(request.form['question'])
-    ans = db_manager.exec(command).fetchall()
+    command = 'SELECT answer FROM question_tbl WHERE question=?;'
+    inputs = (request.form['question'], )
+    ans = db_manager.execmany(command, inputs).fetchall()
     if ans[0][0] == request.form['answer']:
         #correct answer
         command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
         teams = db_manager.exec(command).fetchall()[0]
+        #print(teams)
+        team1 = teams[0]
+        team2 = teams[1]
         if session['username'] in teams[0]:
             data = teams[0].split(',')
-            data[0] = (int(data[0]) + 10) + ''
-            teams[0] = data.join(',')
+            data[0] = str(int(data[0]) + 10)
+            team1 = ",".join(data)
         if session['username'] in teams[1]:
             data = teams[1].split(',')
-            data[0] = (int(data[0]) + 10) + ''
-            teams[1] = data.join(',')
-        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}";'.format(teams[0], teams[1], request.form["id"])
+            data[0] = str(int(data[0]) + 10)
+            team2 = ",".join(data)
+        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}";'.format(team1, team2, request.form["id"])
         db_manager.exec(command)
+        #update score
+        command = 'SELECT score FROM user_tbl WHERE username=?'
+        inputs = (session['username'], )
+        data = db_manager.execmany(command, inputs).fetchone()[0]
+        data += 10
+        command = 'UPDATE user_tbl SET score=? WHERE username=?'
+        inputs = (data, session['username'])
+        db_manager.execmany(command, inputs)
     command = 'SELECT participants FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
     participants = db_manager.exec(command).fetchall()[0][0].split(',')
-    participants.remove('')
+    if (participants.count('') > 0):
+        participants.remove('')
     player = participants.index(session['username'])
     command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}";'.format(participants[player - 1], request.form['id'])
     db_manager.exec(command)
-    return redirect("/play")
+    command = 'SELECT stat FROM user_tbl WHERE username=?;'
+    inputs = (session['username'], )
+    data = db_manager.execmany(command, inputs).fetchone()[0].split(",")
+    for i in range(len(data)):
+        category = data[i].split("|")
+        if category[0] == request.form['category']:
+            if ans[0][0] == request.form['answer']:
+                category[1] = str(int(category[1]) + 1)
+            category[2] = str(int(category[2]) + 1)
+        data[i] = "|".join(category)
+    data = ",".join(data)
+    command = 'UPDATE user_tbl SET stat=? WHERE username=?'
+    inputs = (data, session['username'])
+    db_manager.execmany(command, inputs)
+    return redirect(url_for("play"), code=307)
 
 @app.route("/logout")
 def logout():
