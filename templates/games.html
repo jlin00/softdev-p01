@@ -9,41 +9,53 @@
 	<div class="row">
 		<div class="col">
 			<div class="card">
-				Single Player Games:
-				<br>
+				<h3>Single Player Games</h3>
 				{% for game in single %}
 				<form action="/play" method="post">
 					<input type="hidden" value="{{ game }}" name="id">
-					<button class="btn btn-primary" type="submit">{{ game }}</button>
+					<button class="btn btn-link" type="submit">{{ game }}</button>
+				</form>
+				{% endfor %}
+				<br>
+				<form action="new" method="post">
+					<input type="hidden" value="new" name="id">
+					<button class="btn btn-info" type="submit">Create New Game</button>
 				</form>
 				<br>
-				{% endfor %}
 			</div>
 		</div>
 		<div class="col">
 			<div class="card">
-				PvP Games:
-				<br>
+				<h3>PvP Games</h3>
 				{% for game in pvp %}
 				<form action="/play" method="post">
 					<input type="hidden" value="{{ game }}" name="id">
-					<button class="btn btn-primary" type="submit">{{ game }}</button>
+					<button class="btn btn-link" type="submit">{{ game }}</button>
+				</form>
+				{% endfor %}
+				<br>
+				<form action="new" method="post">
+					<input type="hidden" value="newp" name="id">
+					<button class="btn btn-info" type="submit">Create New Game</button>
 				</form>
 				<br>
-				{% endfor %}
 			</div>
 		</div>
 		<div class="col">
 			<div class="card">
-				Team Rallies:
-				<br>
+				<h3>Team Rallies</h3>
 				{% for game in team %}
 				<form action="/play" method="post">
 					<input type="hidden" value="{{ game }}" name="id">
-					<button class="btn btn-primary" type="submit">{{ game }}</button>
+					<button class="btn btn-link" type="submit">{{ game }}</button>
+				</form>
+				{% endfor %}
+				<br>
+				<form action="new" method="post">
+					<input type="hidden" value="newt" name="id">
+					<button class="btn btn-info" type="submit">Create New Game</button>
 				</form>
 				<br>
-				{% endfor %}
 			</div>
 		</div>
 	</div>

@@ -6,6 +6,7 @@
 import sqlite3
 from utl.db_builder import exec, execmany
 from collections import OrderedDict
+import random
 
 #====================================================
 #formatting functions
@@ -128,10 +129,17 @@ def getColl(username):
     data = execmany(q, inputs).fetchone()[0].split(",")
     return data
 
+def getGames(username):
+    q = "SELECT game_id from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    return data
+
 #====================================================
 #creating leaderboard functions
 def orderDict(list):
     list = sorted(list, key=lambda x:x[1])
+    list = list[::-1]
     dict = OrderedDict()
     for item in list:
         dict[item[0]] = item[1]
@@ -157,6 +165,26 @@ def myCountryboard(username):
     countryRank = orderDict(execmany(q, inputs).fetchall())
     return countryRank
 
+def findUser(query):
+    query = query.lower().strip()
+    list = []
+    q = "SELECT username FROM user_tbl"
+    data = exec(q).fetchall()
+    for name in data:
+        if (query in name[0]):
+            list.append(name[0])
+    return list
+
+def findGame(query):
+    query = query.lower().strip()
+    list = []
+    q = "SELECT game_id FROM game_tbl"
+    data = exec(q).fetchall()
+    for game in data:
+        if (query in game[0] and "S" not in game[0]):
+            list.append(game[0])
+    return list
+
 #====================================================
 #creating store functions
 def purchase(username, value):
@@ -166,6 +194,10 @@ def purchase(username, value):
     if (money >= value):
         if (value == 50):
             packR(username)
+        if (value == 75):
+            packP(username)
+        if (value == 100):
+            packM(username)
         #additional code
         q = "UPDATE user_tbl SET money=? WHERE username=?"
         money -= value
@@ -175,14 +207,37 @@ def purchase(username, value):
     return False
 
 def packR(username):
-    q = "SELECT pic FROM pic_tbl ORDER BY random() LIMIT 3;"
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'R%' ORDER BY random() LIMIT 3"
     data = exec(q).fetchall()
     for pic in data:
         pic = pic[0]
         coll = getColl(username)
         coll.append(pic)
         coll = ",".join(coll)
-        print(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
+
+def packP(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'P%' ORDER BY random() LIMIT 3"
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
+        q = "UPDATE user_tbl SET coll=? WHERE username=?"
+        inputs = (coll, username)
+        execmany(q, inputs)
+
+def packM(username):
+    q = "SELECT pic FROM pic_tbl WHERE category LIKE 'M%' ORDER BY random() LIMIT 3 "
+    data = exec(q).fetchall()
+    for pic in data:
+        pic = pic[0]
+        coll = getColl(username)
+        coll.append(pic)
+        coll = ",".join(coll)
         q = "UPDATE user_tbl SET coll=? WHERE username=?"
         inputs = (coll, username)
         execmany(q, inputs)
@@ -199,3 +254,62 @@ def pfp(username,link):
     q = "UPDATE user_tbl SET pic = ? WHERE username=?"
     inputs=(link, username)
     execmany(q,inputs)
+#====================================================
+#creating game functions
+
+#get all single player games
+def getSingle(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "S" in data[i]:
+            list.append(data[i])
+    return list
+
+def getPVP(username):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0]
+    data = data.split(",")
+    list = []
+    for i in range(len(data)):
+        if "P" in data[i]:
+            list.append(data[i])
+    return list
+
+def getTeam(username):
+        q = "SELECT game_id FROM user_tbl WHERE username=?"
+        inputs = (username, )
+        data = execmany(q, inputs).fetchone()[0]
+        data = data.split(",")
+        list = []
+        for i in range(len(data)):
+            if "T" in data[i]:
+                list.append(data[i])
+        return list
+
+def addSingle(username):
+    #generate random game id
+    game_id = "S" + str(random.randrange(10000))
+    command = "SELECT game_id FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    data = execmany(command, inputs).fetchall()
+    while game_id in data:
+        game_id = "S" + str(random.randrange(10000))
+
+    #add game to game table
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?)"
+    inputs = (str(game_id), username, str(0)+','+username, '', username)
+    execmany(command, inputs)
+
+    #add game to user table
+    command = 'SELECT game_id FROM user_tbl WHERE username=?'
+    inputs = (username, )
+    games = execmany(command, inputs).fetchone()[0]
+    command = 'UPDATE user_tbl SET game_id=? WHERE username=?'
+    games += "," + game_id
+    inputs = (games, username)
+    execmany(command, inputs)

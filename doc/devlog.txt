@@ -181,3 +181,33 @@ HOME STRETCH PLAN
 
 jackieL -- 2019-11-26 02:28
 formatted profile picture store and tested out buying
+
+jackieL -- 2019-11-26 10:16
+added code to cache images from pictures database
+
+jackieL -- 2019-11-26 12:53
+finished building picture cache table in database
+
+jackieL -- 2019-11-26 13:06
+fixed buying functionality in db_mananger
+
+jackieL -- 2019-11-26 14:52
+added search functionality to search for users
+
+jackieL -- 2019-11-26 21:38
+updated search functionality and added code to create single-player game
+
+jackieL -- 2019-11-26 21:57
+added basic single-player game functionality
+
+jackieL -- 2019-11-26 23:29
+updated gameplay functionality and added database functions to modify user_tbl
+
+jackieL -- 2019-11-27 00:22
+uploaded latest version of devlog
+  -edited component description to reflect use of navigation bar
+  -edited site map to represent new relationships between routes
+  -updated list of APIs
+  -updated component map to reflect new caches in Backend
+  -updated database schema with new caches
+  -updated division of labor map 
