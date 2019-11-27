@@ -239,19 +239,22 @@ def play():
     raw = db_manager.exec(command).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
-    #team1.remove('')
-    #team2.remove('')
-    up = raw[0][2]
+    if (team1.count('') > 0):
+        team1.remove('')
+    if (team2.count('') > 0):
+        team2.remove('')
+    up = raw[0][2] #who's up next
     t1 = (team1.pop(0), [])
     for user in team1:
         command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-        raw = db_manager.exec(command)
+        raw = db_manager.exec(command).fetchone()
         t1[1].append((user, raw[0][0]))
-    t2 = (team2.pop(0), [])
-    for user in team2:
-        command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-        raw = db_manager.exec(command)
-        t2[1].append((user, raw[0][0]))
+    if ("S" not in game):
+        t2 = (team2.pop(0), [])
+        for user in team2:
+            command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
+            raw = db_manager.exec(command).fetchone()
+            t2[1].append((user, raw[0][0]))
     #fetch question from API
     raw = urlopen("https://opentdb.com/api.php?amount=1&type=multiple").read()
     question = loads(raw)['results'][0]
