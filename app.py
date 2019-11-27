@@ -324,11 +324,15 @@ def create():
     #create game code here
     username = session['username']
     if 'p' in request.form['id']:
+        command="SELECT participants FROM game_tbl WHERE game_id LIKE 'p'";
+        gameList=db_manager.formatFetch(db_builder.exec(command))
+        print(gameList)
         #check if there exists a game with room first
         return 'under construction'
     #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
     elif 't' in request.form['id']:
+
         #check if there exists a game with room first
         return 'under construction'
         #else:

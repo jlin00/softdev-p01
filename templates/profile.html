@@ -46,12 +46,14 @@
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 
   <div class="carousel-inner"  width="250px;">
+    <div class="carousel-item">
       <div class="carousel-item active" >
-        <a href="#"><img class="d-block w-100" src="{{new}}" alt="First slide"  width="250px;"></a>
+        <a href="/newhome?value={{id}}"><img class="d-block w-100" src="{{new}}" alt="First slide"  width="250px;"></a>
         <div class="carousel-caption d-none d-md-block">
         <h5>NEW!</h5>
-  </div>
       </div>
+    </div>
+  </div>
 {% for item in coll%}
       <div class="carousel-item">
           <a href="/newhome?value={{id}}"><img class="d-block w-100" src="{{item}}" alt="Slide" width="250px;"></a>
