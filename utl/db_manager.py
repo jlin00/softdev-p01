@@ -6,6 +6,7 @@
 import sqlite3
 from utl.db_builder import exec, execmany
 from collections import OrderedDict
+import random
 
 #====================================================
 #formatting functions
@@ -128,6 +129,12 @@ def getColl(username):
     data = execmany(q, inputs).fetchone()[0].split(",")
     return data
 
+def getGames(username):
+    q = "SELECT game_id from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    return data
+
 #====================================================
 #creating leaderboard functions
 def orderDict(list):
@@ -165,6 +172,16 @@ def findUser(query):
     for name in data:
         if (query in name[0]):
             list.append(name[0])
+    return list
+
+def findGame(query):
+    query = query.lower().strip()
+    list = []
+    q = "SELECT game_id FROM game_tbl"
+    data = exec(q).fetchall()
+    for game in data:
+        if (query in game[0]):
+            list.append(game[0])
     return list
 
 #====================================================
@@ -236,7 +253,7 @@ def getSingle(username):
     list = []
     for i in range(len(data)):
         if "S" in data[i]:
-            list.append(game)
+            list.append(data[i])
     return list
 
 def getPVP(username):
@@ -247,7 +264,7 @@ def getPVP(username):
     list = []
     for i in range(len(data)):
         if "P" in data[i]:
-            list.append(game)
+            list.append(data[i])
     return list
 
 def getTeam(username):
@@ -258,5 +275,28 @@ def getTeam(username):
         list = []
         for i in range(len(data)):
             if "T" in data[i]:
-                list.append(game)
+                list.append(data[i])
         return list
+
+def addSingle(username):
+    #generate random game id
+    game_id = "S" + str(random.randrange(10000))
+    command = "SELECT game_id FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    data = execmany(command, inputs).fetchall()
+    while game_id in data:
+        game_id = "S" + str(random.randrange(10000))
+
+    #add game to game table
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?)"
+    inputs = (str(game_id), username, str(0)+','+username, '', username)
+    execmany(command, inputs)
+
+    #add game to user table
+    command = 'SELECT game_id FROM user_tbl WHERE username=?'
+    inputs = (username, )
+    games = execmany(command, inputs).fetchone()[0]
+    command = 'UPDATE user_tbl SET game_id=? WHERE username=?'
+    games += "," + game_id
+    inputs = (games, username)
+    execmany(command, inputs)

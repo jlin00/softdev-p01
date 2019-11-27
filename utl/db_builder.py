@@ -42,7 +42,7 @@ def build_db():
         command = "INSERT OR IGNORE INTO user_tbl VALUES('jackielin', '123', '', '', '', 2000, '', '%s', 0)" % allcategories
         exec(command)
 
-    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT)"
+    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT)"
     exec(command)
 
     command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT, diff TEXT, choices TEXT, answer TEXT)"

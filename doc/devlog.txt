@@ -193,3 +193,6 @@ fixed buying functionality in db_mananger
 
 jackieL -- 2019-11-26 14:52
 added search functionality to search for users
+
+jackieL -- 2019-11-26 21:38
+updated search functionality and added code to create single-player game

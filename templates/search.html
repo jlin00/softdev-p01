@@ -5,8 +5,30 @@
 {% endblock %}
 
 {% block body %}
-<h1>Search</h1>
+  <h1>Search</h1>
+  <br>
+  <div class="d-flex justify-content-center">
+    <form class="form-inline" action = "/search" method="GET">
+      <div class="form-group px-3">
+          <select class="form-control" name="select" id="selectsearch">
+            <option value="byuser">Search by Username</option>
+            <option value="bygame">Search by Game ID</option>
+          </select>
+      </div>
+      <input class="form-control mr-sm-2" name="query" type="search" placeholder="Type query here..." aria-label="Search">
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+  <br>
   {% for result in results %}
-    <a href="/home?user={{ result }}">{{ result }}</a><br>
+    {% if byUser %}
+      <a href="/home?user={{ result }}">{{ result }}</a><br>
+    {% else %}
+    <form action="/play" method="post">
+      <input type="hidden" value="{{ result }}" name="id">
+      ID: {{ result }}
+      <button class="btn btn-primary btn-sm" type="submit">Join</button>
+    </form>
+    {% endif %}
   {% endfor %}
 {% endblock %}

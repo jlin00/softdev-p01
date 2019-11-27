@@ -40,15 +40,22 @@ def no_login_required(f):
 #====================================================
 
 #Michael's Code Below
-@app.route("/search", methods=["GET"])
+@app.route("/search")
 @login_required
 def search():
     if (request.args):
-        if ('query' in request.args):
+        if ('select' in request.args and 'query' in request.args):
+            select = request.args['select']
             query = request.args['query'] #search keyword
-            results = db_manager.findUser(query)
-            return render_template('search.html', results=results)
-    return render_template('search.html')
+            results = []
+            byUser = False
+            if (select == "byuser"):
+                results = db_manager.findUser(query)
+                byUser = True
+            if (select == "bygame"):
+                results = db_manager.findGame(query)
+            return render_template('search.html', results=results, byUser=byUser, search="active")
+    return render_template('search.html', search="active")
 
 @app.route("/")
 def root():
@@ -232,8 +239,8 @@ def play():
     raw = db_manager.exec(command).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
-    team1.remove('')
-    team2.remove('')
+    #team1.remove('')
+    #team2.remove('')
     up = raw[0][2]
     t1 = (team1.pop(0), [])
     for user in team1:
@@ -292,21 +299,19 @@ def play():
 @login_required
 def create():
     #create game code here
-    #random
-    game_id = 0 #change this
-    #if 'p' in request.form['id']:
+    username = session['username']
+    if 'p' in request.form['id']:
         #check if there exists a game with room first
         return 'under construction'
-        #else:
+    #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
-    #elif 't' in request.form['id']:
+    elif 't' in request.form['id']:
         #check if there exists a game with room first
         return 'under construction'
         #else:
             #command = 'INSERT INTO game_tbl VALUES ();'
     else:
-        command = 'INSERT INTO game_tbl VALUES ("{}", "{}", "{}", "{}", "{}");'.format(str(game_id), session['username'], str(0) + ',' + session['username'], '', session['username'])
-    db_manager.exec(command)
+        db_manager.addSingle(username)
     return redirect("/play")
 
 @app.route("/triviacheck", methods=['POST'])
