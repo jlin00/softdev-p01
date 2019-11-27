@@ -242,14 +242,6 @@ def packM(username):
         inputs = (coll, username)
         execmany(q, inputs)
 
-def packP():
-    #code to return random space pack
-    return None
-
-def packM():
-    #code to return random pokemon pack
-    return None
-
 def pfp(username,link):
     q = "UPDATE user_tbl SET pic = ? WHERE username=?"
     inputs=(link, username)
@@ -318,4 +310,4 @@ def gameStarted(game_id):
     q = "SELECT started FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()[0]
-    return (data != 1)
+    return (data == 1)
