@@ -9,6 +9,8 @@ from utl import db_builder, db_manager
 from urllib.request import urlopen
 from json import loads
 import random
+import urllib, json
+from json import loads
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -134,6 +136,22 @@ def home():
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
+
+@app.route("/newhome")
+@login_required
+def newhome():
+    username = session['username']
+    score = db_manager.getScore(username)
+    money = db_manager.getMoney(username)
+    stats = db_manager.getStats(username).items()
+    if request.args['id'][0]=="R":
+        pic="https://rickandmortyapi.com/api/character/avatar/"+request.args['id'][1:]+".jpeg"
+    elif request.args['id'][0]=="P":
+        pic="https://pokeres.bastionbot.org/images/pokemon/"+request.args['id'][1:]+".png"
+    else:
+        pic="https://picsum.photos/id/"+request.args['id'][1:]+"/250.jpg"
+    db_manager.pfp(username,pic)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
 
 @app.route("/leaderboard")
 @login_required

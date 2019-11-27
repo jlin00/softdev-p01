@@ -14,8 +14,8 @@ import random
 #turns tuple into a list
 def formatFetch(results):
     collection=[]
-    for item in results:
-        if str(item) not in collection:
+    for item in results[0]:
+        if str(item) not in collection and len(str(item))>0:
             collection.append(str(item)[2:-3])
     return collection
 
@@ -242,6 +242,18 @@ def packM(username):
         inputs = (coll, username)
         execmany(q, inputs)
 
+def packP():
+    #code to return random space pack
+    return None
+
+def packM():
+    #code to return random pokemon pack
+    return None
+
+def pfp(username,link):
+    q = "UPDATE user_tbl SET pic = ? WHERE username=?"
+    inputs=(link, username)
+    execmany(q,inputs)
 #====================================================
 #creating game functions
 
