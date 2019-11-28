@@ -109,6 +109,12 @@ def getMoney(username):
     data = execmany(q, inputs).fetchone()[0]
     return data
 
+def getColl(username):
+     q = "SELECT coll from user_tbl WHERE username=?"
+     inputs = (username, )
+     data = execmany(q, inputs).fetchone()[0].split(",")
+     return data
+
 #get IDs of all the pictures in user's collections
 def getCollID(username):
     coll = getColl(username)

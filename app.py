@@ -247,7 +247,7 @@ def play():
     category = questionEntry[0]
     num = db_manager.currentNumber(username, game)
     started = db_manager.gameStarted(game)
-    return render_template("_gameplay.html",
+    return render_template("gameplay.html",
                 started=started,
                 player=username,
                 up=up,
