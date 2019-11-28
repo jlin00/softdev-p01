@@ -17,7 +17,7 @@ Trivia
 	<div class="container">
 		{% if player == up %}
 		<div class="progress">
-		  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ num }}0%" aria-valuenow="{{ num }}" aria-valuemin="0" aria-valuemax="10">{{ num }} / 10</div>
+		  <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{ num }}0%" aria-valuenow="{{ num }}" aria-valuemin="0" aria-valuemax="10">{{ num }} / 10</div>
 		</div><br>
 		<h4>{{ question|safe }}</h4>
 		<form action="/triviacheck" method="post">

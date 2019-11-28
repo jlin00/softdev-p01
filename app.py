@@ -110,9 +110,7 @@ def home():
         if ('user' in request.args): #if username was given, display that user's profile
             username = request.args['user']
         elif ('value' in request.args): #if value of profile picture given
-            pic = db_manager.getpfp(request.args['value']) #checks if picture exists
-            if (pic is not None): #if picture exists, change user's profile picture
-                db_manager.updatePic(username, pic)
+            db_manager.updatePic(username, request.args['value'])
     isOwner = False
     if (owner == username): #if logged-in user matches owner of profile
         isOwner = True
@@ -183,11 +181,12 @@ def password():
 def store():
     return render_template("store.html", store="active")
 
-@app.route("/purchase")
+@app.route("/purchase", methods=["POST"])
 @login_required
 def purchase():
     username = session['username']
-    selection = int(request.args['value'])
+    value = request.form['value']
+    selection = int(request.form['value'])
     purchased = db_manager.purchase(username, selection)
     if (purchased):
         flash('Purchase successfully made!','alert-success')

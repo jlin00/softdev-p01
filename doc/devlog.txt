@@ -223,3 +223,6 @@ added formatting for html pages and created a game completed html page
 
 jackieL -- 2019-11-28 11:55
 reorganized code for database functions 
+
+jackieL -- 2019-11-28 12:41
+additional testing for single player mode and changed purchasing packs to post method

@@ -92,11 +92,6 @@ def getPic(username):
     data = execmany(q, inputs).fetchone()[0]
     return data
 
-def updatePic(username, pic):
-    q = "UPDATE user_tbl SET pic=? WHERE username=?"
-    inputs = (pic, username)
-    data = execmany(q, inputs)
-
 def getScore(username):
     q = "SELECT score from user_tbl WHERE username=?"
     inputs = (username, )
@@ -179,6 +174,8 @@ def myCountryboard(username):
 
 #buy a picture pack, each pack has unique price (value)
 def purchase(username, value):
+    if (value != 50 and value != 75 and value != 100):
+        return False
     q = "SELECT money FROM user_tbl WHERE username=?"
     inputs = (username,)
     money = execmany(q, inputs).fetchone()[0]
@@ -246,6 +243,22 @@ def getpfp(pic_id):
         inputs = (pic_id, )
         data = execmany(q, inputs).fetchone()
     return data[0]
+
+#checks to see if user owns picture
+def ownsPic(username, pic_id):
+    list = getCollID(username)
+    for item in list:
+        if item == pic_id:
+            return True
+    return False
+
+def updatePic(username, pic_id):
+    isOwner = ownsPic(username, pic_id)
+    if isOwner:
+        pic = getpfp(pic_id)
+        q = "UPDATE user_tbl SET pic=? WHERE username=?"
+        inputs = (pic, username)
+        data = execmany(q, inputs)
 
 #====================================================
 #playing trivia game functions
@@ -363,11 +376,14 @@ def getCurrentQuestion(username, game_id):
 def updateQuestion(username, game_id):
     #determine team number
     team = getTeamNum(username, game_id)
+    q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
     r = "UPDATE game_tbl SET currentq%s=?" % team
     s = "UPDATE game_tbl SET team%s=?" % team
 
     #update question number that team is up to
-    number = currentNumber(username, game_id) + 1 #increment number by 1
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    number = int(data[1]) + 1
     if (number > 10):
         completeGame(game_id)
         return
