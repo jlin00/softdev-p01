@@ -134,8 +134,6 @@ def getCollID(username):
     list = []
     for i in range(len(coll)):
         pic = coll[i]
-        print("PICCICICCHSHSH=================")
-        print(pic)
         q = "SELECT country from flags_tbl WHERE flag=?"
         inputs = (pic, )
         data = execmany(q, inputs).fetchone()
@@ -193,6 +191,7 @@ def findUser(query):
             list.append(name[0])
     return list
 
+##### UPDATE TO MAKE GAME ID UNIQUE #####
 def findGame(query):
     query = query.lower().strip()
     list = []
@@ -275,7 +274,7 @@ def getpfp(pic_id):
         data = execmany(q, inputs).fetchone()
     return data[0]
 #====================================================
-#creating game functions
+#playing trivia game functions
 
 #get all single player games
 def getSingle(username):
@@ -321,8 +320,8 @@ def addSingle(username):
         game_id = "S" + str(random.randrange(10000))
 
     #add game to game table
-    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?)"
-    inputs = (str(game_id), username, str(0)+','+username, '', username, 1, 0)
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    inputs = (str(game_id), username, '0,0,'+username, '', username, 1, 0, '', '')
     execmany(command, inputs)
 
     #add game to user table
@@ -339,3 +338,63 @@ def gameStarted(game_id):
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()[0]
     return (data == 1)
+
+def gameCompleted(game_id):
+    q = "SELECT completed FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0]
+    return (data == 1)
+
+def getTeamNum(username, game_id):
+    q = "SELECT team1 FROM game_tbl WHERE game_id=?"
+    r = "SELECT team2 FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    team1 = execmany(q, inputs).fetchone()[0].split(",")
+    team2 = execmany(r, inputs).fetchone()[0].split(",")
+    for i in range(len(team1) - 2):
+        i = i + 2
+        if team1[i] == username:
+            return "1";
+    return "2";
+
+def getCurrentQuestion(username, game_id):
+    team = getTeamNum(username, game_id)
+    q = "SELECT currentq%s FROM game_tbl WHERE game_id=?" % team
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0]
+    if (data != ""):
+        q = "SELECT * FROM question_tbl WHERE question=?"
+        inputs = (data, )
+        output = execmany(q, inputs).fetchone()
+        return output
+    return None
+
+def updateQuestion(username, game_id):
+    #determine team number
+    team = getTeamNum(username, game_id)
+    q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
+    r = "UPDATE game_tbl SET currentq%s=?" % team
+    s = "UPDATE game_tbl SET team%s=?" % team
+
+    #update question number that team is up to
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    number = int(data[1]) + 1 #increment by 1
+    if (number > 10):
+        completeGame(game_id)
+        return
+    data[1] = str(number)
+    data = ",".join(data)
+    inputs = (data, )
+    execmany(s, inputs)
+
+    #update current question for that team
+    command = "SELECT * FROM question_tbl ORDER BY random() LIMIT 1"
+    question = exec(command).fetchone()[1]
+    inputs = (question, )
+    execmany(r, inputs)
+
+def completeGame(game_id):
+    q = "UPDATE game_tbl SET completed=? WHERE game_id=?"
+    inputs = (1, game_id)
+    execmany(q, inputs)

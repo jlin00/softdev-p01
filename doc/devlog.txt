@@ -214,3 +214,6 @@ uploaded latest version of devlog
 
 jackieL -- 2019-11-27 11:52
 updated code to allow selection of profile pictures
+
+jackieL -- 2019-11-27 21:06
+added function to build cached questions table and updated game table to keep track of number of questions answered
