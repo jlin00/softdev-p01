@@ -226,3 +226,6 @@ reorganized code for database functions
 
 jackieL -- 2019-11-28 12:41
 additional testing for single player mode and changed purchasing packs to post method
+
+jackieL -- 2019-11-28 14:41
+tested game functionality some more and added getGames function

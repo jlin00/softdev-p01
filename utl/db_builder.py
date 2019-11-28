@@ -30,7 +30,7 @@ def build_db():
     command = "CREATE TABLE IF NOT EXISTS user_tbl (username TEXT, password TEXT, pic TEXT, coll TEXT, game_id TEXT, money INT, flag TEXT, stat TEXT, score INT)"
     exec(command)
 
-    command = "SELECT * FROM user_tbl WHERE username='jackie'" #dummy account
+    command = "SELECT * FROM user_tbl WHERE username='admin'" #dummy account
     data = exec(command).fetchone()
     if (data is None):
         u = urllib.request.urlopen("https://opentdb.com/api_category.php")
@@ -40,7 +40,7 @@ def build_db():
             allcategories += category['name'] + "|0|0,"
         #print(allcategories)
         allcategories = allcategories[0:-1]
-        command = "INSERT OR IGNORE INTO user_tbl VALUES('jackie', 'lin', 'https://restcountries.eu/data/usa.svg', 'https://restcountries.eu/data/usa.svg', '', 200, 'United States of America', '%s', 0)" % allcategories
+        command = "INSERT OR IGNORE INTO user_tbl VALUES('admin', '123', 'https://restcountries.eu/data/usa.svg', 'https://restcountries.eu/data/usa.svg', '', 200, 'United States of America', '%s', 0)" % allcategories
         exec(command)
 
     command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT, started INT, completed INT, currentq1 TEXT, currentq2 TEXT)"

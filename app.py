@@ -53,6 +53,9 @@ def login():
 def auth():
     enteredU = request.form['username']
     enteredP = request.form['password']
+    if(enteredU == "admin"):
+        flash('Login is disabled for this account!', 'alert-warning')
+        return redirect(url_for('login'))
     if(enteredU == "" or enteredP == ""): #if fields empty
         flash('Please fill out all fields!', 'alert-danger')
         return redirect(url_for('login'))
@@ -118,8 +121,9 @@ def home():
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
-    ##### code to get games of user
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
+    games = db_manager.getGames(username)
+    print(games)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner)
 
 @app.route("/leaderboard")
 @login_required
@@ -140,20 +144,12 @@ def leaderboard():
 @login_required
 def profile():
     username=session['username']
-    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username=?'
-    inputs = (username, )
-    raw = db_manager.execmany(command, inputs).fetchone()
-    iconstring = raw[0]
-    coll = iconstring.split(",")
+    coll = db_manager.getColl(username)
     collID = db_manager.getCollID(username)
-    money = raw[1]
-    games = raw[2].split(",")
     return render_template("profile.html",
             enumcoll=range(len(coll)),
             coll=coll,
             collID=collID,
-            money=money,
-            games=games,
             profile="active")
 
 @app.route("/resetpasswd", methods=["POST"])
@@ -235,7 +231,7 @@ def play():
         t2=['', []]
     #check if game is completed
     if (db_manager.gameCompleted(game)):
-        return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single)
+        return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single, code=303)
     #get current question
     questionEntry = db_manager.getCurrentQuestion(username, game)
     if (questionEntry is None):
@@ -246,6 +242,7 @@ def play():
     category = questionEntry[0]
     num = db_manager.currentNumber(username, game)
     started = db_manager.gameStarted(game)
+    ##### EDIT TO RETURN WHICH TEAM THE PLAYER IS ON
     return render_template("gameplay.html",
                 started=started,
                 player=username,
@@ -288,7 +285,7 @@ def check():
     ans = db_manager.execmany(command, inputs).fetchall()
     if 'answer' not in request.form:
         flash("Please select an answer!", 'alert-danger')
-        return redirect(url_for("play", id=game_id), code=307)
+        return redirect(url_for("play"), code=307)
     else:
         if ans[0][0] == request.form['answer']:
             #correct answer
@@ -340,7 +337,7 @@ def check():
     inputs = (data, username)
     db_manager.execmany(command, inputs)
     db_manager.updateQuestion(username, game_id)
-    return redirect(url_for("play"), code=307)
+    return redirect(url_for("play", id=game_id), code=307)
 
 @app.route("/search")
 @login_required
@@ -364,6 +361,7 @@ def search():
     return render_template('search.html', search="active")
 
 @app.route("/logout")
+@login_required
 def logout():
     session.clear()
     flash('You were successfully logged out.', 'alert-success')

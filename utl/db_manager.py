@@ -46,7 +46,7 @@ def addUser(username, password, flag):
         command = "SELECT flag from flags_tbl where country=?"
         inputs = (flag, )
         pic = execmany(command, inputs).fetchone()[0]
-        command = "SELECT stat FROM user_tbl WHERE username='jackie'"
+        command = "SELECT stat FROM user_tbl WHERE username='admin'"
         stats = exec(command).fetchone()[0]
         inputs = (username, password, pic, pic, flag, stats)
         execmany(q, inputs)
@@ -132,7 +132,44 @@ def getGames(username):
     q = "SELECT game_id from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0].split(",")
-    return data
+    output = []
+    if len(data) > 0:
+        data.pop(0)
+    for i in range(len(data)):
+        entry = []
+        game_id = data[i]
+
+        #first item in tuple
+        if "S" in game_id:
+            entry.append("Single Player")
+        elif "P" in game_id:
+            entry.append("PVP")
+        else:
+            entry.append("Team")
+
+        #second item in tuple
+        entry.append(game_id)
+
+        #third, fourth, fifth item in tuple
+        if gameCompleted(game_id):
+            entry.append("View")
+            entry.append("")
+            entry.append("btn-secondary")
+        elif gameFull(game_id):
+            entry.append("Full")
+            entry.append("disabled")
+            entry.append("btn-danger")
+        elif "S" in game_id:
+            entry.append("Play")
+            entry.append("")
+            entry.append("btn-primary")
+        else:
+            entry.append("Join")
+            entry.append("")
+            entry.append("btn-primary")
+
+        output.append(tuple(entry))
+    return output
 
 #====================================================
 #leaderboard
@@ -272,7 +309,8 @@ def getSingle(username):
     list = []
     for i in range(len(data)):
         if "S" in data[i]:
-            list.append(data[i])
+            if (not gameCompleted(data[i])):
+                list.append(data[i])
     return list
 
 #get all PVP games
@@ -284,7 +322,8 @@ def getPVP(username):
     list = []
     for i in range(len(data)):
         if "P" in data[i]:
-            list.append(data[i])
+            if (not gameCompleted(data[i])):
+                list.append(data[i])
     return list
 
 #get all team games
@@ -296,18 +335,19 @@ def getTeam(username):
         list = []
         for i in range(len(data)):
             if "T" in data[i]:
-                list.append(data[i])
+                if (not gameCompleted(data[i])):
+                    list.append(data[i])
         return list
 
 #create a single player game
 def addSingle(username):
     #generate random game id
-    game_id = "S" + str(random.randrange(10000))
+    game_id = "S" + str(random.randrange(100000000))
     command = "SELECT game_id FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(command, inputs).fetchall()
     while game_id in data:
-        game_id = "S" + str(random.randrange(10000))
+        game_id = "S" + str(random.randrange(100000000))
 
     #add game to game table
     command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)"
@@ -336,6 +376,12 @@ def gameCompleted(game_id):
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()[0]
     return (data == 1)
+
+#check if game is full
+def gameFull(game_id):
+    if "S" in game_id:
+        return False
+    return True
 
 #check which team user is on for a particular game
 def getTeamNum(username, game_id):
@@ -377,8 +423,8 @@ def updateQuestion(username, game_id):
     #determine team number
     team = getTeamNum(username, game_id)
     q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
-    r = "UPDATE game_tbl SET currentq%s=?" % team
-    s = "UPDATE game_tbl SET team%s=?" % team
+    r = "UPDATE game_tbl SET currentq%s=? WHERE game_id=?" % team
+    s = "UPDATE game_tbl SET team%s=? WHERE game_id=?" % team
 
     #update question number that team is up to
     inputs = (game_id, )
@@ -389,13 +435,13 @@ def updateQuestion(username, game_id):
         return
     data[1] = str(number)
     data = ",".join(data)
-    inputs = (data, )
+    inputs = (data, game_id)
     execmany(s, inputs)
 
     #update current question for that team
     command = "SELECT * FROM question_tbl ORDER BY random() LIMIT 1"
     question = exec(command).fetchone()[1]
-    inputs = (question, )
+    inputs = (question, game_id)
     execmany(r, inputs)
 
 def completeGame(game_id):
@@ -417,7 +463,6 @@ def findUser(query):
             list.append(name[0])
     return list
 
-##### UPDATE TO MAKE GAME ID UNIQUE #####
 #find by game_id
 def findGame(query):
     query = query.lower().strip()
