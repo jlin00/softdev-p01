@@ -5,56 +5,37 @@ Trivia
 {% endblock %}
 
 {% block body %}
-{% if completed %}
-	<div class="card">
-		<h1>Game Completed</h1>
-	</div>
-{% else %}
 	{% if started %}
-	<div class="card">
+	<div class="card w-50">
 		<div class="row">
-			<div class="col-2">
-				Score: {{ t1[0] }}
-			</div>
-			<div class="col-4">
-				<div class="row">
-					{% for user in t1[2] %}
-					<div class="col">
-						{{ user[0] }}
-					</div>
-					{% endfor %}
-				</div>
-			</div>
-			<div class="col-2">
-				Score: {{ t2[0] }}
-			</div>
-			<div class="col-4">
-				<div class="row">
-					{% for user in t2[2] %}
-					<div class="col">
-						{{ user[0] }}
-					</div>
-					{% endfor %}
-				</div>
+			<div class="col-12">
+				<b>Score: </b> &nbsp&nbsp&nbsp {{ t1[0] }}
 			</div>
 		</div>
 	</div>
+	<br>
 	<div class="container">
 		{% if player == up %}
-		<h4>{{ question }}</h4>
+		<div class="progress">
+		  <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: {{ num }}0%" aria-valuenow="{{ num }}" aria-valuemin="0" aria-valuemax="10">{{ num }} / 10</div>
+		</div><br>
+		<h4>{{ question|safe }}</h4>
 		<form action="/triviacheck" method="post">
 			<input type="hidden" name="id" value="{{ game }}">
 			<input type="hidden" name="question" value="{{ question }}">
 			<input type="hidden" name="category" value="{{ category }}">
 			{% for answer in choices %}
 			<input type="radio" name="answer" value="{{ answer }}" id="{{ answer }}">
-			<label for="{{ answer }}">{{ answer }}</label>
+			<label for="{{ answer }}">{{ answer|safe }}</label>
 			<br>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary">Submit</button>
 		</form>
 		{% else %}
-		<h4>{{up}} is currently making a move...</h4>
+		<h2>It is currently {{ up }}'s turn.</h2>
+		<div class="spinner-border text-primary" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
 		{% endif %}
 	</div>
 	{% else %}
@@ -67,6 +48,4 @@ Trivia
 		<br>
 	</div>
 	{% endif %}
-{% endif %}
-
 {% endblock %}

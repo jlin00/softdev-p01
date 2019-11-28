@@ -51,12 +51,16 @@ def search():
             query = request.args['query'] #search keyword
             results = []
             byUser = False
+            user=""
+            game=""
             if (select == "byuser"):
                 results = db_manager.findUser(query)
                 byUser = True
+                user = "selected"
             if (select == "bygame"):
                 results = db_manager.findGame(query)
-            return render_template('search.html', results=results, byUser=byUser, search="active")
+                game = "selected"
+            return render_template('search.html', results=results, byUser=byUser, search="active", user=user, game=game)
     return render_template('search.html', search="active")
 
 @app.route("/")
@@ -260,18 +264,19 @@ def play():
     up = raw[0][2] #who's up next
     t1 = (team1.pop(0), team1.pop(0), [])
     for user in team1:
-        command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-        raw = db_manager.exec(command).fetchone()
-        t1[2].append((user, raw[0][0]))
+        t1[2].append(user)
+    #single player exceptions
+    single=True
     if ("S" not in game):
+        single=False
         t2 = (team2.pop(0), [])
         for user in team2:
-            command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-            raw = db_manager.exec(command).fetchone()
-            t2[1].append((user, raw[0][0]))
+            t2[1].append(user)
+    else:
+        t2=['', []]
     #check if game is completed
     if (db_manager.gameCompleted(game)):
-        return render_template("_gameplay.html", completed=True)
+        return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single)
     #get current question
     questionEntry = db_manager.getCurrentQuestion(username, game)
     if (questionEntry is None):
@@ -280,10 +285,9 @@ def play():
     question = questionEntry[1]
     choices = set(questionEntry[3].split("~"))
     category = questionEntry[0]
+    num = db_manager.currentNumber(username, game)
     started = db_manager.gameStarted(game)
-    if "S" not in game:
-        #team rally
-        return render_template("_gameplay.html",
+    return render_template("_gameplay.html",
                 started=started,
                 player=username,
                 up=up,
@@ -292,18 +296,9 @@ def play():
                 question=question,
                 choices=choices,
                 game=game,
-                category=category)
-    #single player
-    return render_template("_gameplay.html",
-            started=started,
-            player=username,
-            up=up,
-            t1=t1,
-            t2=['', []],
-            question=question,
-            choices=choices,
-            game=game,
-            category=category)
+                category=category,
+                single=single,
+                num=num)
 
 @app.route("/new", methods=['POST'])
 @login_required

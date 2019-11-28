@@ -63,7 +63,7 @@ def addUser(username, password, flag):
         command = "SELECT flag from flags_tbl where country=?"
         inputs = (flag, )
         pic = execmany(command, inputs).fetchone()[0]
-        command = "SELECT stat FROM user_tbl WHERE username='jackielin'"
+        command = "SELECT stat FROM user_tbl WHERE username='jackie'"
         stats = exec(command).fetchone()[0]
         inputs = (username, password, pic, pic, flag, stats)
         execmany(q, inputs)
@@ -398,3 +398,11 @@ def completeGame(game_id):
     q = "UPDATE game_tbl SET completed=? WHERE game_id=?"
     inputs = (1, game_id)
     execmany(q, inputs)
+
+def currentNumber(username, game_id):
+    team = getTeamNum(username, game_id)
+    q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    number = int(data[1])
+    return number
