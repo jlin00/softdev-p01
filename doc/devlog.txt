@@ -220,3 +220,6 @@ added function to build cached questions table and updated game table to keep tr
 
 jackieL -- 2019-11-27 22:40
 added formatting for html pages and created a game completed html page
+
+jackieL -- 2019-11-28 11:55
+reorganized code for database functions 

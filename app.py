@@ -1,21 +1,16 @@
-# Junhee Lee, Jackie Lin, Michael Zhang, Amanda Zheng (KIRKLAND MEESEEKS)
-#SoftDev1 pd1
-#K25: Getting More Rest
-#2019-11-13
+#Team Kirkland Meeseeks
+#SoftDev pd1
+#P01 -- ArRESTed Development
+#2019-12-04
+
 from flask import Flask , render_template,request, redirect, url_for, session, flash
 from functools import wraps
 import sqlite3, os
 from utl import db_builder, db_manager
-from urllib.request import urlopen
-from json import loads
 import random
-import urllib, json
-from json import loads
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
-
-DB_FILE = "trivia.db"
 
 #====================================================
 # decorator for checking login
@@ -39,29 +34,8 @@ def no_login_required(f):
         flash('You cannot view this page while logged in!', 'alert-danger')
         return redirect('/home')
     return dec
-#====================================================
 
-#Michael's Code Below
-@app.route("/search")
-@login_required
-def search():
-    if (request.args):
-        if ('select' in request.args and 'query' in request.args):
-            select = request.args['select']
-            query = request.args['query'] #search keyword
-            results = []
-            byUser = False
-            user=""
-            game=""
-            if (select == "byuser"):
-                results = db_manager.findUser(query)
-                byUser = True
-                user = "selected"
-            if (select == "bygame"):
-                results = db_manager.findGame(query)
-                game = "selected"
-            return render_template('search.html', results=results, byUser=byUser, search="active", user=user, game=game)
-    return render_template('search.html', search="active")
+#====================================================
 
 @app.route("/")
 def root():
@@ -79,50 +53,50 @@ def login():
 def auth():
     enteredU = request.form['username']
     enteredP = request.form['password']
-    if(enteredU=="" or enteredP==""):
+    if(enteredU == "" or enteredP == ""): #if fields empty
         flash('Please fill out all fields!', 'alert-danger')
-        return render_template("login.html")
-    if ("," in enteredU):
-        flash('Commas are not allowed in username!', 'alert-danger')
-        return render_template("login.html")
-    if (db_manager.userValid(enteredU,enteredP)):
+        return redirect(url_for('login'))
+    if (db_manager.userValid(enteredU,enteredP)): #returns true if login successful
         flash('You were successfully logged in!', 'alert-success')
         session['username'] = enteredU
-        return redirect('/home')
+        return redirect(url_for('home'))
     else:
         flash('Wrong Credentials!', 'alert-danger')
-        return render_template("login.html")
+        return redirect(url_for('login'))
 
-#Amanda's Code Below
 @app.route("/signup")
 @no_login_required
 def signup():
     data = db_manager.allCountries()
-    return render_template("signup.html",options=data)
+    return render_template("signup.html", options=data)
 
 @app.route("/signupcheck", methods=["POST"])
 @no_login_required
 def signupcheck():
-    username=request.form['username']
-    password=request.form['password']
-    confirm=request.form['confirmation']
-    flag=request.form['flag']
-    if flag=="":
-        flag="United States of America"
-    allcountries=db_manager.allCountries()
-    if(username=="" or password=="" or confirm==""):
+    username = request.form['username']
+    password = request.form['password']
+    confirm = request.form['confirmation']
+    flag = request.form['flag']
+    if flag == "": #default country is USA
+        flag = "United States of America"
+    allcountries = db_manager.allCountries()
+    #preliminary checks on entered fields
+    if(username == "" or password == "" or confirm == ""):
         flash('Please fill out all fields!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
+    if ("," in username):
+            flash('Commas are not allowed in username!', 'alert-danger')
+            return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
         flash('Passwords do not match!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    added = db_manager.addUser(username,password,flag)
+    #form information delivered to backend
+    added = db_manager.addUser(username,password,flag) #returns True if user was sucessfully added
     if (not added):
         flash('Username taken!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    #return redirect(url_for("leaderboard"))
     flash('You have successfully created an account! Please log in!', 'alert-success')
-    return redirect("/login")
+    return redirect(url_for('login'))
 
 #====================================================
 #STARTING FROM HERE USER MUST BE LOGGED IN
@@ -131,21 +105,22 @@ def signupcheck():
 @login_required
 def home():
     username = session['username']
-    owner = session['username']
-    if (request.args):
-        if ('user' in request.args):
+    owner = session['username'] #owner of the profile
+    if (request.args): #if querystring exists
+        if ('user' in request.args): #if username was given, display that user's profile
             username = request.args['user']
-        if ('value' in request.args):
-            pic = db_manager.getpfp(request.args['value'])
-            if (pic is not None):
-                db_manager.pfp(username, pic)
+        elif ('value' in request.args): #if value of profile picture given
+            pic = db_manager.getpfp(request.args['value']) #checks if picture exists
+            if (pic is not None): #if picture exists, change user's profile picture
+                db_manager.updatePic(username, pic)
     isOwner = False
-    if (owner == username):
+    if (owner == username): #if logged-in user matches owner of profile
         isOwner = True
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
+    ##### code to get games of user
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
 
 @app.route("/leaderboard")
@@ -163,7 +138,6 @@ def leaderboard():
                             country=country,
                             board="active")
 
-#profile pages below
 @app.route("/profile")
 @login_required
 def profile():
@@ -184,23 +158,9 @@ def profile():
             games=games,
             profile="active")
 
-@app.route("/icon", methods=["POST"])
-@login_required
-def icon():
-    if 'img' not in request.form:
-        flash("Please Select a Profile Icon!", "alert-danger")
-        return redirect("/profile")
-    index = int(request.form['img'])
-    user = session['username']
-    img = db_manager.getColl(user)[index]
-    db_manager.updatePic(user, img)
-    flash("Successfully set Player Icon", 'alert-success')
-    return redirect("/home")
-
 @app.route("/resetpasswd", methods=["POST"])
 @login_required
 def password():
-    #Jackie: Insert Code Here
     password = request.form['password']
     verif = request.form['verif']
     oldpass = request.form['oldpass']
@@ -382,6 +342,27 @@ def check():
     db_manager.execmany(command, inputs)
     db_manager.updateQuestion(username, game_id)
     return redirect(url_for("play"), code=307)
+
+@app.route("/search")
+@login_required
+def search():
+    if (request.args):
+        if ('select' in request.args and 'query' in request.args):
+            select = request.args['select']
+            query = request.args['query'] #search keyword
+            results = []
+            byUser = False
+            user=""
+            game=""
+            if (select == "byuser"):
+                results = db_manager.findUser(query)
+                byUser = True
+                user = "selected"
+            if (select == "bygame"):
+                results = db_manager.findGame(query)
+                game = "selected"
+            return render_template('search.html', results=results, byUser=byUser, search="active", user=user, game=game)
+    return render_template('search.html', search="active")
 
 @app.route("/logout")
 def logout():

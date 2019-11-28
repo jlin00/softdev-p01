@@ -1,7 +1,7 @@
 #Team Kirkland Meeseeks
 #SoftDev pd1
 #P01 -- ArRESTed Development
-#2019-1?-??
+#2019-12-04
 
 import sqlite3, urllib, json
 
@@ -60,7 +60,7 @@ def build_flag():
     command = "SELECT * FROM flags_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        print("EXECUTING BUILD FLAG")
+        print("\tBuilding flag cache...")
         u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
         response = json.loads(u.read())
         for country in response:
@@ -73,7 +73,7 @@ def build_pic():
     command = "SELECT * FROM pic_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        print("EXECUTING BUILD PIC")
+        print("\tBuilding picture cache...")
         q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
 
         #building Rick and Morty picture cache
@@ -108,7 +108,7 @@ def build_question():
     command = "SELECT * FROM question_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        print("EXECUTING BUILD QUESTION")
+        print("\tBuild question cache...")
         #get a token
         url = "https://opentdb.com/api_token.php?command=request"
         u = urllib.request.urlopen(url)
