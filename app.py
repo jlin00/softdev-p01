@@ -90,8 +90,9 @@ def auth():
 @app.route("/signup")
 @no_login_required
 def signup():
+    db_builder.build_flag()
     data = db_manager.allCountries()
-    return render_template("signup.html",options=data)
+    return render_template("signup.html",options=data,flag="United States of America")
 
 @app.route("/signupcheck", methods=["POST"])
 @no_login_required
@@ -285,9 +286,11 @@ def play():
     q = question['question'] #question here
     c = set(choices) #choices
     category = question['category']
+    started = db_manager.gameStarted(game)
     if "T" in game:
         #team rally
         return render_template("_gameplay.html",
+                started=started,
                 player=session['username'],
                 up=up,
                 t1=t1,
@@ -299,6 +302,7 @@ def play():
     if "P" in game:
         #pvp
         return render_template("_gameplay.html",
+                started=started,
                 player=session["username"],
                 up=up,
                 t1=t1,
@@ -309,6 +313,7 @@ def play():
                 category=category)
     #single player
     return render_template("_gameplay.html",
+            started=started,
             player=session["username"],
             up=up,
             t1=t1,
@@ -324,9 +329,31 @@ def create():
     #create game code here
     username = session['username']
     if 'p' in request.form['id']:
-        command="SELECT participants FROM game_tbl WHERE game_id LIKE 'p'";
-        gameList=db_manager.formatFetch(db_builder.exec(command))
+        command="SELECT participants,game_id FROM game_tbl WHERE game_id LIKE '%p%';"
+        gameList=db_builder.exec(command).fetchall()
         print(gameList)
+        collection=[]
+        i=0
+        if (len(gameList))>0:
+            for i in range(0,len(gameList)):
+                item=[]
+                for parts in gameList[i]:
+                    if len(str(parts))>0:
+                        item.append(str(parts))
+                collection.append(item)
+        print("----------")
+        print(collection)
+        print("----------")
+        if len(collection)>0:
+            for pair in collection:
+                print(pair)
+                if pair[0].count(',')<1:
+                    command="UPDATE game_tbl SET team2 = ?, participants = participants + ',' + ? WHERE game_id = ?"
+                    inputs=(session['username'],session['username'],pair[1],)
+                    updating=db_manager.execmany(command, inputs).fetchall()
+                    print(updating)
+
+        #not a game that user is in
         #check if there exists a game with room first
         return 'under construction'
     #else:

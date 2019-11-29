@@ -39,10 +39,13 @@ def build_db():
             allcategories += category['name'] + "|0|0,"
         #print(allcategories)
         allcategories = allcategories[0:-1]
-        command = "INSERT OR IGNORE INTO user_tbl VALUES('jackielin', '123', '', '', '', 2000, '', '%s', 0)" % allcategories
+        command = "INSERT OR IGNORE INTO user_tbl VALUES('jackielin', '123', '', '', 'p1', 2000, '', '%s', 0)" % allcategories
         exec(command)
 
-    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT)"
+
+    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT, started INT, completed INT)"
+    exec(command)
+    command = "INSERT OR IGNORE INTO game_tbl VALUES('p1', 'jackielin', 'jackielin', '', '', 0, 0)"
     exec(command)
 
     command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT PRIMARY KEY, diff TEXT, choices TEXT, answer TEXT)"
@@ -56,16 +59,16 @@ def build_db():
 
 #populates flag_tbl if it isn't already populated
 def build_flag():
-    command = "SELECT * FROM flags_tbl;"
-    data = exec(command).fetchone()
-    if (data is None):
+    #command = "SELECT * FROM flags_tbl;"
+    #data = exec(command).fetchone()
+    #if (data is None):
         #print("EXECUTING BUILD_FLAG")
-        u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
-        response = json.loads(u.read())
-        for country in response:
-            q = "INSERT OR IGNORE INTO flags_tbl VALUES(?, ?)"
-            inputs = (country['name'], country['flag'])
-            execmany(q, inputs)
+    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
+    response = json.loads(u.read())
+    for country in response:
+        q = "INSERT OR IGNORE INTO flags_tbl VALUES(?, ?)"
+        inputs = (country['name'], country['flag'])
+        execmany(q, inputs)
     #else:
         #print("NOT EXECUTING BUILD_FLAG")
 

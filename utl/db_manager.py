@@ -14,10 +14,12 @@ import random
 #turns tuple into a list
 def formatFetch(results):
     collection=[]
-    for item in results[0]:
-        if str(item) not in collection and len(str(item))>0:
-            collection.append(str(item)[2:-3])
+    if len(results)>0:
+        for item in results:
+            if str(item) not in collection and len(str(item))>0:
+                collection.append(str(item)[2:-3])
     return collection
+
 
 def makeDict(results):
     dictionary={}
@@ -242,14 +244,6 @@ def packM(username):
         inputs = (coll, username)
         execmany(q, inputs)
 
-def packP():
-    #code to return random space pack
-    return None
-
-def packM():
-    #code to return random pokemon pack
-    return None
-
 def pfp(username,link):
     q = "UPDATE user_tbl SET pic = ? WHERE username=?"
     inputs=(link, username)
@@ -301,8 +295,8 @@ def addSingle(username):
         game_id = "S" + str(random.randrange(10000))
 
     #add game to game table
-    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?)"
-    inputs = (str(game_id), username, str(0)+','+username, '', username)
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?)"
+    inputs = (str(game_id), username, str(0)+','+username, '', username, 1, 0)
     execmany(command, inputs)
 
     #add game to user table
@@ -313,3 +307,9 @@ def addSingle(username):
     games += "," + game_id
     inputs = (games, username)
     execmany(command, inputs)
+
+def gameStarted(game_id):
+    q = "SELECT started FROM game_tbl WHERE game_id=?"
+    inputs = (game_id, )
+    data = execmany(q, inputs).fetchone()[0]
+    return (data == 1)
