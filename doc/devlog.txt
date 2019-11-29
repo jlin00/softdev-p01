@@ -229,3 +229,6 @@ additional testing for single player mode and changed purchasing packs to post m
 
 jackieL -- 2019-11-28 14:41
 tested game functionality some more and added getGames function
+
+jackieL -- 2019-11-28 20:20
+added and tested PVP functionality, users now can create, join and play PVP games with other users

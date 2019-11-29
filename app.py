@@ -122,7 +122,6 @@ def home():
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
     games = db_manager.getGames(username)
-    print(games)
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner)
 
 @app.route("/leaderboard")
@@ -208,8 +207,11 @@ def play():
         game = request.form['id']
     else:
         game = request.args['id']
-    command = 'SELECT team1,team2,playing FROM game_tbl WHERE game_id="{}";'.format(game)
-    raw = db_manager.exec(command).fetchall()
+    started = db_manager.gameStarted(game)
+    number = db_manager.getTeamNum(username, game)
+    command = 'SELECT team1,team2,playing%s FROM game_tbl WHERE game_id=?;' % number
+    inputs = (game, )
+    raw = db_manager.execmany(command, inputs).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
     if (team1.count('') > 0):
@@ -222,13 +224,13 @@ def play():
         t1[2].append(user)
     #single player exceptions
     single=True
+    t2=['', []]
     if ("S" not in game):
         single=False
-        t2 = (team2.pop(0), [])
-        for user in team2:
-            t2[1].append(user)
-    else:
-        t2=['', []]
+        if (started):
+            t2 = (team2.pop(0), team2.pop(0), [])
+            for user in team2:
+                t2[2].append(user)
     #check if game is completed
     if (db_manager.gameCompleted(game)):
         return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single, code=303)
@@ -241,14 +243,22 @@ def play():
     choices = set(questionEntry[3].split("~"))
     category = questionEntry[0]
     num = db_manager.currentNumber(username, game)
-    started = db_manager.gameStarted(game)
+    team = db_manager.getTeamNum(username, game)
+    waiting = db_manager.team2Completed(game)
+    currentteam = t2
+    if (team == "1"):
+        waiting = db_manager.team1Completed(game)
+        currentteam = t1
+    if (single):
+        team1Completed = False
+        team2Completed = False
     ##### EDIT TO RETURN WHICH TEAM THE PLAYER IS ON
     return render_template("gameplay.html",
                 started=started,
+                waiting=waiting,
                 player=username,
                 up=up,
-                t1=t1,
-                t2=t2,
+                currentteam=currentteam,
                 question=question,
                 choices=choices,
                 game=game,
@@ -259,20 +269,18 @@ def play():
 @app.route("/new", methods=['POST'])
 @login_required
 def create():
-    #create game code here
     username = session['username']
     if 'p' in request.form['id']:
-        #check if there exists a game with room first
-        return 'under construction'
-    #else:
-            #command = 'INSERT INTO game_tbl VALUES ();'
+        ##### check if there is a game with room first
+        added = db_manager.joinPVP(username, "P")
     elif 't' in request.form['id']:
-        #check if there exists a game with room first
-        return 'under construction'
-        #else:
-            #command = 'INSERT INTO game_tbl VALUES ();'
+        ##### check if there is a game with room first
+        added = db_manager.addMulti(username, "T")
     else:
-        db_manager.addSingle(username)
+        added = db_manager.addSingle(username)
+
+    if (not added):
+        flash('Maximum number of games reached!', 'alert-danger')
     return redirect("/play")
 
 @app.route("/triviacheck", methods=['POST'])
@@ -285,24 +293,20 @@ def check():
     ans = db_manager.execmany(command, inputs).fetchall()
     if 'answer' not in request.form:
         flash("Please select an answer!", 'alert-danger')
-        return redirect(url_for("play"), code=307)
+        return redirect(url_for("play", id=game_id), code=307)
     else:
         if ans[0][0] == request.form['answer']:
             #correct answer
-            command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}";'.format(game_id)
-            teams = db_manager.exec(command).fetchall()[0]
-            team1 = teams[0]
-            team2 = teams[1]
-            if username in teams[0]:
-                data = teams[0].split(',')
-                data[0] = str(int(data[0]) + 10)
-                team1 = ",".join(data)
-            if username in teams[1]:
-                data = teams[1].split(',')
-                data[0] = str(int(data[0]) + 10)
-                team2 = ",".join(data)
-            command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}";'.format(team1, team2, game_id)
-            db_manager.exec(command)
+            number = db_manager.getTeamNum(username, game_id)
+            command = 'SELECT team%s FROM game_tbl WHERE game_id=?' % number
+            inputs = (game_id, )
+            team = db_manager.execmany(command, inputs).fetchall()[0]
+            data = team[0].split(',')
+            data[0] = str(int(data[0]) + 10)
+            team = ",".join(data)
+            command = 'UPDATE game_tbl SET team%s=? WHERE game_id=?' % number
+            inputs = (team, game_id)
+            db_manager.execmany(command, inputs)
             #update score
             command = 'SELECT score FROM user_tbl WHERE username=?'
             inputs = (username, )
@@ -320,8 +324,11 @@ def check():
     if (participants.count('') > 0):
         participants.remove('')
     player = participants.index(username)
-    command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}";'.format(participants[player - 1], game_id)
-    db_manager.exec(command)
+    number = db_manager.getTeamNum(username, game_id)
+    if ("T" in game_id):
+        command = 'UPDATE game_tbl SET playing%s=? WHERE game_id=?;' % number
+        inputs = (participants[player - 1], game_id)
+        db_manager.execmany(command, inputs)
     command = 'SELECT stat FROM user_tbl WHERE username=?;'
     inputs = (username, )
     data = db_manager.execmany(command, inputs).fetchone()[0].split(",")

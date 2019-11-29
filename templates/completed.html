@@ -17,9 +17,8 @@ Trivia
   {% else %}
     <div class="card" style="width:45%; margin:2.5%">
       <br>
-      <b><u>Team 1</u></b>
+      <h2><u>Team 1</u></h2>
   {% endif %}
-
     {% for user in t1[2] %}
       <a href="/home?user={{ user }}">{{ user }}</a>
     {% endfor %}
@@ -28,11 +27,12 @@ Trivia
   </div>
   {% if not single %}
   <div class="card" style="width:45%; margin:2.5%">
-    <b><u>Team 2</u></b>
+    <br>
+    <h2><u>Team 2</u></h2>
     {% for user in t2[2] %}
       <a href="/home?user={{ user }}">{{ user }}</a>
     {% endfor %}
-    <p class="font-weight-bold">Score:{{ t2[0] }}</p>
+    <p class="font-weight-bold">Score: {{ t2[0] }}</p>
     <br>
   </div>
   {% endif %}
