@@ -121,7 +121,7 @@ def home():
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
-    games = db_manager.getGames(username)
+    games = db_manager.getGames(username, owner)
     return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner)
 
 @app.route("/leaderboard")
@@ -207,6 +207,7 @@ def play():
         game = request.form['id']
     else:
         game = request.args['id']
+    db_manager.joinGame(username, game)
     started = db_manager.gameStarted(game)
     number = db_manager.getTeamNum(username, game)
     command = 'SELECT team1,team2,playing%s FROM game_tbl WHERE game_id=?;' % number

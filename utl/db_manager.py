@@ -127,7 +127,7 @@ def getCollID(username):
         list.append(data)
     return list
 
-def getGames(username):
+def getGames(username, owner):
     q = "SELECT game_id from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0].split(",")
@@ -154,15 +154,20 @@ def getGames(username):
             entry.append("View")
             entry.append("")
             entry.append("btn-secondary")
-        elif gameFull(game_id):
-            entry.append("Full")
-            entry.append("disabled")
-            entry.append("btn-danger")
         else:
-            entry.append("Play")
-            entry.append("")
-            entry.append("btn-primary")
-
+            if ownGame(owner, game_id):
+                entry.append("Play")
+                entry.append("")
+                entry.append("btn-primary")
+            else:
+                if gameFull(game_id):
+                    entry.append("Full")
+                    entry.append("disabled")
+                    entry.append("btn-danger")
+                else:
+                    entry.append("Join")
+                    entry.append("")
+                    entry.append("btn-success")
         output.append(tuple(entry))
     return output
 
@@ -294,6 +299,11 @@ def updatePic(username, pic_id):
 
 #====================================================
 #playing trivia game functions
+def ownGame(username, game_id):
+    q = "SELECT game_id FROM user_tbl WHERE username=?"
+    inputs = (username,)
+    data = execmany(q, inputs).fetchone()[0]
+    return (game_id in data)
 
 #get all single player games
 def getSingle(username):
@@ -392,6 +402,33 @@ def addMulti(username, type):
     execmany(command, inputs)
     return True
 
+def joinGame(username, game_id):
+    owner = ownGame(username, game_id)
+    if not owner and not gameFull(game_id):
+        #joining a PVP game
+        if "P" in game_id:
+            #update game table
+            q = "SELECT participants FROM game_tbl WHERE game_id=?"
+            inputs = (game_id, )
+            participants = execmany(q, inputs).fetchone()[0]
+            q = "UPDATE game_tbl SET participants=?, team2=?, playing2=?, started=? WHERE game_id=?"
+            participants += "," + username
+            team2 = '0,0,' + username
+            playing2 = username
+            started = 1
+            inputs = (participants, team2, playing2, started, game_id)
+            execmany(q, inputs)
+
+            #update user table
+            q = "SELECT game_id FROM user_tbl WHERE username=?"
+            inputs = (username, )
+            games = execmany(q, inputs).fetchone()[0]
+            q = "UPDATE user_tbl SET game_id=? WHERE username=?"
+            games += "," + game_id
+            inputs = (games, username)
+            execmany(q, inputs)
+        #joining a team game
+
 def joinPVP(username, type):
     q = "SELECT game_id FROM game_tbl WHERE game_id LIKE 'P%' AND team2='' AND playing1!=?"
     inputs = (username, )
@@ -400,27 +437,7 @@ def joinPVP(username, type):
         return addMulti(username, type)
     else:
         game_id = game_id[0]
-
-        #update game table
-        q = "SELECT participants FROM game_tbl WHERE game_id=?"
-        inputs = (game_id, )
-        participants = execmany(q, inputs).fetchone()[0]
-        q = "UPDATE game_tbl SET participants=?, team2=?, playing2=?, started=? WHERE game_id=?"
-        participants += "," + username
-        team2 = '0,0,' + username
-        playing2 = username
-        started = 1
-        inputs = (participants, team2, playing2, started, game_id)
-        execmany(q, inputs)
-
-        #update user table
-        q = "SELECT game_id FROM user_tbl WHERE username=?"
-        inputs = (username, )
-        games = execmany(q, inputs).fetchone()[0]
-        q = "UPDATE user_tbl SET game_id=? WHERE username=?"
-        games += "," + game_id
-        inputs = (games, username)
-        execmany(q, inputs)
+        joinGame(username, game_id)
     return True
 
 #check if game started
