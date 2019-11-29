@@ -1,21 +1,16 @@
-# Junhee Lee, Jackie Lin, Michael Zhang, Amanda Zheng (KIRKLAND MEESEEKS)
-#SoftDev1 pd1
-#K25: Getting More Rest
-#2019-11-13
+#Team Kirkland Meeseeks
+#SoftDev pd1
+#P01 -- ArRESTed Development
+#2019-12-04
+
 from flask import Flask , render_template,request, redirect, url_for, session, flash
 from functools import wraps
 import sqlite3, os
 from utl import db_builder, db_manager
-from urllib.request import urlopen
-from json import loads
 import random
-import urllib, json
-from json import loads
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
-
-DB_FILE = "trivia.db"
 
 #====================================================
 # decorator for checking login
@@ -39,25 +34,8 @@ def no_login_required(f):
         flash('You cannot view this page while logged in!', 'alert-danger')
         return redirect('/home')
     return dec
-#====================================================
 
-#Michael's Code Below
-@app.route("/search")
-@login_required
-def search():
-    if (request.args):
-        if ('select' in request.args and 'query' in request.args):
-            select = request.args['select']
-            query = request.args['query'] #search keyword
-            results = []
-            byUser = False
-            if (select == "byuser"):
-                results = db_manager.findUser(query)
-                byUser = True
-            if (select == "bygame"):
-                results = db_manager.findGame(query)
-            return render_template('search.html', results=results, byUser=byUser, search="active")
-    return render_template('search.html', search="active")
+#====================================================
 
 @app.route("/")
 def root():
@@ -75,18 +53,20 @@ def login():
 def auth():
     enteredU = request.form['username']
     enteredP = request.form['password']
-    if(enteredU=="" or enteredP==""):
+    if(enteredU == "admin"):
+        flash('Login is disabled for this account!', 'alert-warning')
+        return redirect(url_for('login'))
+    if(enteredU == "" or enteredP == ""): #if fields empty
         flash('Please fill out all fields!', 'alert-danger')
-        return render_template("login.html")
-    if (db_manager.userValid(enteredU,enteredP)):
+        return redirect(url_for('login'))
+    if (db_manager.userValid(enteredU,enteredP)): #returns true if login successful
         flash('You were successfully logged in!', 'alert-success')
         session['username'] = enteredU
-        return redirect('/home')
+        return redirect(url_for('home'))
     else:
         flash('Wrong Credentials!', 'alert-danger')
-        return render_template("login.html")
+        return redirect(url_for('login'))
 
-#Amanda's Code Below
 @app.route("/signup")
 @no_login_required
 def signup():
@@ -97,26 +77,30 @@ def signup():
 @app.route("/signupcheck", methods=["POST"])
 @no_login_required
 def signupcheck():
-    username=request.form['username']
-    password=request.form['password']
-    confirm=request.form['confirmation']
-    flag=request.form['flag']
-    if flag=="":
-        flag="United States of America"
-    allcountries=db_manager.allCountries()
-    if(username=="" or password=="" or confirm==""):
+    username = request.form['username']
+    password = request.form['password']
+    confirm = request.form['confirmation']
+    flag = request.form['flag']
+    if flag == "": #default country is USA
+        flag = "United States of America"
+    allcountries = db_manager.allCountries()
+    #preliminary checks on entered fields
+    if(username == "" or password == "" or confirm == ""):
         flash('Please fill out all fields!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
+    if ("," in username):
+            flash('Commas are not allowed in username!', 'alert-danger')
+            return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
     if (confirm!=password):
         flash('Passwords do not match!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    added = db_manager.addUser(username,password,flag)
+    #form information delivered to backend
+    added = db_manager.addUser(username,password,flag) #returns True if user was sucessfully added
     if (not added):
         flash('Username taken!', 'alert-danger')
         return render_template("signup.html", username=username,password=password,confirm=confirm,flag=flag,options=allcountries)
-    #return redirect(url_for("leaderboard"))
     flash('You have successfully created an account! Please log in!', 'alert-success')
-    return redirect("/login")
+    return redirect(url_for('login'))
 
 #====================================================
 #STARTING FROM HERE USER MUST BE LOGGED IN
@@ -125,34 +109,21 @@ def signupcheck():
 @login_required
 def home():
     username = session['username']
-    owner = session['username']
-    if (request.args):
-        if ('user' in request.args):
+    owner = session['username'] #owner of the profile
+    if (request.args): #if querystring exists
+        if ('user' in request.args): #if username was given, display that user's profile
             username = request.args['user']
+        elif ('value' in request.args): #if value of profile picture given
+            db_manager.updatePic(username, request.args['value'])
     isOwner = False
-    if (owner == username):
+    if (owner == username): #if logged-in user matches owner of profile
         isOwner = True
     pic = db_manager.getPic(username)
     score = db_manager.getScore(username)
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, isOwner=isOwner)
-
-@app.route("/newhome")
-@login_required
-def newhome():
-    username = session['username']
-    score = db_manager.getScore(username)
-    money = db_manager.getMoney(username)
-    stats = db_manager.getStats(username).items()
-    if request.args['id'][0]=="R":
-        pic="https://rickandmortyapi.com/api/character/avatar/"+request.args['id'][1:]+".jpeg"
-    elif request.args['id'][0]=="P":
-        pic="https://pokeres.bastionbot.org/images/pokemon/"+request.args['id'][1:]+".png"
-    else:
-        pic="https://picsum.photos/id/"+request.args['id'][1:]+"/250.jpg"
-    db_manager.pfp(username,pic)
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats)
+    games = db_manager.getGames(username, owner)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner)
 
 @app.route("/leaderboard")
 @login_required
@@ -169,42 +140,21 @@ def leaderboard():
                             country=country,
                             board="active")
 
-#profile pages below
 @app.route("/profile")
 @login_required
 def profile():
     username=session['username']
-    command = 'SELECT coll,money,game_id FROM user_tbl WHERE username=?'
-    inputs = (username, )
-    raw = db_manager.execmany(command, inputs).fetchone()
-    iconstring = raw[0]
-    coll = iconstring.split(",")
-    money = raw[1]
-    games = raw[2].split(",")
+    coll = db_manager.getColl(username)
+    collID = db_manager.getCollID(username)
     return render_template("profile.html",
             enumcoll=range(len(coll)),
             coll=coll,
-            money=money,
-            games=games,
+            collID=collID,
             profile="active")
-
-@app.route("/icon", methods=["POST"])
-@login_required
-def icon():
-    if 'img' not in request.form:
-        flash("Please Select a Profile Icon!", "alert-danger")
-        return redirect("/profile")
-    index = int(request.form['img'])
-    user = session['username']
-    img = db_manager.getColl(user)[index]
-    db_manager.updatePic(user, img)
-    flash("Successfully set Player Icon", 'alert-success')
-    return redirect("/home")
 
 @app.route("/resetpasswd", methods=["POST"])
 @login_required
 def password():
-    #Jackie: Insert Code Here
     password = request.form['password']
     verif = request.form['verif']
     oldpass = request.form['oldpass']
@@ -227,11 +177,12 @@ def password():
 def store():
     return render_template("store.html", store="active")
 
-@app.route("/purchase")
+@app.route("/purchase", methods=["POST"])
 @login_required
 def purchase():
     username = session['username']
-    selection = int(request.args['value'])
+    value = request.form['value']
+    selection = int(request.form['value'])
     purchased = db_manager.purchase(username, selection)
     if (purchased):
         flash('Purchase successfully made!','alert-success')
@@ -253,9 +204,16 @@ def play():
                 pvp=pvp,
                 single=single,
                 play="active")
-    game = request.form['id']
-    command = 'SELECT team1,team2,playing FROM game_tbl WHERE game_id="{}";'.format(game)
-    raw = db_manager.exec(command).fetchall()
+    if 'id' in request.form:
+        game = request.form['id']
+    else:
+        game = request.args['id']
+    db_manager.joinGame(username, game)
+    started = db_manager.gameStarted(game)
+    number = db_manager.getTeamNum(username, game)
+    command = 'SELECT team1,team2,playing%s FROM game_tbl WHERE game_id=?;' % number
+    inputs = (game, )
+    raw = db_manager.execmany(command, inputs).fetchall()
     team1 = raw[0][0].split(',')
     team2 = raw[0][1].split(',')
     if (team1.count('') > 0):
@@ -263,151 +221,118 @@ def play():
     if (team2.count('') > 0):
         team2.remove('')
     up = raw[0][2] #who's up next
-    t1 = (team1.pop(0), [])
+    t1 = (team1.pop(0), team1.pop(0), [])
     for user in team1:
-        command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-        raw = db_manager.exec(command).fetchone()
-        t1[1].append((user, raw[0][0]))
+        t1[2].append(user)
+    #single player exceptions
+    single=True
+    t2=['', []]
     if ("S" not in game):
-        t2 = (team2.pop(0), [])
-        for user in team2:
-            command = 'SELECT pic FROM user_tbl WHERE username="{}";'.format(user)
-            raw = db_manager.exec(command).fetchone()
-            t2[1].append((user, raw[0][0]))
-    #fetch question from API
-    raw = urlopen("https://opentdb.com/api.php?amount=1&type=multiple").read()
-    question = loads(raw)['results'][0]
-    choices = question['incorrect_answers']
-    choices.append(question['correct_answer'])
-    #cache
-    command='INSERT OR IGNORE INTO question_tbl VALUES(?, ?, ?, ?, ?)'
-    inputs = (question['category'], question['question'], question['difficulty'], ",".join(choices), question['correct_answer'])
-    db_manager.execmany(command, inputs)
-    q = question['question'] #question here
-    c = set(choices) #choices
-    category = question['category']
-    started = db_manager.gameStarted(game)
-    if "T" in game:
-        #team rally
-        return render_template("_gameplay.html",
+        single=False
+        if (started):
+            t2 = (team2.pop(0), team2.pop(0), [])
+            for user in team2:
+                t2[2].append(user)
+    #check if game is completed
+    if (db_manager.gameCompleted(game)):
+        return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single, code=303)
+    #get current question
+    questionEntry = db_manager.getCurrentQuestion(username, game)
+    if (questionEntry is None):
+        db_manager.updateQuestion(username, game)
+        questionEntry = db_manager.getCurrentQuestion(username, game)
+    question = questionEntry[1]
+    choices = set(questionEntry[3].split("~"))
+    category = questionEntry[0]
+    num = db_manager.currentNumber(username, game)
+    team = db_manager.getTeamNum(username, game)
+    waiting = db_manager.team2Completed(game)
+    currentteam = t2
+    if (team == "1"):
+        waiting = db_manager.team1Completed(game)
+        currentteam = t1
+    if (single):
+        team1Completed = False
+        team2Completed = False
+    ##### EDIT TO RETURN WHICH TEAM THE PLAYER IS ON
+    return render_template("gameplay.html",
                 started=started,
-                player=session['username'],
+                waiting=waiting,
+                player=username,
                 up=up,
-                t1=t1,
-                t2=t2,
-                question=q,
-                choices=c,
+                currentteam=currentteam,
+                question=question,
+                choices=choices,
                 game=game,
-                category=category)
-    if "P" in game:
-        #pvp
-        return render_template("_gameplay.html",
-                started=started,
-                player=session["username"],
-                up=up,
-                t1=t1,
-                t2=t2,
-                question=q,
-                choices=c,
-                game=game,
-                category=category)
-    #single player
-    return render_template("_gameplay.html",
-            started=started,
-            player=session["username"],
-            up=up,
-            t1=t1,
-            t2=['', []],
-            question=q,
-            choices=c,
-            game=game,
-            category=category)
+                category=category,
+                single=single,
+                num=num)
 
 @app.route("/new", methods=['POST'])
 @login_required
 def create():
-    #create game code here
     username = session['username']
     if 'p' in request.form['id']:
-        command="SELECT participants,game_id FROM game_tbl WHERE game_id LIKE '%p%';"
-        gameList=db_builder.exec(command).fetchall()
-        print(gameList)
-        collection=[]
-        i=0
-        if (len(gameList))>0:
-            for i in range(0,len(gameList)):
-                item=[]
-                for parts in gameList[i]:
-                    if len(str(parts))>0:
-                        item.append(str(parts))
-                collection.append(item)
-        print("----------")
-        print(collection)
-        print("----------")
-        if len(collection)>0:
-            for pair in collection:
-                print(pair)
-                if pair[0].count(',')<1:
-                    command="UPDATE game_tbl SET team2 = ?, participants = participants + ',' + ? WHERE game_id = ?"
-                    inputs=(session['username'],session['username'],pair[1],)
-                    updating=db_manager.execmany(command, inputs).fetchall()
-                    print(updating)
-
-        #not a game that user is in
-        #check if there exists a game with room first
-        return 'under construction'
-    #else:
-            #command = 'INSERT INTO game_tbl VALUES ();'
+        ##### check if there is a game with room first
+        added = db_manager.joinPVP(username, "P")
     elif 't' in request.form['id']:
-
-        #check if there exists a game with room first
-        return 'under construction'
-        #else:
-            #command = 'INSERT INTO game_tbl VALUES ();'
+        ##### check if there is a game with room first
+        added = db_manager.addMulti(username, "T")
     else:
-        db_manager.addSingle(username)
+        added = db_manager.addSingle(username)
+
+    if (not added):
+        flash('Maximum number of games reached!', 'alert-danger')
     return redirect("/play")
 
 @app.route("/triviacheck", methods=['POST'])
 @login_required
 def check():
+    game_id = request.form['id']
+    username = session['username']
     command = 'SELECT answer FROM question_tbl WHERE question=?;'
     inputs = (request.form['question'], )
     ans = db_manager.execmany(command, inputs).fetchall()
-    if ans[0][0] == request.form['answer']:
-        #correct answer
-        command = 'SELECT team1, team2 FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
-        teams = db_manager.exec(command).fetchall()[0]
-        #print(teams)
-        team1 = teams[0]
-        team2 = teams[1]
-        if session['username'] in teams[0]:
-            data = teams[0].split(',')
+    if 'answer' not in request.form:
+        flash("Please select an answer!", 'alert-danger')
+        return redirect(url_for("play", id=game_id), code=307)
+    else:
+        if ans[0][0] == request.form['answer']:
+            #correct answer
+            number = db_manager.getTeamNum(username, game_id)
+            command = 'SELECT team%s FROM game_tbl WHERE game_id=?' % number
+            inputs = (game_id, )
+            team = db_manager.execmany(command, inputs).fetchall()[0]
+            data = team[0].split(',')
             data[0] = str(int(data[0]) + 10)
-            team1 = ",".join(data)
-        if session['username'] in teams[1]:
-            data = teams[1].split(',')
-            data[0] = str(int(data[0]) + 10)
-            team2 = ",".join(data)
-        command = 'UPDATE game_tbl SET team1="{}", team2="{}" WHERE game_id="{}";'.format(team1, team2, request.form["id"])
-        db_manager.exec(command)
-        #update score
-        command = 'SELECT score FROM user_tbl WHERE username=?'
-        inputs = (session['username'], )
-        data = db_manager.execmany(command, inputs).fetchone()[0]
-        data += 10
-        command = 'UPDATE user_tbl SET score=? WHERE username=?'
-        inputs = (data, session['username'])
-        db_manager.execmany(command, inputs)
-    command = 'SELECT participants FROM game_tbl WHERE game_id="{}";'.format(request.form['id'])
+            team = ",".join(data)
+            command = 'UPDATE game_tbl SET team%s=? WHERE game_id=?' % number
+            inputs = (team, game_id)
+            db_manager.execmany(command, inputs)
+            #update score
+            command = 'SELECT score FROM user_tbl WHERE username=?'
+            inputs = (username, )
+            data = db_manager.execmany(command, inputs).fetchone()[0]
+            data += 10
+            command = 'UPDATE user_tbl SET score=? WHERE username=?'
+            inputs = (data, username)
+            db_manager.execmany(command, inputs)
+            flash('Correct!', 'alert-success')
+        else:
+            flash('Wrong answer!', 'alert-danger')
+
+    command = 'SELECT participants FROM game_tbl WHERE game_id="{}";'.format(game_id)
     participants = db_manager.exec(command).fetchall()[0][0].split(',')
     if (participants.count('') > 0):
         participants.remove('')
-    player = participants.index(session['username'])
-    command = 'UPDATE game_tbl SET playing="{}" WHERE game_id="{}";'.format(participants[player - 1], request.form['id'])
-    db_manager.exec(command)
+    player = participants.index(username)
+    number = db_manager.getTeamNum(username, game_id)
+    if ("T" in game_id):
+        command = 'UPDATE game_tbl SET playing%s=? WHERE game_id=?;' % number
+        inputs = (participants[player - 1], game_id)
+        db_manager.execmany(command, inputs)
     command = 'SELECT stat FROM user_tbl WHERE username=?;'
-    inputs = (session['username'], )
+    inputs = (username, )
     data = db_manager.execmany(command, inputs).fetchone()[0].split(",")
     for i in range(len(data)):
         category = data[i].split("|")
@@ -418,11 +343,34 @@ def check():
         data[i] = "|".join(category)
     data = ",".join(data)
     command = 'UPDATE user_tbl SET stat=? WHERE username=?'
-    inputs = (data, session['username'])
+    inputs = (data, username)
     db_manager.execmany(command, inputs)
-    return redirect(url_for("play"), code=307)
+    db_manager.updateQuestion(username, game_id)
+    return redirect(url_for("play", id=game_id), code=307)
+
+@app.route("/search")
+@login_required
+def search():
+    if (request.args):
+        if ('select' in request.args and 'query' in request.args):
+            select = request.args['select']
+            query = request.args['query'] #search keyword
+            results = []
+            byUser = False
+            user=""
+            game=""
+            if (select == "byuser"):
+                results = db_manager.findUser(query)
+                byUser = True
+                user = "selected"
+            if (select == "bygame"):
+                results = db_manager.findGame(query)
+                game = "selected"
+            return render_template('search.html', results=results, byUser=byUser, search="active", user=user, game=game)
+    return render_template('search.html', search="active")
 
 @app.route("/logout")
+@login_required
 def logout():
     session.clear()
     flash('You were successfully logged out.', 'alert-success')
@@ -432,5 +380,6 @@ if __name__ == "__main__":
     db_builder.build_db()
     db_builder.build_flag()
     db_builder.build_pic()
+    db_builder.build_question()
     app.debug = True
     app.run()

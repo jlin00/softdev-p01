@@ -30,7 +30,7 @@
 						{% for i, (k, v) in leaderboard %}
 						<tr class="text-center">
 							<th>{{ i + 1 }}</th>
-							<td>{{ k }}</td>
+							<td><a href="/home?user={{k}}">{{ k }}</a></td>
 							<td>{{ v }}</td>
 						</tr>
 						{% endfor %}
@@ -92,7 +92,7 @@
 						{% for i, (k, v) in countryboard %}
 						<tr class="text-center">
 							<th>{{ i + 1 }}</th>
-							<td>{{ k }}</td>
+							<td><a href="/home?user={{k}}">{{ k }}</a></td>
 							<td>{{ v }}</td>
 						</tr>
 						{% endfor %}

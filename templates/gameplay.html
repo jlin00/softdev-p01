@@ -1,0 +1,62 @@
+{% extends "_base.html" %}
+
+{% block title %}
+Trivia
+{% endblock %}
+
+{% block body %}
+	{% if waiting %}
+	<div class="card w-50">
+		<br>
+		<h2>Waiting for other team to finish...</h2>
+		<div class="spinner-border text-primary" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+		<br>
+	</div>
+	{% else %}
+		{% if started %}
+		<div class="card w-50">
+			<div class="row">
+				<div class="col-12">
+					<b>Score: </b> &nbsp&nbsp&nbsp {{ currentteam[0] }}
+				</div>
+			</div>
+		</div>
+		<br>
+		<div class="container">
+			{% if player == up %}
+			<div class="progress">
+			  <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: {{ num }}0%" aria-valuenow="{{ num }}" aria-valuemin="0" aria-valuemax="10">{{ num }} / 10</div>
+			</div><br>
+			<h4>{{ question|safe }}</h4>
+			<form action="/triviacheck" method="post">
+				<input type="hidden" name="id" value="{{ game }}">
+				<input type="hidden" name="question" value="{{ question }}">
+				<input type="hidden" name="category" value="{{ category }}">
+				{% for answer in choices %}
+				<input type="radio" name="answer" value="{{ answer }}" id="{{ answer }}">
+				<label for="{{ answer }}">{{ answer|safe }}</label>
+				<br>
+				{% endfor %}
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+			{% else %}
+			<h2>It is currently {{ up }}'s turn.</h2>
+			<div class="spinner-border text-primary" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			{% endif %}
+		</div>
+		{% else %}
+		<div class="card w-50">
+			<br>
+			<h2>Waiting for players to join...</h2>
+			<div class="spinner-border text-primary" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			<br>
+		</div>
+		{% endif %}
+	{% endif %}
+{% endblock %}

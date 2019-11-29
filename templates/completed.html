@@ -1,0 +1,41 @@
+{% extends "_base.html" %}
+
+{% block title %}
+Trivia
+{% endblock %}
+
+{% block body %}
+<br>
+<h1>Game Completed!</h1>
+<br>
+
+<div class="row">
+  {% if single %}
+    <div class="card w-50" style="margin:0 25% 0% 25%;">
+      <br>
+    <h2 class="font-italic"><u>Results</u></h2>
+  {% else %}
+    <div class="card" style="width:45%; margin:2.5%">
+      <br>
+      <h2><u>Team 1</u></h2>
+  {% endif %}
+    {% for user in t1[2] %}
+      <a href="/home?user={{ user }}">{{ user }}</a>
+    {% endfor %}
+    <p class="font-weight-bold">Score: {{ t1[0] }}</p>
+    <br>
+  </div>
+  {% if not single %}
+  <div class="card" style="width:45%; margin:2.5%">
+    <br>
+    <h2><u>Team 2</u></h2>
+    {% for user in t2[2] %}
+      <a href="/home?user={{ user }}">{{ user }}</a>
+    {% endfor %}
+    <p class="font-weight-bold">Score: {{ t2[0] }}</p>
+    <br>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

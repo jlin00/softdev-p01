@@ -1,7 +1,7 @@
 #Team Kirkland Meeseeks
 #SoftDev pd1
 #P01 -- ArRESTed Development
-#2019-1?-??
+#2019-12-04
 
 import sqlite3, urllib, json
 
@@ -26,10 +26,11 @@ def execmany(cmd, inputs):
 #==========================================================
 #creates tables if they do not exist with necessary columns
 def build_db():
+    print("Database is being created. It may take a while. Please stand by...")
     command = "CREATE TABLE IF NOT EXISTS user_tbl (username TEXT, password TEXT, pic TEXT, coll TEXT, game_id TEXT, money INT, flag TEXT, stat TEXT, score INT)"
     exec(command)
 
-    command = "SELECT * FROM user_tbl WHERE username='jackielin'" #dummy account
+    command = "SELECT * FROM user_tbl WHERE username='admin'" #dummy account
     data = exec(command).fetchone()
     if (data is None):
         u = urllib.request.urlopen("https://opentdb.com/api_category.php")
@@ -39,11 +40,10 @@ def build_db():
             allcategories += category['name'] + "|0|0,"
         #print(allcategories)
         allcategories = allcategories[0:-1]
-        command = "INSERT OR IGNORE INTO user_tbl VALUES('jackielin', '123', '', '', 'p1', 2000, '', '%s', 0)" % allcategories
+        command = "INSERT OR IGNORE INTO user_tbl VALUES('admin', '123', 'https://restcountries.eu/data/usa.svg', 'https://restcountries.eu/data/usa.svg', '', 200, 'United States of America', '%s', 0)" % allcategories
         exec(command)
 
-
-    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing TEXT, started INT, completed INT)"
+    command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing1 TEXT, playing2 TEXT, started INT, completed1 INT, completed2 INT, currentq1 TEXT, currentq2 TEXT)"
     exec(command)
     command = "INSERT OR IGNORE INTO game_tbl VALUES('p1', 'jackielin', 'jackielin', '', '', 0, 0)"
     exec(command)
@@ -59,24 +59,23 @@ def build_db():
 
 #populates flag_tbl if it isn't already populated
 def build_flag():
-    #command = "SELECT * FROM flags_tbl;"
-    #data = exec(command).fetchone()
-    #if (data is None):
-        #print("EXECUTING BUILD_FLAG")
-    u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
-    response = json.loads(u.read())
-    for country in response:
-        q = "INSERT OR IGNORE INTO flags_tbl VALUES(?, ?)"
-        inputs = (country['name'], country['flag'])
-        execmany(q, inputs)
-    #else:
-        #print("NOT EXECUTING BUILD_FLAG")
+    command = "SELECT * FROM flags_tbl;"
+    data = exec(command).fetchone()
+    if (data is None):
+        print("\tBuilding flag cache...")
+        u = urllib.request.urlopen("https://restcountries.eu/rest/v2/all?fields=name;flag")
+        response = json.loads(u.read())
+        for country in response:
+            q = "INSERT OR IGNORE INTO flags_tbl VALUES(?, ?)"
+            inputs = (country['name'], country['flag'])
+            execmany(q, inputs)
 
 #build pic cache
 def build_pic():
     command = "SELECT * FROM pic_tbl;"
     data = exec(command).fetchone()
     if (data is None):
+        print("\tBuilding picture cache...")
         q = "INSERT OR IGNORE INTO pic_tbl VALUES(?, ?)"
 
         #building Rick and Morty picture cache
@@ -111,4 +110,25 @@ def build_question():
     command = "SELECT * FROM question_tbl;"
     data = exec(command).fetchone()
     if (data is None):
-        return data
+        print("\tBuild question cache...")
+        #get a token
+        url = "https://opentdb.com/api_token.php?command=request"
+        u = urllib.request.urlopen(url)
+        response = json.loads(u.read())
+        token = response['token']
+
+        #use token to retrieve questions
+        url = "https://opentdb.com/api.php?amount=50&type=multiple&token=" + token
+        u = urllib.request.urlopen(url)
+        response = json.loads(u.read())
+        while (response['response_code'] == 0): #while database has not been exhausted
+            for result in response['results']:
+                q = "INSERT OR IGNORE INTO question_tbl VALUES(?, ?, ?, ?, ?)"
+                choices = result['incorrect_answers']
+                choices.append(result['correct_answer'])
+                choices = "~".join(choices)
+                inputs = (result['category'], result['question'], result['difficulty'], choices, result['correct_answer'])
+                execmany(q, inputs)
+            url = "https://opentdb.com/api.php?amount=50&type=multiple&token=" + token
+            u = urllib.request.urlopen(url)
+            response = json.loads(u.read())

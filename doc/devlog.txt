@@ -211,3 +211,24 @@ uploaded latest version of devlog
   -updated component map to reflect new caches in Backend
   -updated database schema with new caches
   -updated division of labor map 
+
+jackieL -- 2019-11-27 11:52
+updated code to allow selection of profile pictures
+
+jackieL -- 2019-11-27 21:06
+added function to build cached questions table and updated game table to keep track of number of questions answered
+
+jackieL -- 2019-11-27 22:40
+added formatting for html pages and created a game completed html page
+
+jackieL -- 2019-11-28 11:55
+reorganized code for database functions 
+
+jackieL -- 2019-11-28 12:41
+additional testing for single player mode and changed purchasing packs to post method
+
+jackieL -- 2019-11-28 14:41
+tested game functionality some more and added getGames function
+
+jackieL -- 2019-11-28 20:20
+added and tested PVP functionality, users now can create, join and play PVP games with other users

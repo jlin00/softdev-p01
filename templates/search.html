@@ -11,8 +11,8 @@
     <form class="form-inline" action = "/search" method="GET">
       <div class="form-group px-3">
           <select class="form-control" name="select" id="selectsearch">
-            <option value="byuser">Search by Username</option>
-            <option value="bygame">Search by Game ID</option>
+            <option value="byuser" {{ user }}>Search by Username</option>
+            <option value="bygame" {{ game }}>Search by Game ID</option>
           </select>
       </div>
       <input class="form-control mr-sm-2" name="query" type="search" placeholder="Type query here..." aria-label="Search">

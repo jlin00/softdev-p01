@@ -5,6 +5,9 @@
 {% endblock %}
 
 {% block body %}
+<h1>Play</h1>
+<small class="text-danger">(Only active games are shown.)</small>
+<br><br>
 <div class="container">
 	<div class="row">
 		<div class="col">
@@ -19,7 +22,7 @@
 				<br>
 				<form action="new" method="post">
 					<input type="hidden" value="new" name="id">
-					<button class="btn btn-info" type="submit">Create New Game</button>
+					<button class="btn btn-info" type="submit">Start New Game</button>
 				</form>
 				<br>
 			</div>
@@ -36,7 +39,7 @@
 				<br>
 				<form action="new" method="post">
 					<input type="hidden" value="newp" name="id">
-					<button class="btn btn-info" type="submit">Create New Game</button>
+					<button class="btn btn-info" type="submit">Start New Game</button>
 				</form>
 				<br>
 			</div>
@@ -53,7 +56,7 @@
 				<br>
 				<form action="new" method="post">
 					<input type="hidden" value="newt" name="id">
-					<button class="btn btn-info" type="submit">Create New Game</button>
+					<button class="btn btn-info" type="submit">Start New Game</button>
 				</form>
 				<br>
 			</div>
