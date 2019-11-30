@@ -359,8 +359,8 @@ def addSingle(username):
         game_id = "S" + str(random.randrange(10000000000))
 
     #add game to game table
-    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    inputs = (str(game_id), username, '0,0,'+username, '', username, '', 1, 0, 1, '', '')
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    inputs = (str(game_id), '0,0,'+username, '', username, '', 1, 0, 1, '', '')
     execmany(command, inputs)
 
     #add game to user table
@@ -373,7 +373,7 @@ def addSingle(username):
     execmany(command, inputs)
     return True
 
-#create a pvp game
+#create a multiplayer game
 def addMulti(username, type):
     #generate random game id
     game_id = type + str(random.randrange(10000000000))
@@ -388,8 +388,8 @@ def addMulti(username, type):
         game_id = type + str(random.randrange(10000000000))
 
     #add game to game table
-    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-    inputs = (str(game_id), username, '0,0,'+username, '', username, '', 0, 0, 0, '', '')
+    command = "INSERT INTO game_tbl VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    inputs = (str(game_id), '0,0,'+username, '', username, '', 0, 0, 0, '', '')
     execmany(command, inputs)
 
     #add game to user table
@@ -408,15 +408,11 @@ def joinGame(username, game_id):
         #joining a PVP game
         if "P" in game_id:
             #update game table
-            q = "SELECT participants FROM game_tbl WHERE game_id=?"
-            inputs = (game_id, )
-            participants = execmany(q, inputs).fetchone()[0]
-            q = "UPDATE game_tbl SET participants=?, team2=?, playing2=?, started=? WHERE game_id=?"
-            participants += "," + username
+            q = "UPDATE game_tbl SET team2=?, playing2=?, started=? WHERE game_id=?"
             team2 = '0,0,' + username
             playing2 = username
             started = 1
-            inputs = (participants, team2, playing2, started, game_id)
+            inputs = (team2, playing2, started, game_id)
             execmany(q, inputs)
 
             #update user table
@@ -427,7 +423,64 @@ def joinGame(username, game_id):
             games += "," + game_id
             inputs = (games, username)
             execmany(q, inputs)
+
         #joining a team game
+        if "T" in game_id:
+            #update team members
+            q = "SELECT team1, team2 FROM game_tbl WHERE game_id=?"
+            inputs = (game_id, )
+            data = execmany(q, inputs).fetchone()
+            team1 = data[0]
+            lenteam1 = len(team1.split(","))
+            emptyteam1 = team1.split(",")[0] == ""
+            team2 = data[1]
+            lenteam2 = len(team2.split(","))
+            emptyteam2 = team2.split(",")[0] == ""
+            print(team2)
+            print(emptyteam2)
+
+            if lenteam1 < 5:
+                team = "1"
+                if emptyteam1:
+                    team1 += '0,0,' + username
+                    playing = username
+                    q = "UPDATE game_tbl SET playing%s=?, team%s=? WHERE game_id=?" % (team, team)
+                    inputs = (playing, team1, game_id)
+                    execmany(q, inputs)
+                else:
+                    team1 += "," + username
+                    q = "UPDATE game_tbl SET team%s=? WHERE game_id=?" % team
+                    inputs = (team1, game_id)
+                    execmany(q, inputs)
+            else:
+                team = "2"
+                if emptyteam2:
+                    team2 += '0,0,' + username
+                    playing = username
+                    q = "UPDATE game_tbl SET playing%s=?, team%s=? WHERE game_id=?" % (team, team)
+                    inputs = (playing, team2, game_id)
+                    execmany(q, inputs)
+                else:
+                    team2 += "," + username
+                    q = "UPDATE game_tbl SET team%s=? WHERE game_id=?" % team
+                    inputs = (team2, game_id)
+                    execmany(q, inputs)
+
+            full = gameFull(game_id)
+            print(full)
+            if full:
+                q = "UPDATE game_tbl SET started=? WHERE game_id=?"
+                inputs = (True, game_id)
+                execmany(q, inputs)
+
+            #update user table
+            q = "SELECT game_id FROM user_tbl WHERE username=?"
+            inputs = (username, )
+            games = execmany(q, inputs).fetchone()[0]
+            q = "UPDATE user_tbl SET game_id=? WHERE username=?"
+            games += "," + game_id
+            inputs = (games, username)
+            execmany(q, inputs)
 
 def joinPVP(username, type):
     q = "SELECT game_id FROM game_tbl WHERE game_id LIKE 'P%' AND team2='' AND playing1!=?"
@@ -438,6 +491,22 @@ def joinPVP(username, type):
     else:
         game_id = game_id[0]
         joinGame(username, game_id)
+    return True
+
+def joinTeam(username, type):
+    q = "SELECT game_id FROM game_tbl WHERE game_id LIKE 'T%'"
+    data = exec(q).fetchall()
+    list = []
+    for game in data:
+        game_id = game[0]
+        owner = ownGame(username, game_id)
+        full = gameFull(game_id)
+        if not full and not owner:
+            list.append(game_id)
+    if len(list) == 0:
+        return addMulti(username, type)
+    else:
+        joinGame(username, list[0])
     return True
 
 #check if game started
@@ -471,7 +540,7 @@ def team2Completed(game_id):
 #check if game is full
 def gameFull(game_id):
     if "S" in game_id:
-        return False
+        return True
     if "P" in game_id:
         q = "SELECT team2 FROM game_tbl WHERE game_id=?"
         inputs = (game_id, )
@@ -481,7 +550,11 @@ def gameFull(game_id):
     else:
         q = "SELECT team1, team2 FROM game_tbl WHERE game_id=?"
         inputs = (game_id, )
-        data = execmany(q, inputs).fetchone()[0]
+        data = execmany(q, inputs).fetchone()
+        team1 = data[0].split(",")
+        team2 = data[1].split(",")
+        if len(team1) < 5 or len(team2) < 5:
+            return False
     return True
 
 #check which team user is on for a particular game
@@ -561,17 +634,43 @@ def findUser(query):
     q = "SELECT username FROM user_tbl"
     data = exec(q).fetchall()
     for name in data:
-        if (query in name[0]):
+        if (query in name[0].lower()):
             list.append(name[0])
     return list
 
 #find by game_id
-def findGame(query):
+def findGame(username, query):
     query = query.lower().strip()
-    list = []
-    q = "SELECT game_id FROM game_tbl"
+    output = []
+    q = "SELECT game_id from game_tbl"
     data = exec(q).fetchall()
     for game in data:
-        if (query in game[0] and "S" not in game[0]):
-            list.append(game[0])
-    return list
+        game_id = game[0]
+        if query in game_id.lower() and "S" not in game_id: #meets these requirements
+            entry = []
+
+            #first item in tuple
+            if "P" in game_id:
+                entry.append("PVP")
+            else:
+                entry.append("Team")
+
+            #second item in tuple
+            entry.append(game_id)
+
+            #third, fourth, fifth item in tuple
+            if ownGame(username, game_id):
+                entry.append("Play")
+                entry.append("")
+                entry.append("btn-primary")
+            else:
+                if gameFull(game_id):
+                    entry.append("Full")
+                    entry.append("disabled")
+                    entry.append("btn-danger")
+                else:
+                    entry.append("Join")
+                    entry.append("")
+                    entry.append("btn-success")
+            output.append(tuple(entry))
+    return output
