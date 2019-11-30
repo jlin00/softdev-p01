@@ -54,7 +54,6 @@ def build_db():
 
     command = "CREATE TABLE IF NOT EXISTS pic_tbl (category TEXT, pic TEXT PRIMARY KEY)"
     exec(command)
-
 #populates flag_tbl if it isn't already populated
 def build_flag():
     command = "SELECT * FROM flags_tbl;"
