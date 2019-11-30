@@ -12,18 +12,18 @@
 	{% endif %}
 
 	<br>
-	<div class="container w-50">
+	<div class="container w-50" style="width:700px;">
 	  <div class="row">
 	    <div class="col-sm">
-	      <img src="{{ pic }}" class="mb-2 img-thumbnail" style="width:250px">
+	      <img src="{{ pic }}" class="mb-2 img-thumbnail" style="width:300px; height: 200px;">
 				{% if isOwner %}
 				<form action="/profile">
-					<button type="submit" class="btn btn-primary" style="width:250px;">Change Picture</button>
+					<button type="submit" class="btn btn-primary" style="width:300px;">Change Picture</button>
 				</form>
 				{% endif %}
 	    </div>
 	    <div class="col-sm font-weight-bold">
-	      <h1>{{ user }}</h1>
+	      <h1>{{ user }}</h1> <img  style="width: 100px; height: 50px;" src="{{flag}}" alt="not displaying">
 				<h4 class="text-primary font-weight-light">Score: {{ score }}</h4>
 				<h4 class="text-success font-weight-light">Money: {{ money }}</h4><br>
 				<button class="btn btn-info mr-2" style="width:125px" type="button" data-toggle="collapse" data-target="#games" aria-expanded="true" aria-controls="games">
@@ -32,6 +32,7 @@
 				<button class="btn btn-info ml-2" style="width:125px" data-toggle="collapse" data-target="#stattable" aria-expanded="true" aria-controls="stattable">
 	        Show Stats
         </button>
+				<br>
 	    </div>
 	  </div><br><br>
 

@@ -104,6 +104,15 @@ def getMoney(username):
     data = execmany(q, inputs).fetchone()[0]
     return data
 
+def getFlag(username):
+    q = "SELECT flag from user_tbl WHERE username=?"
+    inputs = (username, )
+    data1 = execmany(q, inputs).fetchone()[0]
+    q = "SELECT flag from flags_tbl WHERE country=?"
+    inputs = (data1, )
+    data = execmany(q, inputs).fetchone()[0]
+    return data
+
 def getColl(username):
      q = "SELECT coll from user_tbl WHERE username=?"
      inputs = (username, )
@@ -436,8 +445,8 @@ def joinGame(username, game_id):
             team2 = data[1]
             lenteam2 = len(team2.split(","))
             emptyteam2 = team2.split(",")[0] == ""
-            print(team2)
-            print(emptyteam2)
+            #print(team2)
+            #print(emptyteam2)
 
             if lenteam1 < 5:
                 team = "1"
@@ -467,7 +476,7 @@ def joinGame(username, game_id):
                     execmany(q, inputs)
 
             full = gameFull(game_id)
-            print(full)
+            #print(full)
             if full:
                 q = "UPDATE game_tbl SET started=? WHERE game_id=?"
                 inputs = (True, game_id)
@@ -553,6 +562,9 @@ def gameFull(game_id):
         data = execmany(q, inputs).fetchone()
         team1 = data[0].split(",")
         team2 = data[1].split(",")
+        #print("---------------------")
+        #print(team1)
+        #print(team2)
         if len(team1) < 5 or len(team2) < 5:
             return False
     return True
@@ -631,7 +643,7 @@ def completeGame(username, game_id):
 def findUser(query):
     query = query.lower().strip()
     list = []
-    q = "SELECT username FROM user_tbl"
+    q = "SELECT username FROM user_tbl;"
     data = exec(q).fetchall()
     for name in data:
         if (query in name[0].lower()):
@@ -642,7 +654,7 @@ def findUser(query):
 def findGame(username, query):
     query = query.lower().strip()
     output = []
-    q = "SELECT game_id from game_tbl"
+    q = "SELECT game_id FROM game_tbl;"
     data = exec(q).fetchall()
     for game in data:
         game_id = game[0]

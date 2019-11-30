@@ -6,6 +6,14 @@ Trivia
 
 {% block body %}
 	{% if waiting %}
+	<div class="card w-20" style="margin-left: 0px; height:50px; width: 100px; float: left;">
+		<b>My Team</b>
+			{{score}}
+	</div>
+	<div class="card w-20" style="margin-right: 0px; height:50px; width: 200px; float: right;">
+		<b>Opponent Team</b>
+			{{Oscore}}
+	</div>
 	<div class="card w-50">
 		<br>
 		<h2>Waiting for other team to finish...</h2>
@@ -17,10 +25,17 @@ Trivia
 	</div>
 	{% else %}
 		{% if started %}
+		<div class="card w-20" style="margin-left: 0px; height:50px; width: 100px; float: left;">
+			<b>My Team</b>
+				{{score}}
+		</div>
+		<div class="card w-20" style="margin-right: 0px; height:50px; width: 200px; float: right;">
+			<b>Opponent Team</b>
+				{{Oscore}}
+		</div>
 		<div class="card w-50">
 			<div class="row">
 				<div class="col-12">
-					<b>Score: </b> &nbsp&nbsp&nbsp {{ currentteam[0] }}
 				</div>
 			</div>
 		</div>

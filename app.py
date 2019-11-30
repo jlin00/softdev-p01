@@ -123,7 +123,8 @@ def home():
     money = db_manager.getMoney(username)
     stats = db_manager.getStats(username).items()
     games = db_manager.getGames(username, owner)
-    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner)
+    flag = db_manager.getFlag(username)
+    return render_template("home.html", home="active", user=username, pic=pic, score=score, money=money, stats=stats, games=games, isOwner=isOwner, flag=flag)
 
 @app.route("/leaderboard")
 @login_required
@@ -220,6 +221,21 @@ def play():
         team1.remove('')
     if (team2.count('') > 0):
         team2.remove('')
+    score1=0
+    score2=0
+    if db_manager.gameFull(game):
+        print(team1)
+        score1=team1[0]
+        score2=team2[0]
+        if score1>score2:
+            higher="1"
+            highscore=score1
+        else:
+            highscore=score2
+            higher="2"
+            if username in team2:
+                score1=team2[0]
+                score2=team1[0]
     up = raw[0][2] #who's up next
     t1 = (team1.pop(0), team1.pop(0), [])
     for user in team1:
@@ -235,6 +251,15 @@ def play():
                 t2[2].append(user)
     #check if game is completed
     if (db_manager.gameCompleted(game)):
+        if score1 != score2:
+            if higher=="1":
+                winners=team1
+            else:
+                winners=team2
+            for user in winners:
+                q="UPDATE user_tbl SET money = money + ? WHERE username=?"
+                inputs = (highscore, user)
+                db_manager.execmany(q, inputs)
         return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single, code=303)
     #get current question
     questionEntry = db_manager.getCurrentQuestion(username, game)
@@ -266,7 +291,9 @@ def play():
                 game=game,
                 category=category,
                 single=single,
-                num=num)
+                num=num,
+                score=score1,
+                Oscore=score2)
 
 @app.route("/new", methods=['POST'])
 @login_required
