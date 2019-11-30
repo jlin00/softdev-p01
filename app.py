@@ -272,11 +272,9 @@ def play():
 def create():
     username = session['username']
     if 'p' in request.form['id']:
-        ##### check if there is a game with room first
         added = db_manager.joinPVP(username, "P")
     elif 't' in request.form['id']:
-        ##### check if there is a game with room first
-        added = db_manager.addMulti(username, "T")
+        added = db_manager.joinTeam(username, "T")
     else:
         added = db_manager.addSingle(username)
 
@@ -297,7 +295,7 @@ def check():
         return redirect(url_for("play", id=game_id), code=307)
     else:
         if ans[0][0] == request.form['answer']:
-            #correct answer
+            #correct answer, update team score
             number = db_manager.getTeamNum(username, game_id)
             command = 'SELECT team%s FROM game_tbl WHERE game_id=?' % number
             inputs = (game_id, )
@@ -308,7 +306,7 @@ def check():
             command = 'UPDATE game_tbl SET team%s=? WHERE game_id=?' % number
             inputs = (team, game_id)
             db_manager.execmany(command, inputs)
-            #update score
+            #update user score
             command = 'SELECT score FROM user_tbl WHERE username=?'
             inputs = (username, )
             data = db_manager.execmany(command, inputs).fetchone()[0]
@@ -319,17 +317,20 @@ def check():
             flash('Correct!', 'alert-success')
         else:
             flash('Wrong answer!', 'alert-danger')
-
-    command = 'SELECT participants FROM game_tbl WHERE game_id="{}";'.format(game_id)
-    participants = db_manager.exec(command).fetchall()[0][0].split(',')
-    if (participants.count('') > 0):
-        participants.remove('')
-    player = participants.index(username)
+    #switch turns
     number = db_manager.getTeamNum(username, game_id)
+    q = "SELECT team%s FROM game_tbl WHERE game_id=?" % number
+    inputs = (game_id, )
+    team = db_manager.execmany(q, inputs).fetchone()[0].split(",")
+    team.pop(0) #pop score and question number
+    team.pop(0)
+    player = team.index(username)
+    next = (player + 1) % 3
     if ("T" in game_id):
         command = 'UPDATE game_tbl SET playing%s=? WHERE game_id=?;' % number
-        inputs = (participants[player - 1], game_id)
+        inputs = (team[next], game_id)
         db_manager.execmany(command, inputs)
+    #update user stats
     command = 'SELECT stat FROM user_tbl WHERE username=?;'
     inputs = (username, )
     data = db_manager.execmany(command, inputs).fetchone()[0].split(",")
@@ -344,28 +345,34 @@ def check():
     command = 'UPDATE user_tbl SET stat=? WHERE username=?'
     inputs = (data, username)
     db_manager.execmany(command, inputs)
+    #set next question for team
     db_manager.updateQuestion(username, game_id)
     return redirect(url_for("play", id=game_id), code=307)
 
 @app.route("/search")
 @login_required
 def search():
+    byUser = False
+    byGame = False
+    username = session['username']
     if (request.args):
         if ('select' in request.args and 'query' in request.args):
             select = request.args['select']
             query = request.args['query'] #search keyword
             results = []
-            byUser = False
             user=""
             game=""
             if (select == "byuser"):
-                results = db_manager.findUser(query)
-                byUser = True
+                users = db_manager.findUser(query)
+                games = []
                 user = "selected"
+                byUser = True
             if (select == "bygame"):
-                results = db_manager.findGame(query)
+                users = []
+                games = db_manager.findGame(username, query)
                 game = "selected"
-            return render_template('search.html', results=results, byUser=byUser, search="active", user=user, game=game)
+                byGame = True
+            return render_template('search.html', users=users, games=games, byUser=byUser, byGame=byGame, search="active", user=user, game=game)
     return render_template('search.html', search="active")
 
 @app.route("/logout")

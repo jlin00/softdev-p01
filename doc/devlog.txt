@@ -232,3 +232,6 @@ tested game functionality some more and added getGames function
 
 jackieL -- 2019-11-28 20:20
 added and tested PVP functionality, users now can create, join and play PVP games with other users
+
+jackieL -- 2019-11-29 20:48
+used pvp code to add team player functionality and updated search behavior
