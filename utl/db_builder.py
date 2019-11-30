@@ -45,8 +45,6 @@ def build_db():
 
     command = "CREATE TABLE IF NOT EXISTS game_tbl (game_id TEXT, participants TEXT, team1 TEXT, team2 TEXT, playing1 TEXT, playing2 TEXT, started INT, completed1 INT, completed2 INT, currentq1 TEXT, currentq2 TEXT)"
     exec(command)
-    command = "INSERT OR IGNORE INTO game_tbl VALUES('p1', 'jackielin', 'jackielin', '', '', 0, 0)"
-    exec(command)
 
     command = "CREATE TABLE IF NOT EXISTS question_tbl (category TEXT, question TEXT PRIMARY KEY, diff TEXT, choices TEXT, answer TEXT)"
     exec(command)
