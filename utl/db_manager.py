@@ -117,7 +117,11 @@ def getColl(username):
      q = "SELECT coll from user_tbl WHERE username=?"
      inputs = (username, )
      data = execmany(q, inputs).fetchone()[0].split(",")
-     return data
+     coll=[]
+     for items in data:
+         if items not in coll:
+             coll.append(items)
+     return coll
 
 #get IDs of all the pictures in user's collections
 def getCollID(username):
