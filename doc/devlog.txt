@@ -238,3 +238,6 @@ used pvp code to add team player functionality and updated search behavior
 
 jackieL -- 2019-11-29 23:49
 updated design doc by updating game table in database schema 
+
+jackieL -- 2019-11-30 18:58
+updated design doc with up-to-date component map and made minor changes to formatting 

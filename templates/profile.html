@@ -40,16 +40,16 @@
 <div class="card"   style="margin-left: auto;
   margin-right: auto;">
   <h3>Click a picture to set as your profile picture!</h3>
-  <div id="carouselExampleIndicators" class="carousel slide w-50" data-ride="carousel" style="width:350px; height:250px; align-items:center; margin-left: auto; margin-right: auto;">
-    <div class="carousel-inner"  style="width:350px; height:250px; align-items:center; margin-left: auto; margin-right: auto;">
+  <div id="carouselExampleIndicators" class="carousel slide w-50" data-ride="carousel" style="width:250px; align-items:center; margin-left: auto; margin-right: auto;">
+    <div class="carousel-inner"  style="width:250px; align-items:center; margin-left: auto; margin-right: auto;">
       {% for i in enumcoll %}
         {% if i == 0 %}
           <div class="carousel-item active">
-              <a href="/home?value={{ collID[i] }}"><img class="d-block" style="margin: auto; width:350px; height:250px;" src="{{ coll[i] }}" alt="Slide"></a>
+              <a href="/home?value={{ collID[i] }}"><img class="d-block" style="margin: auto; width:250px; height:250px" src="{{ coll[i] }}" alt="Slide"></a>
             </div>
         {% else %}
           <div class="carousel-item">
-              <a href="/home?value={{ collID[i] }}"><img class="d-block" style="margin: auto; width:350px; height:250px;" src="{{ coll[i] }}" alt="Slide" ></a>
+              <a href="/home?value={{ collID[i] }}"><img class="d-block" style="margin: auto; width:250px;" src="{{ coll[i] }}" alt="Slide" ></a>
           </div>
         {% endif %}
       {% endfor %}
@@ -63,10 +63,11 @@
         <span class="sr-only">Next</span>
       </a>
   </div>
+  <br>
 </div>
 <br>
 <br>
-<div class="card" style="align-text:center; display:flex; align-items:center; width:350px; height:450px;">
+<div class="card" style="align-text:center; display:flex; align-items:center;">
   <h3>Change Your Password</h3>
   <form action="/resetpasswd" method="post" class="w-50 p-3">
     <div class="form-group">

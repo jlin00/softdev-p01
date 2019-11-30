@@ -70,7 +70,6 @@ def auth():
 @app.route("/signup")
 @no_login_required
 def signup():
-    db_builder.build_flag()
     data = db_manager.allCountries()
     return render_template("signup.html",options=data,flag="United States of America")
 
@@ -305,7 +304,6 @@ def create():
         added = db_manager.joinTeam(username, "T")
     else:
         added = db_manager.addSingle(username)
-
     if (not added):
         flash('Maximum number of games reached!', 'alert-danger')
     return redirect("/play")
