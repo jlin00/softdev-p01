@@ -235,3 +235,6 @@ added and tested PVP functionality, users now can create, join and play PVP game
 
 jackieL -- 2019-11-29 20:48
 used pvp code to add team player functionality and updated search behavior
+
+jackieL -- 2019-11-29 23:49
+updated design doc by updating game table in database schema 
