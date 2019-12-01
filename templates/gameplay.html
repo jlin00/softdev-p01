@@ -25,6 +25,7 @@ Trivia
 	</div>
 	{% else %}
 		{% if started %}
+		{% if not single %}
 		<div class="card w-20" style="margin-left: 0px; height:50px; width: 200px; float: left;">
 			<b>My Team</b>
 				{{score}}
@@ -33,12 +34,12 @@ Trivia
 			<b>Opponent Team</b>
 				{{Oscore}}
 		</div>
-		<div class="card w-50">
-			<div class="row">
-				<div class="col-12">
-				</div>
-			</div>
+		{% else %}
+		<div class="card">
+			<b>Score: </b>
+			{{score}}
 		</div>
+		{% endif %}
 		<br>
 		<div class="container">
 			{% if player == up %}
