@@ -154,8 +154,39 @@ amandaZ -- 2019-11-21 23:46
         -mainly html front
     -started the purchase and collection display
 
+amandaZ -- 2019-11-22 18:05
+    -worked on pictures and getting random cards from each of the packs
+    -debating about whether to change the api cards because not fitting
+    -working on reshaping the cards on the store
+    -made lorem picsum api card
+    -finished purchase
+
+amandaZ -- 2019-11-23 19:18
+    -using pokemon 
+    -worked on PFP changing
+    -displaying all the pictures in the collection
+    -getting pictures from picture collection of user from sqlite database
+    -making carousel for the pictures
+ 
+amandaZ -- 2019-11-24 20:43
+    -carousel displays the pictures
+    -passing html queries for selection of pfp 
+    -working on getting pfp to change once user clicks on a picture in carousel
+    -styling carousel
+
+amandaZ -- 2019-11-25 22:30
+    -decided on using pokemon instead of space
+    -finished carousel
+    -finished updating new pfp as the selected one
+    -finished packs of pfp collectibles
+
 jackieL -- 2019-11-25 14:52
 updated homepage and db fucntions for profile
+
+amandaZ -- 2019-11-26 21:13
+-start pvp games
+-made function determining if there are single player
+-check if pvp is full
 
 jackieL -- 2019-11-26 01:12
 added to homepage and profile, fixed setting profile icon and worked on store
@@ -215,6 +246,9 @@ uploaded latest version of devlog
 jackieL -- 2019-11-27 11:52
 updated code to allow selection of profile pictures
 
+amandaZ -- 2019-11-27 20:12
+-finished store functionality
+
 jackieL -- 2019-11-27 21:06
 added function to build cached questions table and updated game table to keep track of number of questions answered
 
@@ -230,6 +264,12 @@ additional testing for single player mode and changed purchasing packs to post m
 jackieL -- 2019-11-28 14:41
 tested game functionality some more and added getGames function
 
+amandaZ -- 2019-11-28 19:23
+-tested team rallies
+-made several database accounts
+-played game multiple times
+-checked ending game of team rallies
+
 jackieL -- 2019-11-28 20:20
 added and tested PVP functionality, users now can create, join and play PVP games with other users
 
@@ -239,5 +279,21 @@ used pvp code to add team player functionality and updated search behavior
 jackieL -- 2019-11-29 23:49
 updated design doc by updating game table in database schema 
 
+amandaZ -- 2019-11-29 14:45
+-made team and opponent score trackers for pvp and team
+-tested out team relay
+-tested out all parts for bugs
+-made money adds for winning a game
+-fixed bug of index out of bounds when only one person in pvp
+-added flag to dashboard
+
 jackieL -- 2019-11-30 18:58
 updated design doc with up-to-date component map and made minor changes to formatting 
+
+amandaZ -- 2019-11-30 22:12
+-updated design doc
+-fixed component map
+-made demo plan sheet
+-made database ready for demo
+-practice demo with everyone
+
