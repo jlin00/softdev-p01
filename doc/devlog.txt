@@ -308,3 +308,6 @@ amandaZ -- 2019-12-02 14:04
 
 jackieL -- 2019-12-02 14:13
 formatted design doc for printing
+
+jackieL -- 2019-12-02 14:22
+fixed formatting error and deleted duplicate page
