@@ -7,16 +7,16 @@ import sqlite3, urllib, json
 
 DB_FILE = "trivia.db"
 
-#commits the changes after a command
 def exec(cmd):
+    """Executes a sqlite command"""
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     output = c.execute(cmd)
     db.commit()
     return output
 
-#executing using ? placeholder
 def execmany(cmd, inputs):
+    """Executes a sqlite command using ? placeholder"""
     db = sqlite3.connect(DB_FILE)
     c = db.cursor()
     output = c.execute(cmd, inputs)
@@ -24,8 +24,8 @@ def execmany(cmd, inputs):
     return output
 
 #==========================================================
-#creates tables if they do not exist with necessary columns
 def build_db():
+    """Creates database if it does not yet exist with the necessary tables"""
     print("Database is being created. It may take a while. Please stand by...")
     command = "CREATE TABLE IF NOT EXISTS user_tbl (username TEXT, password TEXT, pic TEXT, coll TEXT, game_id TEXT, money INT, flag TEXT, stat TEXT, score INT)"
     exec(command)
@@ -54,8 +54,9 @@ def build_db():
 
     command = "CREATE TABLE IF NOT EXISTS pic_tbl (category TEXT, pic TEXT PRIMARY KEY)"
     exec(command)
-#populates flag_tbl if it isn't already populated
+
 def build_flag():
+    """Populates flag_tbl if it isn't already populated, makes a request to the Countries API"""
     command = "SELECT * FROM flags_tbl;"
     data = exec(command).fetchone()
     if (data is None):
@@ -67,8 +68,9 @@ def build_flag():
             inputs = (country['name'], country['flag'])
             execmany(q, inputs)
 
-#build pic cache
 def build_pic():
+    """Populates pic_tbl if it isn't already populated
+    Makes a request to the PokeAPI, Rick and Morty API, and the Lorem Picsum API """
     command = "SELECT * FROM pic_tbl;"
     data = exec(command).fetchone()
     if (data is None):
@@ -102,8 +104,8 @@ def build_pic():
             inputs = (id, pic)
             execmany(q, inputs)
 
-#build question cache
 def build_question():
+    """Populates question_tbl if it isn't already populated, makes a request to the OpenTrivia API"""
     command = "SELECT * FROM question_tbl;"
     data = exec(command).fetchone()
     if (data is None):

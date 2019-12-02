@@ -11,10 +11,9 @@ import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
-
 #====================================================
-# decorator for checking login
 def login_required(f):
+    """Decorator for making sure user is logged in"""
     @wraps(f)
     def dec(*args, **kwargs):
         '''dec (*args, **kwargs): Decorator for checking login and if user in session'''
@@ -26,8 +25,8 @@ def login_required(f):
         return redirect('/')
     return dec
 
-# decorator for checking no login
 def no_login_required(f):
+    """Decorator for making sure user is not logged in"""
     @wraps(f)
     def dec(*args, **kwargs):
         '''dec(*args, **kwargs): Decorator for checking no login'''
