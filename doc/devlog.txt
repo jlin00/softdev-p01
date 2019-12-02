@@ -305,3 +305,6 @@ amandaZ -- 2019-12-02 14:04
     -wrote pydoc strings for every function in app.py
     -wrote pydoc strings for every function in db_manager.py
     -fixed score error 
+
+jackieL -- 2019-12-02 14:13
+formatted design doc for printing
