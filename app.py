@@ -222,6 +222,10 @@ def play():
         team2.remove('')
     score1=0
     score2=0
+    if (len(team1)>0):
+        score1=team1[0]
+        higher="1"
+        highscore=score1
     if(len(team1)>0 and len(team2)>0):
         score1=team1[0]
         score2=team2[0]
@@ -234,7 +238,6 @@ def play():
             if username in team2:
                 score1=team2[0]
                 score2=team1[0]
-
     up = raw[0][2] #who's up next
     t1 = (team1.pop(0), team1.pop(0), [])
     for user in team1:
