@@ -297,3 +297,6 @@ amandaZ -- 2019-11-30 22:12
 -made database ready for demo
 -practice demo with everyone
 
+
+jackieL -- 2019-12-02 13:54
+updated docstrings in python files 

@@ -127,7 +127,7 @@ def getFlag(username):
     return data
 
 def getColl(username):
-    '''def getColl(username): get collection of picture url that the user in session has???'''
+    '''def getColl(username): get collection of picture urls that the user in session has'''
      q = "SELECT coll from user_tbl WHERE username=?"
      inputs = (username, )
      data = execmany(q, inputs).fetchone()[0].split(",")
@@ -139,7 +139,7 @@ def getColl(username):
 
 #get IDs of all the pictures in user's collections
 def getCollID(username):
-    '''def getCollID(username): get the id of the pictures (based on the pack they were from) in collection of user in sesssion???'''
+    '''def getCollID(username): get the ID of the pictures in user's collection'''
     coll = getColl(username)
     list = []
     for i in range(len(coll)):
@@ -156,7 +156,7 @@ def getCollID(username):
     return list
 
 def getGames(username, owner):
-    '''def getGames(username, owner): Get information about a game given username and owner of game ???'''
+    '''def getGames(username, owner): get list of game_id's under a given username, button actions for each game change based on if logged-in user matches given user'''
     q = "SELECT game_id from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0].split(",")
@@ -203,9 +203,8 @@ def getGames(username, owner):
 #====================================================
 #leaderboard
 
-#create an orderedDict given a list of values
 def orderDict(list):
-    '''def orderDict(list): sort a dictionary such that keys are in alphabetical order ???'''
+    '''def orderDict(list): create an ordered dictionary given a list of scores associated with a user or country'''
     list = sorted(list, key=lambda x:x[1])
     list = list[::-1]
     dict = OrderedDict()
@@ -342,7 +341,7 @@ def updatePic(username, pic_id):
 #====================================================
 #playing trivia game functions
 def ownGame(username, game_id):
-    '''def ownGame(username, game_id): ???'''
+    '''def ownGame(username, game_id): returns boolean based on whether or not given game_id is listed under given username'''
     q = "SELECT game_id FROM user_tbl WHERE username=?"
     inputs = (username,)
     data = execmany(q, inputs).fetchone()[0]
@@ -618,7 +617,7 @@ def gameFull(game_id):
 
 #check which team user is on for a particular game
 def getTeamNum(username, game_id):
-    '''def getTeamNum(username, game_id): ???'''
+    '''def getTeamNum(username, game_id): given an username and a game_id, return which team the user is on for that given game'''
     q = "SELECT team1 FROM game_tbl WHERE game_id=?"
     r = "SELECT team2 FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
@@ -632,7 +631,7 @@ def getTeamNum(username, game_id):
 
 #get which number question the team is currently up to
 def currentNumber(username, game_id):
-    '''def currentNumber(username, game_id): gets current amount of people in a game given game_id???'''
+    '''def currentNumber(username, game_id): get which number question the given user is up to'''
     team = getTeamNum(username, game_id)
     q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
     inputs = (game_id, )
@@ -657,7 +656,7 @@ def getCurrentQuestion(username, game_id):
 #generate next question for team
 def updateQuestion(username, game_id):
     #determine team number
-    '''def updateQuestion(username, game_id): gets the next question and updates data table accordingly???'''
+    '''def updateQuestion(username, game_id): generate the next question for a team and updates data tables accordingly'''
     team = getTeamNum(username, game_id)
     q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
     r = "UPDATE game_tbl SET currentq%s=? WHERE game_id=?" % team
@@ -682,7 +681,7 @@ def updateQuestion(username, game_id):
     execmany(r, inputs)
 
 def completeGame(username, game_id):
-    '''def completeGame(username, game_id): completed game ???'''
+    '''def completeGame(username, game_id): mark a game as complete in game_tbl given the game_id'''
     team = getTeamNum(username, game_id)
     q = "UPDATE game_tbl SET completed%s=? WHERE game_id=?" % team
     inputs = (1, game_id)
@@ -705,7 +704,7 @@ def findUser(query):
 
 #find by game_id
 def findGame(username, query):
-    '''def findGame(username, query): search for a game using game_id???'''
+    '''def findGame(username, query): search for a game using game_id'''
     query = query.lower().strip()
     output = []
     q = "SELECT game_id FROM game_tbl;"
