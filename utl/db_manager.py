@@ -127,14 +127,15 @@ def getFlag(username):
     return data
 
 def getColl(username):
-     q = "SELECT coll from user_tbl WHERE username=?"
-     inputs = (username, )
-     data = execmany(q, inputs).fetchone()[0].split(",")
-     coll=[]
-     for items in data:
-         if items not in coll:
-             coll.append(items)
-     return coll
+    '''def getColl(username): gets collection of picture urls owned by user in session'''
+    q = "SELECT coll from user_tbl WHERE username=?"
+    inputs = (username, )
+    data = execmany(q, inputs).fetchone()[0].split(",")
+    coll=[]
+    for items in data:
+        if items not in coll:
+         coll.append(items)
+    return coll
 
 #get IDs of all the pictures in user's collections
 def getCollID(username):
