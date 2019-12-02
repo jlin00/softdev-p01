@@ -258,10 +258,11 @@ def play():
                 winners=team1
             else:
                 winners=team2
-            for user in winners:
-                q="UPDATE user_tbl SET money = money + ? WHERE username=?"
-                inputs = (highscore, user)
-                db_manager.execmany(q, inputs)
+            if not single:
+                for user in winners:
+                    q="UPDATE user_tbl SET money = money + ? WHERE username=?"
+                    inputs = (highscore, user)
+                    db_manager.execmany(q, inputs)
         return render_template("completed.html", t1=t1, t2=t2, completed=True, single=single, code=303)
     #get current question
     questionEntry = db_manager.getCurrentQuestion(username, game)
