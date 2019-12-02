@@ -13,6 +13,7 @@ import random
 
 #turns tuple into a list
 def formatFetch(results):
+    '''def formatFetch(results): format results from fetchall into a list'''
     collection=[]
     for item in results:
          if str(item) not in collection:
@@ -24,6 +25,7 @@ def formatFetch(results):
 
 #authenticates user
 def userValid(username,password):
+    '''def userValid(username,password): determines if username is in database and password corresponds to username'''
     q = "SELECT username FROM user_tbl;"
     data = exec(q)
     for uName in data:
@@ -38,6 +40,8 @@ def userValid(username,password):
 
 #add user-provided credentials to database
 def addUser(username, password, flag):
+    '''def addUser(username, password, flag): adding user from sign up,
+    taking in form inputs and writing to data table'''
     q = "SELECT * FROM user_tbl WHERE username=?"
     inputs = (username,)
     data = execmany(q, inputs).fetchone()
@@ -55,12 +59,14 @@ def addUser(username, password, flag):
 
 #reset password
 def changePass(username, password):
+    '''def changePass(username, password): updating data table of user in session with new password'''
     q = "UPDATE user_tbl SET password=? WHERE username=?"
     inputs = (password, username)
     execmany(q, inputs)
 
 #displays all options for country on sign-up page
 def allCountries():
+    '''def allCountries(): getting all the countries from country api'''
     q = "SELECT country FROM flags_tbl;"
     data = exec(q).fetchall()
     return formatFetch(data)
@@ -69,6 +75,8 @@ def allCountries():
 #user information
 
 def getStats(username):
+    '''def getStats(username): Getting stats of user;
+    for each category the number of questions attempted and questions gotten correct are shown '''
     q = "SELECT stat from user_tbl WHERE username=?"
     inputs = (username,)
     data = execmany(q, inputs).fetchone()[0]
@@ -81,30 +89,35 @@ def getStats(username):
     return stats
 
 def getCountry(username):
+    '''def getCountry(username): get country of user in session'''
     q = "SELECT flag from user_tbl WHERE username=?"
     inputs = (username,)
     data = execmany(q, inputs).fetchone()[0]
     return data
 
 def getPic(username):
+    '''def getPic(username): get profile pic of user in session'''
     q = "SELECT pic from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0]
     return data
 
 def getScore(username):
+    '''def getScore(username): get score of user in session'''
     q = "SELECT score from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0]
     return data
 
 def getMoney(username):
+    '''def getMoney(username): get current amount of money of user in session'''
     q = "SELECT money from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0]
     return data
 
 def getFlag(username):
+    '''def getFlag(username): get flag picture url of user in session'''
     q = "SELECT flag from user_tbl WHERE username=?"
     inputs = (username, )
     data1 = execmany(q, inputs).fetchone()[0]
@@ -114,6 +127,7 @@ def getFlag(username):
     return data
 
 def getColl(username):
+    '''def getColl(username): get collection of picture url that the user in session has???'''
      q = "SELECT coll from user_tbl WHERE username=?"
      inputs = (username, )
      data = execmany(q, inputs).fetchone()[0].split(",")
@@ -125,6 +139,7 @@ def getColl(username):
 
 #get IDs of all the pictures in user's collections
 def getCollID(username):
+    '''def getCollID(username): get the id of the pictures (based on the pack they were from) in collection of user in sesssion???'''
     coll = getColl(username)
     list = []
     for i in range(len(coll)):
@@ -141,6 +156,7 @@ def getCollID(username):
     return list
 
 def getGames(username, owner):
+    '''def getGames(username, owner): Get information about a game given username and owner of game ???'''
     q = "SELECT game_id from user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0].split(",")
@@ -189,6 +205,7 @@ def getGames(username, owner):
 
 #create an orderedDict given a list of values
 def orderDict(list):
+    '''def orderDict(list): sort a dictionary such that keys are in alphabetical order ???'''
     list = sorted(list, key=lambda x:x[1])
     list = list[::-1]
     dict = OrderedDict()
@@ -198,12 +215,14 @@ def orderDict(list):
 
 #top users
 def userLeaderboard():
+    '''def userLeaderboard(): Place all users in order based on scores'''
     q = "SELECT username, score FROM user_tbl"
     data = exec(q).fetchall()
     return orderDict(data)
 
 #top nations
 def nationLeaderboard():
+    '''def nationLeaderboard(): Place all countries in order based on sum of scores of users in those countries'''
     q = "SELECT country, SUM(score) FROM user_tbl, flags_tbl WHERE flags_tbl.country = user_tbl.flag GROUP BY flags_tbl.country"
     data = exec(q).fetchall()
     data = orderDict(data)
@@ -211,6 +230,7 @@ def nationLeaderboard():
 
 #top users in country
 def myCountryboard(username):
+    '''def nationLeaderboard(): Place all users in the same country as user in session in order based on scores'''
     q = "SELECT flag FROM user_tbl WHERE username=?"
     inputs = (username,)
     country = execmany(q, inputs).fetchone()[0]
@@ -224,6 +244,9 @@ def myCountryboard(username):
 
 #buy a picture pack, each pack has unique price (value)
 def purchase(username, value):
+    '''def purchase(username, value): deals with transaction of buying packs of cards,
+    edits user database to include new random cards,
+    and returns flash errors if not enough money'''
     if (value != 50 and value != 75 and value != 100):
         return False
     q = "SELECT money FROM user_tbl WHERE username=?"
@@ -246,6 +269,7 @@ def purchase(username, value):
 
 #Rick and Morty pack
 def packR(username):
+    '''def packR(username): gives random three cards of Rick and Morty pack to user in session'''
     q = "SELECT pic FROM pic_tbl WHERE category LIKE 'R%' ORDER BY random() LIMIT 3"
     data = exec(q).fetchall()
     for pic in data:
@@ -259,6 +283,7 @@ def packR(username):
 
 #Pokemon pack
 def packP(username):
+    '''def packP(username): gives random three cards of Pokemon pack to user in session'''
     q = "SELECT pic FROM pic_tbl WHERE category LIKE 'P%' ORDER BY random() LIMIT 3"
     data = exec(q).fetchall()
     for pic in data:
@@ -272,6 +297,7 @@ def packP(username):
 
 #mystery pack
 def packM(username):
+    '''def packM(username): gives random three cards of Mystery pack to user in session'''
     q = "SELECT pic FROM pic_tbl WHERE category LIKE 'M%' ORDER BY random() LIMIT 3 "
     data = exec(q).fetchall()
     for pic in data:
@@ -285,6 +311,7 @@ def packM(username):
 
 #given pic_id, fetch image source from pic_tbl
 def getpfp(pic_id):
+    '''def getpfp(pic_id): retrieve the url of of current profile picture'''
     q = "SELECT pic FROM pic_tbl WHERE category=?"
     inputs = (pic_id, )
     data = execmany(q, inputs).fetchone()
@@ -296,6 +323,7 @@ def getpfp(pic_id):
 
 #checks to see if user owns picture
 def ownsPic(username, pic_id):
+    '''def ownsPic(username, pic_id): check if a user has a picture'''
     list = getCollID(username)
     for item in list:
         if item == pic_id:
@@ -303,6 +331,7 @@ def ownsPic(username, pic_id):
     return False
 
 def updatePic(username, pic_id):
+    '''def updatePic(username, pic_id): update new pfp picture with the picture user in session selected'''
     isOwner = ownsPic(username, pic_id)
     if isOwner:
         pic = getpfp(pic_id)
@@ -313,6 +342,7 @@ def updatePic(username, pic_id):
 #====================================================
 #playing trivia game functions
 def ownGame(username, game_id):
+    '''def ownGame(username, game_id): ???'''
     q = "SELECT game_id FROM user_tbl WHERE username=?"
     inputs = (username,)
     data = execmany(q, inputs).fetchone()[0]
@@ -320,6 +350,7 @@ def ownGame(username, game_id):
 
 #get all single player games
 def getSingle(username):
+    '''def getSingle(username): get all Single games game_id that username is participating in'''
     q = "SELECT game_id FROM user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0]
@@ -333,6 +364,7 @@ def getSingle(username):
 
 #get all PVP games
 def getPVP(username):
+    '''def getPVP(username): get all PVP games game_id that username is participating in'''
     q = "SELECT game_id FROM user_tbl WHERE username=?"
     inputs = (username, )
     data = execmany(q, inputs).fetchone()[0]
@@ -346,6 +378,7 @@ def getPVP(username):
 
 #get all team games
 def getTeam(username):
+        '''def getTeam(username): get all team rallies games game_id that username is participating in'''
         q = "SELECT game_id FROM user_tbl WHERE username=?"
         inputs = (username, )
         data = execmany(q, inputs).fetchone()[0]
@@ -360,6 +393,7 @@ def getTeam(username):
 #create a single player game
 def addSingle(username):
     #generate random game id
+    '''def addSingle(username): generating a new game_id for a new single player game'''
     game_id = "S" + str(random.randrange(10000000000))
     command = "SELECT game_id FROM game_tbl"
     data = exec(command).fetchall()
@@ -388,6 +422,7 @@ def addSingle(username):
 
 #create a multiplayer game
 def addMulti(username, type):
+    '''def addMulti(username): generating a new game_id for a new multipliayer player game (team or pvp)'''
     #generate random game id
     game_id = type + str(random.randrange(10000000000))
     command = "SELECT game_id FROM game_tbl"
@@ -416,6 +451,7 @@ def addMulti(username, type):
     return True
 
 def joinGame(username, game_id):
+    '''def joinGame(username, game_id): add user to an already existing game based on given game_id if the game is not full'''
     owner = ownGame(username, game_id)
     if not owner and not gameFull(game_id):
         #joining a PVP game
@@ -496,6 +532,7 @@ def joinGame(username, game_id):
             execmany(q, inputs)
 
 def joinPVP(username, type):
+    '''def joinPVP(username, type): add user to an already existing PVP game if the game is not full'''
     q = "SELECT game_id FROM game_tbl WHERE game_id LIKE 'P%' AND team2='' AND playing1!=?"
     inputs = (username, )
     game_id = execmany(q, inputs).fetchone()
@@ -507,6 +544,7 @@ def joinPVP(username, type):
     return True
 
 def joinTeam(username, type):
+    '''def joinTeam(username, type: add user to an already existing team game if the game is not full'''
     q = "SELECT game_id FROM game_tbl WHERE game_id LIKE 'T%'"
     data = exec(q).fetchall()
     list = []
@@ -524,6 +562,7 @@ def joinTeam(username, type):
 
 #check if game started
 def gameStarted(game_id):
+    '''def gameStarted(game_id): check to see if a game_id has started (meaning all participant spots are filled)'''
     q = "SELECT started FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()[0]
@@ -531,6 +570,7 @@ def gameStarted(game_id):
 
 #check if game completed
 def gameCompleted(game_id):
+    '''def gameCompleted(game_id): check if a game with game_id has finished'''
     q = "SELECT completed1, completed2 FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()
@@ -538,6 +578,7 @@ def gameCompleted(game_id):
 
 #only team1 is completed
 def team1Completed(game_id):
+    '''def team1Completed(game_id): check if a game with game_id has enough players in team1'''
     q = "SELECT completed1, completed2 FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()
@@ -545,6 +586,7 @@ def team1Completed(game_id):
 
 #only team2 is completed
 def team2Completed(game_id):
+    '''def team2Completed(game_id): check if a game with game_id has enough players in team2'''
     q = "SELECT completed2, completed1 FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
     data = execmany(q, inputs).fetchone()
@@ -552,6 +594,7 @@ def team2Completed(game_id):
 
 #check if game is full
 def gameFull(game_id):
+    '''def gameFull(game_id): check if a game with game_id has all enough players'''
     if "S" in game_id:
         return True
     if "P" in game_id:
@@ -575,6 +618,7 @@ def gameFull(game_id):
 
 #check which team user is on for a particular game
 def getTeamNum(username, game_id):
+    '''def getTeamNum(username, game_id): ???'''
     q = "SELECT team1 FROM game_tbl WHERE game_id=?"
     r = "SELECT team2 FROM game_tbl WHERE game_id=?"
     inputs = (game_id, )
@@ -588,6 +632,7 @@ def getTeamNum(username, game_id):
 
 #get which number question the team is currently up to
 def currentNumber(username, game_id):
+    '''def currentNumber(username, game_id): gets current amount of people in a game given game_id???'''
     team = getTeamNum(username, game_id)
     q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
     inputs = (game_id, )
@@ -597,6 +642,7 @@ def currentNumber(username, game_id):
 
 #get which question a team is up to
 def getCurrentQuestion(username, game_id):
+    '''def getCurrentQuestion(username, game_id): get the question that the game left off on'''
     team = getTeamNum(username, game_id)
     q = "SELECT currentq%s FROM game_tbl WHERE game_id=?" % team
     inputs = (game_id, )
@@ -611,6 +657,7 @@ def getCurrentQuestion(username, game_id):
 #generate next question for team
 def updateQuestion(username, game_id):
     #determine team number
+    '''def updateQuestion(username, game_id): gets the next question and updates data table accordingly???'''
     team = getTeamNum(username, game_id)
     q = "SELECT team%s FROM game_tbl WHERE game_id=?" % team
     r = "UPDATE game_tbl SET currentq%s=? WHERE game_id=?" % team
@@ -635,6 +682,7 @@ def updateQuestion(username, game_id):
     execmany(r, inputs)
 
 def completeGame(username, game_id):
+    '''def completeGame(username, game_id): completed game ???'''
     team = getTeamNum(username, game_id)
     q = "UPDATE game_tbl SET completed%s=? WHERE game_id=?" % team
     inputs = (1, game_id)
@@ -645,6 +693,7 @@ def completeGame(username, game_id):
 
 #find by username
 def findUser(query):
+    '''def findUser(query): search for a user'''
     query = query.lower().strip()
     list = []
     q = "SELECT username FROM user_tbl;"
@@ -656,6 +705,7 @@ def findUser(query):
 
 #find by game_id
 def findGame(username, query):
+    '''def findGame(username, query): search for a game using game_id???'''
     query = query.lower().strip()
     output = []
     q = "SELECT game_id FROM game_tbl;"
