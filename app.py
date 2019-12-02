@@ -11,10 +11,9 @@ import random
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
-
 #====================================================
-# decorator for checking login
 def login_required(f):
+    """Decorator for making sure user is logged in"""
     @wraps(f)
     def dec(*args, **kwargs):
         if 'username' in session:
@@ -25,8 +24,8 @@ def login_required(f):
         return redirect('/')
     return dec
 
-# decorator for checking no login
 def no_login_required(f):
+    """Decorator for making sure user is not logged in"""
     @wraps(f)
     def dec(*args, **kwargs):
         if 'username' not in session:
@@ -39,6 +38,7 @@ def no_login_required(f):
 
 @app.route("/")
 def root():
+    """Redirects to home if logged in, else directed to login page"""
     if 'username' in session:
         return redirect('/home')
     return redirect('/login')
@@ -51,6 +51,7 @@ def login():
 @app.route("/auth", methods=["POST"])
 @no_login_required
 def auth():
+    """Form handler for login"""
     enteredU = request.form['username']
     enteredP = request.form['password']
     if(enteredU == "admin"):
@@ -76,6 +77,7 @@ def signup():
 @app.route("/signupcheck", methods=["POST"])
 @no_login_required
 def signupcheck():
+    """Form handler for sign up"""
     username = request.form['username']
     password = request.form['password']
     confirm = request.form['confirmation']
@@ -107,6 +109,8 @@ def signupcheck():
 @app.route("/home")
 @login_required
 def home():
+    """If no arguments passed in querystring, the dashboard of the logged-in user is displayed, else dashboard of the requested user is displayed
+    Dashboard contains username, profile picture, flag, score, money, stats, and games of the user"""
     username = session['username']
     owner = session['username'] #owner of the profile
     if (request.args): #if querystring exists
@@ -128,6 +132,7 @@ def home():
 @app.route("/leaderboard")
 @login_required
 def leaderboard():
+    """Returns three leaderboards, with the last one dependent on which country the logged-in user is from"""
     user = session['username']
     country = db_manager.getCountry(user)
     leaderboard=db_manager.userLeaderboard()
@@ -143,6 +148,7 @@ def leaderboard():
 @app.route("/profile")
 @login_required
 def profile():
+    """Returns profile of the logged-in user, with options to reset password and change profile picture"""
     username=session['username']
     coll = db_manager.getColl(username)
     collID = db_manager.getCollID(username)
@@ -155,6 +161,7 @@ def profile():
 @app.route("/resetpasswd", methods=["POST"])
 @login_required
 def password():
+    """Form handler for resetting password"""
     password = request.form['password']
     verif = request.form['verif']
     oldpass = request.form['oldpass']
@@ -180,6 +187,7 @@ def store():
 @app.route("/purchase", methods=["POST"])
 @login_required
 def purchase():
+    """Form handler for purchasing a pack from the store route"""
     username = session['username']
     value = request.form['value']
     selection = int(request.form['value'])
@@ -193,6 +201,8 @@ def purchase():
 @app.route("/play", methods=['GET', 'POST'])
 @login_required
 def play():
+    """GET method returns a list of the logged-in user's active games
+    If user clicks into an active game, POST method is used to render gameplay"""
     username = session['username']
     if request.method == 'GET':
         #display your games with search bar
@@ -301,6 +311,7 @@ def play():
 @app.route("/new", methods=['POST'])
 @login_required
 def create():
+    """Form handler to handle request from play (GET) route to create a new game"""
     username = session['username']
     if 'p' in request.form['id']:
         added = db_manager.joinPVP(username, "P")
@@ -315,6 +326,7 @@ def create():
 @app.route("/triviacheck", methods=['POST'])
 @login_required
 def check():
+    """Form handler to handle request from play (POST) route to check logged-in user's answer to trivia question"""
     game_id = request.form['id']
     username = session['username']
     command = 'SELECT answer FROM question_tbl WHERE question=?;'
@@ -382,6 +394,7 @@ def check():
 @app.route("/search")
 @login_required
 def search():
+    """Search route that allows user to either search by username or by game ID"""
     byUser = False
     byGame = False
     username = session['username']
