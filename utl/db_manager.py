@@ -127,7 +127,6 @@ def getFlag(username):
     return data
 
 def getColl(username):
-    '''def getColl(username): get collection of picture urls that the user in session has'''
      q = "SELECT coll from user_tbl WHERE username=?"
      inputs = (username, )
      data = execmany(q, inputs).fetchone()[0].split(",")
