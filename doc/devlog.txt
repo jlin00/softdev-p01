@@ -300,3 +300,8 @@ amandaZ -- 2019-11-30 22:12
 
 jackieL -- 2019-12-02 13:54
 updated docstrings in python files 
+
+amandaZ -- 2019-12-02 14:04
+    -wrote pydoc strings for every function in app.py
+    -wrote pydoc strings for every function in db_manager.py
+    -fixed score error 
