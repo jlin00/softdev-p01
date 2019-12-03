@@ -724,18 +724,23 @@ def findGame(username, query):
             entry.append(game_id)
 
             #third, fourth, fifth item in tuple
-            if ownGame(username, game_id):
-                entry.append("Play")
+            if gameCompleted(game_id):
+                entry.append("View")
                 entry.append("")
-                entry.append("btn-primary")
+                entry.append("btn-secondary")
             else:
-                if gameFull(game_id):
-                    entry.append("Full")
-                    entry.append("disabled")
-                    entry.append("btn-danger")
-                else:
-                    entry.append("Join")
+                if ownGame(username, game_id):
+                    entry.append("Play")
                     entry.append("")
-                    entry.append("btn-success")
+                    entry.append("btn-primary")
+                else:
+                    if gameFull(game_id):
+                        entry.append("Full")
+                        entry.append("disabled")
+                        entry.append("btn-danger")
+                    else:
+                        entry.append("Join")
+                        entry.append("")
+                        entry.append("btn-success")
             output.append(tuple(entry))
     return output
